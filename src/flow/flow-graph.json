@@ -1,0 +1,94 @@
+{
+  "entry": "F0_branch_select",
+  "nodes": [
+    {
+      "id": "F0_branch_select",
+      "type": "branch_select",
+      "next": "F1_zweck"
+    },
+    {
+      "id": "F1_zweck",
+      "type": "confirm_default",
+      "prompt_template": "default_purpose",
+      "on_exact": "F_vertrauen",
+      "on_more": "F1b_checklist",
+      "on_no": "F1_NEIN_gate"
+    },
+    {
+      "id": "F1b_checklist",
+      "type": "checklist",
+      "source_field": "optional_blocks",
+      "next": "F_vertrauen"
+    },
+    {
+      "id": "F1_NEIN_gate",
+      "type": "lookup_gate",
+      "generic_options": [
+        { "de": "Nur Online-Präsenz/Legitimation, keine aktive Akquise" },
+        { "de": "Anfrage statt direktem Erstgespräch" }
+      ],
+      "signal_field": "out_of_scope_signals",
+      "on_match": "F1_NEIN_gatekeeper",
+      "on_no_match": "F1_NEIN_purpose_reselect"
+    },
+    {
+      "id": "F1_NEIN_gatekeeper",
+      "type": "gatekeeper",
+      "message": {
+        "de": "Dafür ist der Fragebogen noch nicht gebaut. Wir merken Ihr Anliegen vor und melden uns, sobald es unterstützt wird."
+      },
+      "terminal": true
+    },
+    {
+      "id": "F1_NEIN_purpose_reselect",
+      "type": "purpose_reselect",
+      "next": "F_vertrauen"
+    },
+    {
+      "id": "F_vertrauen",
+      "type": "trust_question",
+      "next": "F_conversion"
+    },
+    {
+      "id": "F_conversion",
+      "type": "scalable_question",
+      "depth_source": "conversion_class",
+      "depth_table": {
+        "action": { "depth": "full", "branching": true, "visible": true },
+        "trust": { "depth": "short", "branching": false, "visible": true, "max_options": 3 },
+        "mixed": { "depth": "full", "branching": true, "visible": true }
+      },
+      "next": "F_character"
+    },
+    {
+      "id": "F_character",
+      "type": "character_question",
+      "slider_source": "craft_slider",
+      "emphasis_thresholds": [
+        { "max": 60, "emphasis": "full" },
+        { "max": 100, "emphasis": "reduced" }
+      ],
+      "next": "F_identity"
+    },
+    {
+      "id": "F_identity",
+      "type": "facts_form",
+      "fields": ["name", "ort", "erreichbarkeit", "sprache"],
+      "next": "F_material"
+    },
+    {
+      "id": "F_material",
+      "type": "material_collect",
+      "slider_source": "craft_slider",
+      "mandatory_above_threshold": [
+        { "threshold": 80, "block": "gallery_portfolio" }
+      ],
+      "next": "F_review"
+    },
+    {
+      "id": "F_review",
+      "type": "review",
+      "terminal": true
+    }
+  ]
+}

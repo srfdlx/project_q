@@ -1,0 +1,17 @@
+{
+  "name": "project_q",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "vitest run",
+    "build:ui": "esbuild ui/app.ts --bundle --outfile=ui/app.bundle.js --format=esm",
+    "dev": "npm run build:ui && python3 -m http.server 8765 --directory ui"
+  },
+  "devDependencies": {
+    "esbuild": "^0.21.5",
+    "typescript": "^5.5.4",
+    "vitest": "^2.0.5",
+    "zod": "^3.23.8"
+  }
+}

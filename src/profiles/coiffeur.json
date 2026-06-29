@@ -1,0 +1,46 @@
+{
+  "branch_id": "coiffeur",
+  "branch_label": { "de": "Coiffeur / Friseur" },
+  "branch_aliases": ["Friseur", "Hairstylist", "Salon", "Barbier"],
+
+  "default_purpose": {
+    "de": "...dass neue Kunden Sie online finden und einfach einen Termin oder Kontakt aufnehmen können"
+  },
+
+  "conversion_type": "booking_tool",
+  "conversion_class": "action",
+
+  "craft_slider": 45,
+
+  "proof_types": ["portfolio_images", "reviews", "experience_years"],
+  "specialization_relevant": false,
+
+  "default_blocks": [
+    "hero",
+    "services",
+    "pricing",
+    "about_me",
+    "gallery_portfolio",
+    "contact",
+    "location_map",
+    "opening_hours",
+    "legal"
+  ],
+  "optional_blocks": ["team", "booking", "testimonials"],
+
+  "semi_dynamic_modules": ["promotion", "holiday_hours", "job_opening"],
+  "regulatory_facts": [],
+
+  "character_set": [
+    { "label": { "de": "gepflegt-gehoben" }, "subtitle": { "de": "hier bin ich in guten Händen" } },
+    { "label": { "de": "modern-minimal" }, "subtitle": { "de": "die sind auf der Höhe der Zeit" } },
+    { "label": { "de": "warm-nahbar" }, "subtitle": { "de": "hier fühl ich mich willkommen" } },
+    { "label": { "de": "trendig-mutig" }, "subtitle": { "de": "hier passiert was" } }
+  ],
+
+  "out_of_scope_signals": [
+    "nur Pflegeprodukte verkaufen",
+    "Online-Shop",
+    "Mitglieder-/Login-Bereich"
+  ]
+}
