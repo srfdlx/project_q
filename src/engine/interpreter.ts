@@ -135,7 +135,10 @@ export function getRenderModel(session: Session): RenderModel {
 
     case "scalable_question": {
       const cfg = node.depth_table[profile.conversion_class];
-      const allOptions = [profile.conversion_type, "contact_form", "call"].filter(
+      // Fehlt conversion_fallbacks im Profil, ist der dokumentierte Default
+      // "keine Fallbacks" — ausschliesslich conversion_type. Kein konkreter
+      // Kontaktweg-String steht hier im Motor-Code.
+      const allOptions = [profile.conversion_type, ...(profile.conversion_fallbacks ?? [])].filter(
         (v, i, arr) => arr.indexOf(v) === i
       );
       const options = cfg.depth === "short" && cfg.max_options ? allOptions.slice(0, cfg.max_options) : allOptions;

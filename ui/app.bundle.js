@@ -105,7 +105,7 @@ function getRenderModel(session2) {
     }
     case "scalable_question": {
       const cfg = node.depth_table[profile2.conversion_class];
-      const allOptions = [profile2.conversion_type, "contact_form", "call"].filter(
+      const allOptions = [profile2.conversion_type, ...profile2.conversion_fallbacks ?? []].filter(
         (v, i, arr) => arr.indexOf(v) === i
       );
       const options = cfg.depth === "short" && cfg.max_options ? allOptions.slice(0, cfg.max_options) : allOptions;
@@ -4330,6 +4330,11 @@ var BranchProfileSchema = external_exports.object({
   default_purpose: LocalizedSchema,
   conversion_type: ConversionTypeSchema,
   conversion_class: ConversionClassSchema,
+  // Optional: zusätzliche Kontaktwege, die bei "full"-Tiefe der Conversion-Frage
+  // als Alternativen zu conversion_type angeboten werden. Fehlt das Feld, bietet
+  // der Motor ausschliesslich conversion_type an (dokumentierter Default —
+  // im Profil-Schema festgelegt, nicht im Motor-Code).
+  conversion_fallbacks: external_exports.array(ConversionTypeSchema).optional(),
   craft_slider: external_exports.number().int().min(0).max(100),
   proof_types: external_exports.array(ProofTypeSchema).min(1),
   specialization_relevant: external_exports.boolean(),
@@ -4557,6 +4562,7 @@ var coiffeur_default = {
   },
   conversion_type: "booking_tool",
   conversion_class: "action",
+  conversion_fallbacks: ["contact_form", "call"],
   craft_slider: 45,
   proof_types: ["portfolio_images", "reviews", "experience_years"],
   specialization_relevant: false,

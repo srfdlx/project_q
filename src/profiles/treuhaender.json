@@ -1,0 +1,45 @@
+{
+  "branch_id": "treuhaender",
+  "branch_label": { "de": "Treuhänder / Treuhandbüro" },
+  "branch_aliases": ["Buchhaltung", "Steuerberater", "Wirtschaftsprüfer"],
+
+  "default_purpose": {
+    "de": "...dass potenzielle Mandanten Vertrauen zu Ihnen aufbauen und ein Erstgespräch anfragen"
+  },
+
+  "conversion_type": "first_consultation",
+  "conversion_class": "trust",
+  "conversion_fallbacks": ["contact_form", "call"],
+
+  "craft_slider": 5,
+
+  "proof_types": ["qualification", "certification", "specialization", "experience_years", "testimonials"],
+  "specialization_relevant": true,
+
+  "default_blocks": [
+    "hero",
+    "services",
+    "about_me",
+    "specialization",
+    "qualifications",
+    "contact",
+    "location_map",
+    "legal"
+  ],
+  "optional_blocks": ["team", "testimonials", "pricing"],
+
+  "semi_dynamic_modules": ["news_notice"],
+  "regulatory_facts": [],
+
+  "character_set": [
+    { "label": { "de": "seriös-etabliert" }, "subtitle": { "de": "hier ist man in erfahrenen Händen" } },
+    { "label": { "de": "modern-transparent" }, "subtitle": { "de": "die zeigen offen, wie sie arbeiten" } },
+    { "label": { "de": "persönlich-nahbar" }, "subtitle": { "de": "hier kennt man mich beim Namen" } }
+  ],
+
+  "out_of_scope_signals": [
+    "Online-Shop",
+    "Mitglieder-/Login-Bereich für Mandanten",
+    "reiner Software-Lizenzvertrieb"
+  ]
+}

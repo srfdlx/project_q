@@ -1,0 +1,45 @@
+{
+  "branch_id": "tatowierer",
+  "branch_label": { "de": "Tätowierer / Tattoo-Studio" },
+  "branch_aliases": ["Tattoo", "Tattoo-Studio", "Piercer"],
+
+  "default_purpose": {
+    "de": "...dass Interessierte Ihr Portfolio sehen und eine Anfrage für ein individuelles Motiv stellen"
+  },
+
+  "conversion_type": "inquiry_project",
+  "conversion_class": "mixed",
+  "conversion_fallbacks": ["whatsapp", "contact_form"],
+
+  "craft_slider": 95,
+
+  "proof_types": ["portfolio_images", "specialization", "hygiene_seriosity", "reviews"],
+  "specialization_relevant": true,
+
+  "default_blocks": [
+    "hero",
+    "gallery_portfolio",
+    "specialization",
+    "about_me",
+    "contact",
+    "location_map",
+    "opening_hours",
+    "legal"
+  ],
+  "optional_blocks": ["pricing", "testimonials"],
+
+  "semi_dynamic_modules": ["guest_spot", "availability_status"],
+  "regulatory_facts": [],
+
+  "character_set": [
+    { "label": { "de": "düster-elegant" }, "subtitle": { "de": "hier entsteht etwas Eindrückliches" } },
+    { "label": { "de": "fein-minimalistisch" }, "subtitle": { "de": "die Linie sitzt, ohne viel Lärm" } },
+    { "label": { "de": "bunt-verspielt" }, "subtitle": { "de": "hier darf es auffallen" } },
+    { "label": { "de": "roh-mutig" }, "subtitle": { "de": "das ist Handwerk mit Haltung" } }
+  ],
+
+  "out_of_scope_signals": [
+    "Mitglieder-/Login-Bereich",
+    "Online-Shop für Merchandise"
+  ]
+}

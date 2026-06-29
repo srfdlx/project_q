@@ -9,6 +9,7 @@
 
   "conversion_type": "booking_tool",
   "conversion_class": "action",
+  "conversion_fallbacks": ["contact_form", "call"],
 
   "craft_slider": 45,
 

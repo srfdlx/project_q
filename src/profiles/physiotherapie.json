@@ -1,0 +1,53 @@
+{
+  "branch_id": "physiotherapie",
+  "branch_label": { "de": "Physiotherapie / Physiopraxis" },
+  "branch_aliases": ["Physio", "Physiotherapeut", "Praxis für Physiotherapie"],
+
+  "default_purpose": {
+    "de": "...dass neue Patientinnen und Patienten die Praxis finden und einen Termin oder eine Verordnung einreichen können"
+  },
+
+  "conversion_type": "first_consultation",
+  "conversion_class": "trust",
+  "conversion_fallbacks": ["call", "contact_form"],
+
+  "craft_slider": 10,
+
+  "proof_types": ["qualification", "specialization", "experience_years"],
+  "specialization_relevant": true,
+
+  "default_blocks": [
+    "hero",
+    "services",
+    "about_me",
+    "specialization",
+    "qualifications",
+    "contact",
+    "location_map",
+    "opening_hours",
+    "legal"
+  ],
+  "optional_blocks": ["team", "testimonials"],
+
+  "semi_dynamic_modules": ["vacation_notice", "availability_status"],
+
+  "regulatory_facts": [
+    {
+      "question": { "de": "Rechnen Sie über die Krankenkasse ab?" },
+      "options": ["Grundversicherung", "nur Zusatzversicherung", "Selbstzahler", "Verordnung nötig"],
+      "placement": "prominent",
+      "conversion_critical": true
+    }
+  ],
+
+  "character_set": [
+    { "label": { "de": "ruhig-vertrauensvoll" }, "subtitle": { "de": "hier nimmt man sich Zeit für mich" } },
+    { "label": { "de": "klar-fachlich" }, "subtitle": { "de": "die wissen genau, was sie tun" } },
+    { "label": { "de": "warm-zugewandt" }, "subtitle": { "de": "hier fühl ich mich aufgehoben" } }
+  ],
+
+  "out_of_scope_signals": [
+    "Mitglieder-/Login-Bereich mit Patientendaten",
+    "Online-Shop für Produkte"
+  ]
+}

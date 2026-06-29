@@ -90,6 +90,11 @@ export const BranchProfileSchema = z.object({
 
   conversion_type: ConversionTypeSchema,
   conversion_class: ConversionClassSchema,
+  // Optional: zusätzliche Kontaktwege, die bei "full"-Tiefe der Conversion-Frage
+  // als Alternativen zu conversion_type angeboten werden. Fehlt das Feld, bietet
+  // der Motor ausschliesslich conversion_type an (dokumentierter Default —
+  // im Profil-Schema festgelegt, nicht im Motor-Code).
+  conversion_fallbacks: z.array(ConversionTypeSchema).optional(),
 
   craft_slider: z.number().int().min(0).max(100),
 
