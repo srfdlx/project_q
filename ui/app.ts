@@ -1,22 +1,34 @@
 import { createSession, getRenderModel, submitAnswer, isTerminal, type Session } from "../src/engine/interpreter.js";
 import { FlowGraphSchema } from "../src/schema/flow.js";
-import { BranchProfileSchema } from "../src/schema/profile.js";
+import { BranchProfileSchema, type BranchProfile } from "../src/schema/profile.js";
 import flowGraphRaw from "../src/flow/flow-graph.json" assert { type: "json" };
 import coiffeurRaw from "../src/profiles/coiffeur.json" assert { type: "json" };
+import treuhaenderRaw from "../src/profiles/treuhaender.json" assert { type: "json" };
+import tatowiererRaw from "../src/profiles/tatowierer.json" assert { type: "json" };
+import physiotherapieRaw from "../src/profiles/physiotherapie.json" assert { type: "json" };
 
 /**
  * Diese Datei enthält ausschliesslich Rendering + Event-Wiring.
  * Jede Entscheidung ("welcher Knoten kommt als Nächstes", "wie tief ist
  * die Conversion-Frage", "wird F4-REG übersprungen") passiert im Motor
  * (src/engine/interpreter.ts). Hier wird nur dispatcht, WELCHES
- * Eingabe-Widget zu einem node.type gezeichnet wird — das ist
- * Layout-Auswahl, keine Geschäftslogik.
+ * Eingabe-Widget zu einem node.type gezeichnet wird, und WELCHES Profil
+ * an createSession übergeben wird — beides Layout-/Navigationsentscheidung,
+ * keine Geschäftslogik.
  */
 
 const flow = FlowGraphSchema.parse(flowGraphRaw);
-const profile = BranchProfileSchema.parse(coiffeurRaw);
 
-let session: Session = createSession(flow, profile);
+const profiles: { id: string; data: BranchProfile }[] = [
+  { id: "coiffeur", data: BranchProfileSchema.parse(coiffeurRaw) },
+  { id: "treuhaender", data: BranchProfileSchema.parse(treuhaenderRaw) },
+  { id: "tatowierer", data: BranchProfileSchema.parse(tatowiererRaw) },
+  { id: "physiotherapie", data: BranchProfileSchema.parse(physiotherapieRaw) },
+];
+
+type Screen = { kind: "select" } | { kind: "flow"; profile: BranchProfile; session: Session };
+
+let screen: Screen = { kind: "select" };
 const path: string[] = [];
 
 const app = document.getElementById("app")!;
@@ -29,22 +41,62 @@ function el<K extends keyof HTMLElementTagNameMap>(tag: K, props: Partial<HTMLEl
   return node;
 }
 
+function startFlow(profile: BranchProfile) {
+  path.length = 0;
+  screen = { kind: "flow", profile, session: createSession(flow, profile) };
+  render();
+}
+
+function backToSelection() {
+  path.length = 0;
+  screen = { kind: "select" };
+  render();
+}
+
 function advance(answer: unknown) {
-  session = submitAnswer(session, answer);
+  if (screen.kind !== "flow") return;
+  screen = { ...screen, session: submitAnswer(screen.session, answer) };
   render();
 }
 
 function renderTrail() {
-  trail.textContent = "Pfad: " + path.join(" → ");
+  trail.textContent = path.length > 0 ? "Pfad: " + path.join(" → ") : "";
+}
+
+function renderSelectScreen() {
+  app.replaceChildren();
+  app.append(el("h2", {}, ["Branche wählen"]));
+  for (const p of profiles) {
+    app.append(
+      el("button", { onclick: () => startFlow(p.data) }, [
+        `${p.data.branch_label.de} — conversion_class: ${p.data.conversion_class}, craft_slider: ${p.data.craft_slider}`,
+      ])
+    );
+  }
 }
 
 function render() {
+  if (screen.kind === "select") {
+    renderTrail();
+    renderSelectScreen();
+    return;
+  }
+
+  const { profile, session } = screen;
   path.push(session.currentNodeId);
   renderTrail();
   app.replaceChildren();
 
+  app.append(
+    el("p", { className: "branch-switch" }, [
+      el("button", { className: "link-button", onclick: backToSelection }, ["← Branche wechseln"]),
+    ])
+  );
+
   const model = getRenderModel(session) as Record<string, unknown>;
-  app.append(el("p", { className: "node-id" }, [`[${model.nodeId as string}] ${model.type as string}`]));
+  app.append(
+    el("p", { className: "node-id" }, [`Branche: ${profile.branch_label.de} · [${model.nodeId as string}] ${model.type as string}`])
+  );
 
   switch (model.type) {
     case "branch_select": {
@@ -105,18 +157,28 @@ function render() {
       app.append(el("h2", {}, ["Womit überzeugen Sie?"]));
       app.append(el("p", {}, [`Beleg-Typen: ${(model.proof_types as string[]).join(", ")}`]));
       app.append(el("p", {}, [`Spezialisierung relevant: ${model.specialization_relevant}`]));
-      const facts = model.regulatory_facts as { question: string }[];
+      const facts = model.regulatory_facts as { question: string; placement: string; conversion_critical: boolean }[];
       if (facts.length === 0) {
         app.append(el("p", { className: "muted" }, ["(keine regulatorischen Pflicht-Fakten für diese Branche)"]));
       } else {
-        for (const f of facts) app.append(el("p", {}, [`Pflicht-Frage: ${f.question}`]));
+        for (const f of facts) {
+          app.append(
+            el("p", {}, [
+              `Pflicht-Frage (placement: ${f.placement}, conversion_critical: ${f.conversion_critical}): ${f.question}`,
+            ])
+          );
+        }
       }
       app.append(el("button", { onclick: () => advance({ proof_selected: model.proof_types }) }, ["Weiter"]));
       break;
     }
 
     case "scalable_question": {
-      app.append(el("h2", {}, [`Wie sollen Kunden Kontakt aufnehmen? (Tiefe: ${model.depth as string})`]));
+      app.append(
+        el("h2", {}, [
+          `Wie sollen Kunden Kontakt aufnehmen? (Tiefe: ${model.depth as string}, branching: ${model.branching})`,
+        ])
+      );
       for (const opt of model.options as string[]) {
         app.append(el("button", { onclick: () => advance({ selected: opt }) }, [opt]));
       }
@@ -181,6 +243,7 @@ function render() {
 
   if (isTerminal(session)) {
     app.append(el("p", { className: "terminal-note" }, ["— Ende des Fragebogens —"]));
+    app.append(el("button", { onclick: backToSelection }, ["Neue Branche wählen"]));
   }
 }
 

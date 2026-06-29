@@ -25,36 +25,36 @@ function emphasisFor(slider, thresholds) {
 function isMandatoryAbove(slider, rules, block) {
   return rules.some((r) => r.block === block && slider >= r.threshold);
 }
-function createSession(flow2, profile2) {
+function createSession(flow2, profile) {
   return {
-    profile: profile2,
+    profile,
     flow: flow2,
     currentNodeId: flow2.entry,
     collected: {},
     activeOptionalBlocks: []
   };
 }
-function isTerminal(session2) {
-  const node = findNode(session2.flow, session2.currentNodeId);
+function isTerminal(session) {
+  const node = findNode(session.flow, session.currentNodeId);
   return "terminal" in node && node.terminal === true;
 }
-function getRenderModel(session2) {
-  const { profile: profile2 } = session2;
-  const node = findNode(session2.flow, session2.currentNodeId);
+function getRenderModel(session) {
+  const { profile } = session;
+  const node = findNode(session.flow, session.currentNodeId);
   switch (node.type) {
     case "branch_select":
       return {
         nodeId: node.id,
         type: node.type,
         terminal: false,
-        branch_label: pickLocalized(profile2.branch_label)
+        branch_label: pickLocalized(profile.branch_label)
       };
     case "confirm_default":
       return {
         nodeId: node.id,
         type: node.type,
         terminal: false,
-        purpose: pickLocalized(profile2.default_purpose),
+        purpose: pickLocalized(profile.default_purpose),
         choices: ["exact", "more", "no"]
       };
     case "checklist":
@@ -62,7 +62,7 @@ function getRenderModel(session2) {
         nodeId: node.id,
         type: node.type,
         terminal: false,
-        items: profile2.optional_blocks ?? []
+        items: profile.optional_blocks ?? []
       };
     case "lookup_gate":
       return {
@@ -70,7 +70,7 @@ function getRenderModel(session2) {
         type: node.type,
         terminal: false,
         generic_options: node.generic_options.map((o) => pickLocalized(o)),
-        signal_options: profile2.out_of_scope_signals ?? []
+        signal_options: profile.out_of_scope_signals ?? []
       };
     case "gatekeeper":
       return {
@@ -87,13 +87,13 @@ function getRenderModel(session2) {
         note: "Zweck neu eingeordnet \u2014 zur\xFCck in den Hauptpfad."
       };
     case "trust_question": {
-      const regulatoryFacts = profile2.regulatory_facts ?? [];
+      const regulatoryFacts = profile.regulatory_facts ?? [];
       return {
         nodeId: node.id,
         type: node.type,
         terminal: false,
-        proof_types: profile2.proof_types,
-        specialization_relevant: profile2.specialization_relevant,
+        proof_types: profile.proof_types,
+        specialization_relevant: profile.specialization_relevant,
         // leeres Array → UI rendert 0 Fragen, kein Spezialfall nötig
         regulatory_facts: regulatoryFacts.map((f) => ({
           question: pickLocalized(f.question),
@@ -104,8 +104,8 @@ function getRenderModel(session2) {
       };
     }
     case "scalable_question": {
-      const cfg = node.depth_table[profile2.conversion_class];
-      const allOptions = [profile2.conversion_type, ...profile2.conversion_fallbacks ?? []].filter(
+      const cfg = node.depth_table[profile.conversion_class];
+      const allOptions = [profile.conversion_type, ...profile.conversion_fallbacks ?? []].filter(
         (v, i, arr) => arr.indexOf(v) === i
       );
       const options = cfg.depth === "short" && cfg.max_options ? allOptions.slice(0, cfg.max_options) : allOptions;
@@ -119,13 +119,13 @@ function getRenderModel(session2) {
       };
     }
     case "character_question": {
-      const emphasis = emphasisFor(profile2.craft_slider, node.emphasis_thresholds);
+      const emphasis = emphasisFor(profile.craft_slider, node.emphasis_thresholds);
       return {
         nodeId: node.id,
         type: node.type,
         terminal: false,
         emphasis,
-        character_set: profile2.character_set.map((c) => ({
+        character_set: profile.character_set.map((c) => ({
           label: pickLocalized(c.label),
           subtitle: pickLocalized(c.subtitle)
         }))
@@ -139,14 +139,14 @@ function getRenderModel(session2) {
         fields: node.fields
       };
     case "material_collect": {
-      const blocks = [...profile2.default_blocks, ...session2.activeOptionalBlocks];
+      const blocks = [...profile.default_blocks, ...session.activeOptionalBlocks];
       return {
         nodeId: node.id,
         type: node.type,
         terminal: false,
         blocks: blocks.map((block) => ({
           block,
-          mandatory: isMandatoryAbove(profile2.craft_slider, node.mandatory_above_threshold, block)
+          mandatory: isMandatoryAbove(profile.craft_slider, node.mandatory_above_threshold, block)
         }))
       };
     }
@@ -155,20 +155,20 @@ function getRenderModel(session2) {
         nodeId: node.id,
         type: node.type,
         terminal: true,
-        collected: session2.collected
+        collected: session.collected
       };
     default:
       throw new UnknownNodeError(`Unbekannter Knotentyp: ${node.type}`);
   }
 }
-function submitAnswer(session2, answer) {
-  const { profile: profile2 } = session2;
-  const node = findNode(session2.flow, session2.currentNodeId);
+function submitAnswer(session, answer) {
+  const { profile } = session;
+  const node = findNode(session.flow, session.currentNodeId);
   const next = (nodeId, collectedPatch = {}, optionalBlocksPatch) => ({
-    ...session2,
+    ...session,
     currentNodeId: nodeId,
-    collected: { ...session2.collected, ...collectedPatch },
-    activeOptionalBlocks: optionalBlocksPatch ?? session2.activeOptionalBlocks
+    collected: { ...session.collected, ...collectedPatch },
+    activeOptionalBlocks: optionalBlocksPatch ?? session.activeOptionalBlocks
   });
   switch (node.type) {
     case "branch_select":
@@ -183,7 +183,7 @@ function submitAnswer(session2, answer) {
       if (!Array.isArray(answer) || !answer.every((a) => typeof a === "string")) {
         throw new InvalidAnswerError("checklist erwartet string[]");
       }
-      const allowed = profile2.optional_blocks ?? [];
+      const allowed = profile.optional_blocks ?? [];
       const chosen = answer.filter((a) => allowed.includes(a));
       return next(node.next, { optional_blocks_chosen: chosen }, chosen);
     }
@@ -4593,10 +4593,139 @@ var coiffeur_default = {
   ]
 };
 
+// src/profiles/treuhaender.json
+var treuhaender_default = {
+  branch_id: "treuhaender",
+  branch_label: { de: "Treuh\xE4nder / Treuhandb\xFCro" },
+  branch_aliases: ["Buchhaltung", "Steuerberater", "Wirtschaftspr\xFCfer"],
+  default_purpose: {
+    de: "...dass potenzielle Mandanten Vertrauen zu Ihnen aufbauen und ein Erstgespr\xE4ch anfragen"
+  },
+  conversion_type: "first_consultation",
+  conversion_class: "trust",
+  conversion_fallbacks: ["contact_form", "call"],
+  craft_slider: 5,
+  proof_types: ["qualification", "certification", "specialization", "experience_years", "testimonials"],
+  specialization_relevant: true,
+  default_blocks: [
+    "hero",
+    "services",
+    "about_me",
+    "specialization",
+    "qualifications",
+    "contact",
+    "location_map",
+    "legal"
+  ],
+  optional_blocks: ["team", "testimonials", "pricing"],
+  semi_dynamic_modules: ["news_notice"],
+  regulatory_facts: [],
+  character_set: [
+    { label: { de: "seri\xF6s-etabliert" }, subtitle: { de: "hier ist man in erfahrenen H\xE4nden" } },
+    { label: { de: "modern-transparent" }, subtitle: { de: "die zeigen offen, wie sie arbeiten" } },
+    { label: { de: "pers\xF6nlich-nahbar" }, subtitle: { de: "hier kennt man mich beim Namen" } }
+  ],
+  out_of_scope_signals: [
+    "Online-Shop",
+    "Mitglieder-/Login-Bereich f\xFCr Mandanten",
+    "reiner Software-Lizenzvertrieb"
+  ]
+};
+
+// src/profiles/tatowierer.json
+var tatowierer_default = {
+  branch_id: "tatowierer",
+  branch_label: { de: "T\xE4towierer / Tattoo-Studio" },
+  branch_aliases: ["Tattoo", "Tattoo-Studio", "Piercer"],
+  default_purpose: {
+    de: "...dass Interessierte Ihr Portfolio sehen und eine Anfrage f\xFCr ein individuelles Motiv stellen"
+  },
+  conversion_type: "inquiry_project",
+  conversion_class: "mixed",
+  conversion_fallbacks: ["whatsapp", "contact_form"],
+  craft_slider: 95,
+  proof_types: ["portfolio_images", "specialization", "hygiene_seriosity", "reviews"],
+  specialization_relevant: true,
+  default_blocks: [
+    "hero",
+    "gallery_portfolio",
+    "specialization",
+    "about_me",
+    "contact",
+    "location_map",
+    "opening_hours",
+    "legal"
+  ],
+  optional_blocks: ["pricing", "testimonials"],
+  semi_dynamic_modules: ["guest_spot", "availability_status"],
+  regulatory_facts: [],
+  character_set: [
+    { label: { de: "d\xFCster-elegant" }, subtitle: { de: "hier entsteht etwas Eindr\xFCckliches" } },
+    { label: { de: "fein-minimalistisch" }, subtitle: { de: "die Linie sitzt, ohne viel L\xE4rm" } },
+    { label: { de: "bunt-verspielt" }, subtitle: { de: "hier darf es auffallen" } },
+    { label: { de: "roh-mutig" }, subtitle: { de: "das ist Handwerk mit Haltung" } }
+  ],
+  out_of_scope_signals: [
+    "Mitglieder-/Login-Bereich",
+    "Online-Shop f\xFCr Merchandise"
+  ]
+};
+
+// src/profiles/physiotherapie.json
+var physiotherapie_default = {
+  branch_id: "physiotherapie",
+  branch_label: { de: "Physiotherapie / Physiopraxis" },
+  branch_aliases: ["Physio", "Physiotherapeut", "Praxis f\xFCr Physiotherapie"],
+  default_purpose: {
+    de: "...dass neue Patientinnen und Patienten die Praxis finden und einen Termin oder eine Verordnung einreichen k\xF6nnen"
+  },
+  conversion_type: "first_consultation",
+  conversion_class: "trust",
+  conversion_fallbacks: ["call", "contact_form"],
+  craft_slider: 10,
+  proof_types: ["qualification", "specialization", "experience_years"],
+  specialization_relevant: true,
+  default_blocks: [
+    "hero",
+    "services",
+    "about_me",
+    "specialization",
+    "qualifications",
+    "contact",
+    "location_map",
+    "opening_hours",
+    "legal"
+  ],
+  optional_blocks: ["team", "testimonials"],
+  semi_dynamic_modules: ["vacation_notice", "availability_status"],
+  regulatory_facts: [
+    {
+      question: { de: "Rechnen Sie \xFCber die Krankenkasse ab?" },
+      options: ["Grundversicherung", "nur Zusatzversicherung", "Selbstzahler", "Verordnung n\xF6tig"],
+      placement: "prominent",
+      conversion_critical: true
+    }
+  ],
+  character_set: [
+    { label: { de: "ruhig-vertrauensvoll" }, subtitle: { de: "hier nimmt man sich Zeit f\xFCr mich" } },
+    { label: { de: "klar-fachlich" }, subtitle: { de: "die wissen genau, was sie tun" } },
+    { label: { de: "warm-zugewandt" }, subtitle: { de: "hier f\xFChl ich mich aufgehoben" } }
+  ],
+  out_of_scope_signals: [
+    "Mitglieder-/Login-Bereich mit Patientendaten",
+    "Online-Shop f\xFCr Produkte"
+  ]
+};
+
 // ui/app.ts
 var flow = FlowGraphSchema.parse(flow_graph_default);
-var profile = BranchProfileSchema.parse(coiffeur_default);
-var session = createSession(flow, profile);
+var profiles = [
+  { id: "coiffeur", data: BranchProfileSchema.parse(coiffeur_default) },
+  { id: "treuhaender", data: BranchProfileSchema.parse(treuhaender_default) },
+  { id: "tatowierer", data: BranchProfileSchema.parse(tatowierer_default) },
+  { id: "physiotherapie", data: BranchProfileSchema.parse(physiotherapie_default) }
+];
+var screen = { kind: "select" };
 var path = [];
 var app = document.getElementById("app");
 var trail = document.getElementById("trail");
@@ -4606,19 +4735,54 @@ function el(tag, props = {}, children = []) {
   for (const child of children) node.append(child);
   return node;
 }
+function startFlow(profile) {
+  path.length = 0;
+  screen = { kind: "flow", profile, session: createSession(flow, profile) };
+  render();
+}
+function backToSelection() {
+  path.length = 0;
+  screen = { kind: "select" };
+  render();
+}
 function advance(answer) {
-  session = submitAnswer(session, answer);
+  if (screen.kind !== "flow") return;
+  screen = { ...screen, session: submitAnswer(screen.session, answer) };
   render();
 }
 function renderTrail() {
-  trail.textContent = "Pfad: " + path.join(" \u2192 ");
+  trail.textContent = path.length > 0 ? "Pfad: " + path.join(" \u2192 ") : "";
+}
+function renderSelectScreen() {
+  app.replaceChildren();
+  app.append(el("h2", {}, ["Branche w\xE4hlen"]));
+  for (const p of profiles) {
+    app.append(
+      el("button", { onclick: () => startFlow(p.data) }, [
+        `${p.data.branch_label.de} \u2014 conversion_class: ${p.data.conversion_class}, craft_slider: ${p.data.craft_slider}`
+      ])
+    );
+  }
 }
 function render() {
+  if (screen.kind === "select") {
+    renderTrail();
+    renderSelectScreen();
+    return;
+  }
+  const { profile, session } = screen;
   path.push(session.currentNodeId);
   renderTrail();
   app.replaceChildren();
+  app.append(
+    el("p", { className: "branch-switch" }, [
+      el("button", { className: "link-button", onclick: backToSelection }, ["\u2190 Branche wechseln"])
+    ])
+  );
   const model = getRenderModel(session);
-  app.append(el("p", { className: "node-id" }, [`[${model.nodeId}] ${model.type}`]));
+  app.append(
+    el("p", { className: "node-id" }, [`Branche: ${profile.branch_label.de} \xB7 [${model.nodeId}] ${model.type}`])
+  );
   switch (model.type) {
     case "branch_select": {
       app.append(el("h2", {}, [`Branche: ${model.branch_label}`]));
@@ -4676,13 +4840,23 @@ function render() {
       if (facts.length === 0) {
         app.append(el("p", { className: "muted" }, ["(keine regulatorischen Pflicht-Fakten f\xFCr diese Branche)"]));
       } else {
-        for (const f of facts) app.append(el("p", {}, [`Pflicht-Frage: ${f.question}`]));
+        for (const f of facts) {
+          app.append(
+            el("p", {}, [
+              `Pflicht-Frage (placement: ${f.placement}, conversion_critical: ${f.conversion_critical}): ${f.question}`
+            ])
+          );
+        }
       }
       app.append(el("button", { onclick: () => advance({ proof_selected: model.proof_types }) }, ["Weiter"]));
       break;
     }
     case "scalable_question": {
-      app.append(el("h2", {}, [`Wie sollen Kunden Kontakt aufnehmen? (Tiefe: ${model.depth})`]));
+      app.append(
+        el("h2", {}, [
+          `Wie sollen Kunden Kontakt aufnehmen? (Tiefe: ${model.depth}, branching: ${model.branching})`
+        ])
+      );
       for (const opt of model.options) {
         app.append(el("button", { onclick: () => advance({ selected: opt }) }, [opt]));
       }
@@ -4741,6 +4915,7 @@ function render() {
   }
   if (isTerminal(session)) {
     app.append(el("p", { className: "terminal-note" }, ["\u2014 Ende des Fragebogens \u2014"]));
+    app.append(el("button", { onclick: backToSelection }, ["Neue Branche w\xE4hlen"]));
   }
 }
 render();
