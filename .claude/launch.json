@@ -2,6 +2,12 @@
   "version": "0.0.1",
   "configurations": [
     {
+      "name": "worlds-playground",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["-m", "http.server", "8766"],
+      "port": 8766
+    },
+    {
       "name": "project_q-ui",
       "runtimeExecutable": "python3",
       "runtimeArgs": ["-m", "http.server", "8765", "--directory", "ui"],
