@@ -3,65 +3,193 @@
   "id": "modern-transparent",
   "label": "Modern & transparent",
   "tagline": "die arbeiten zeitgemäss, keine Blackbox",
-
   "design_tokens": {
     "colors": {
-      "primary":        "#0e4f5c",
-      "primary_dark":   "#093843",
-      "surface_sage":   "#c9d8ce",
-      "surface_base":   "#f4f0e8",
-      "accent":         "#e0a13a",
-      "text":           "#1a2b2e"
+      "primary": "#0e4f5c",
+      "primary_dark": "#093843",
+      "surface_sage": "#c9d8ce",
+      "surface_base": "#f4f0e8",
+      "accent": "#e0a13a",
+      "text": "#1a2b2e"
     },
     "fonts": {
-      "display":      { "family": "Bricolage Grotesque", "google": "Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800", "role": "headlines" },
-      "body":         { "family": "Instrument Sans",     "google": "Instrument+Sans:wght@400;600",                                   "role": "body_ui" },
-      "utility_mono": { "family": "IBM Plex Mono",       "google": "IBM+Plex+Mono",                                                  "role": "facts_prices_only" }
+      "display": {
+        "family": "Bricolage Grotesque",
+        "google": "Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800",
+        "role": "headlines"
+      },
+      "body": {
+        "family": "Instrument Sans",
+        "google": "Instrument+Sans:wght@400;600",
+        "role": "body_ui"
+      },
+      "utility_mono": {
+        "family": "IBM Plex Mono",
+        "google": "IBM+Plex+Mono",
+        "role": "facts_prices_only"
+      }
     },
     "radii": {
-      "button":      "4px",
-      "card":        "6px",
+      "button": "4px",
+      "card": "6px",
       "section_cap": "0"
     },
     "type_scale": {
-      "display_clamp":      "clamp(2.4rem, 6.5vw, 4.6rem)",
-      "display_weight":     "800",
-      "display_line_height":"1.0",
-      "h2":                 "1.9rem",
-      "eyebrow":            "0.75rem"
+      "display_clamp": "clamp(2.4rem, 6.5vw, 4.6rem)",
+      "display_weight": "800",
+      "display_line_height": "1.0",
+      "h2": "1.9rem",
+      "eyebrow": "0.75rem"
     }
   },
-
   "form_language": {
     "hero": {
-      "layout":            "stacked_labeled",
-      "background":        "surface_base",
+      "layout": "stacked_labeled",
+      "background": "surface_base",
       "bottom_cap_radius": false,
-      "headline_font":     "display",
+      "headline_font": "display",
       "subline_max_chars": 46,
-      "cta_shape":         "square"
+      "cta_shape": "square"
     },
     "gallery": {
-      "columns":          "1fr 1fr",
-      "row_height":       null,
-      "cell_radius":      "6px",
-      "card_top_border":  true,
-      "stagger":          false
+      "columns": "1fr 1fr",
+      "row_height": null,
+      "cell_radius": "6px",
+      "card_top_border": true,
+      "stagger": false
     },
     "sections": {
-      "transition":     "systematic_dark_accent",
+      "transition": "systematic_dark_accent",
       "eyebrow_labels": true,
-      "dark_sections":  ["preise", "kontakt"],
-      "contact_style":  "dark_block",
-      "has_marquee":    false
+      "dark_sections": [
+        "preise",
+        "kontakt"
+      ],
+      "contact_style": "dark_block",
+      "has_marquee": false
     },
     "freiheitsgrade": {
       "FR1_layout_asymmetry": "mild — 2:3-Raster im Fakten-Abschnitt (Praxis/Physio)",
-      "FR2_scale_jumps":      "stark — Bricolage Grotesque 800 erzeugt dramatischen Massensprung zu Fliesstext",
-      "FR3_transitions":      "aktiv — dunkle Primärfläche für Fakten- und Kontaktsektion schafft starken Rhythmus",
-      "FR4_held_form":        "Fakten-Panel auf weissem Hintergrund in IBM Plex Mono (semantisch: das sind Fakten)",
-      "FR5_images":           "neutral — keine Bildveränderung (sachlich-transparent)",
-      "FR6_micro":            "minimale Radien (6px) und scharfe Kanten betonen Systematik und Klarheit"
+      "FR2_scale_jumps": "stark — Bricolage Grotesque 800 erzeugt dramatischen Massensprung zu Fliesstext",
+      "FR3_transitions": "aktiv — dunkle Primärfläche für Fakten- und Kontaktsektion schafft starken Rhythmus",
+      "FR4_held_form": "Fakten-Panel auf weissem Hintergrund in IBM Plex Mono (semantisch: das sind Fakten)",
+      "FR5_images": "neutral — keine Bildveränderung (sachlich-transparent)",
+      "FR6_micro": "minimale Radien (6px) und scharfe Kanten betonen Systematik und Klarheit"
+    },
+    "quantity_rules": {
+      "quotes": [
+        {
+          "min": 0,
+          "max": 0,
+          "layout": "hidden",
+          "overflow": null,
+          "cap": null
+        },
+        {
+          "min": 1,
+          "max": 1,
+          "layout": "solo_large",
+          "overflow": null,
+          "cap": null
+        },
+        {
+          "min": 2,
+          "max": 3,
+          "layout": "card_row",
+          "overflow": null,
+          "cap": null
+        },
+        {
+          "min": 4,
+          "max": null,
+          "layout": "top3_select",
+          "overflow": "discard",
+          "cap": 3
+        }
+      ],
+      "gallery_items": [
+        {
+          "min": 0,
+          "max": 0,
+          "layout": "hidden",
+          "overflow": null,
+          "cap": null
+        },
+        {
+          "min": 1,
+          "max": 2,
+          "layout": "feature_single",
+          "overflow": null,
+          "cap": null
+        },
+        {
+          "min": 3,
+          "max": 5,
+          "layout": "asymmetric_grid",
+          "overflow": null,
+          "cap": null
+        },
+        {
+          "min": 6,
+          "max": null,
+          "layout": "capped_grid",
+          "overflow": "discard",
+          "cap": 5
+        }
+      ],
+      "services": [
+        {
+          "min": 0,
+          "max": 0,
+          "layout": "hidden",
+          "overflow": null,
+          "cap": null
+        },
+        {
+          "min": 1,
+          "max": 3,
+          "layout": "inline_list",
+          "overflow": null,
+          "cap": null
+        },
+        {
+          "min": 4,
+          "max": 6,
+          "layout": "two_column",
+          "overflow": null,
+          "cap": null
+        },
+        {
+          "min": 7,
+          "max": null,
+          "layout": "capped_two_column",
+          "overflow": "discard",
+          "cap": 6
+        }
+      ],
+      "facts": [
+        {
+          "min": 0,
+          "max": 0,
+          "layout": "hidden",
+          "overflow": null,
+          "cap": null
+        },
+        {
+          "min": 1,
+          "max": 2,
+          "layout": "inline_facts",
+          "overflow": null,
+          "cap": null
+        },
+        {
+          "min": 3,
+          "max": null,
+          "layout": "fact_panel",
+          "overflow": "discard",
+          "cap": 5
+        }
+      ]
     }
   }
 }

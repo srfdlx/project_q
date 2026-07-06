@@ -3,63 +3,190 @@
   "id": "warm-nahbar",
   "label": "Warm & nahbar",
   "tagline": "hier fühl ich mich willkommen",
-
   "design_tokens": {
     "colors": {
-      "primary":        "#5c2e3e",
-      "primary_dark":   "#3f1e2b",
+      "primary": "#5c2e3e",
+      "primary_dark": "#3f1e2b",
       "surface_tinted": "#f3e2dc",
-      "surface_base":   "#faf5f0",
-      "accent":         "#d99a3d",
-      "text":           "#33232a"
+      "surface_base": "#faf5f0",
+      "accent": "#d99a3d",
+      "text": "#33232a"
     },
     "fonts": {
-      "display":      { "family": "Young Serif",  "google": "Young+Serif",        "role": "headlines" },
-      "body":         { "family": "Karla",         "google": "Karla:wght@400;700", "role": "body_ui" },
-      "utility_mono": { "family": "IBM Plex Mono", "google": "IBM+Plex+Mono",     "role": "facts_prices_only" }
+      "display": {
+        "family": "Young Serif",
+        "google": "Young+Serif",
+        "role": "headlines"
+      },
+      "body": {
+        "family": "Karla",
+        "google": "Karla:wght@400;700",
+        "role": "body_ui"
+      },
+      "utility_mono": {
+        "family": "IBM Plex Mono",
+        "google": "IBM+Plex+Mono",
+        "role": "facts_prices_only"
+      }
     },
     "radii": {
-      "button":      "999px",
-      "card":        "1.2rem",
+      "button": "999px",
+      "card": "1.2rem",
       "section_cap": "2rem"
     },
     "type_scale": {
-      "display_clamp":      "clamp(2.4rem, 7vw, 4.5rem)",
-      "display_weight":     "400",
-      "display_line_height":"1.0",
-      "h2":                 "1.9rem"
+      "display_clamp": "clamp(2.4rem, 7vw, 4.5rem)",
+      "display_weight": "400",
+      "display_line_height": "1.0",
+      "h2": "1.9rem"
     }
   },
-
   "form_language": {
     "hero": {
-      "layout":            "stacked",
-      "background":        "surface_tinted",
+      "layout": "stacked",
+      "background": "surface_tinted",
       "bottom_cap_radius": true,
-      "headline_font":     "display",
+      "headline_font": "display",
       "subline_max_chars": 42,
-      "cta_shape":         "pill"
+      "cta_shape": "pill"
     },
     "gallery": {
-      "columns":     "2fr 1fr 1fr",
-      "row_height":  180,
+      "columns": "2fr 1fr 1fr",
+      "row_height": 180,
       "cell_radius": "8px",
-      "stagger":     false
+      "stagger": false
     },
     "sections": {
-      "transition":         "alternating_surfaces",
-      "eyebrow_labels":     false,
-      "dark_sections":      ["preise"],
-      "contact_style":      "rounded_top",
-      "has_marquee":        false
+      "transition": "alternating_surfaces",
+      "eyebrow_labels": false,
+      "dark_sections": [
+        "preise"
+      ],
+      "contact_style": "rounded_top",
+      "has_marquee": false
     },
     "freiheitsgrade": {
       "FR1_layout_asymmetry": "mild — asymmetrisches Galerie-Raster (2fr 1fr 1fr)",
-      "FR2_scale_jumps":      "moderat — grosses Display-Serif, dann kompakter Fliesstext",
-      "FR3_transitions":      "aktiv — Hero auf getönter Fläche, Preise auf Primärfarbe, Kontakt mit gerundetem Oberkap",
-      "FR4_held_form":        "Zitat-Karte mit gerundeten Ecken auf weissem Grund",
-      "FR5_images":           "warm-getöntes Overlay (Primärfarbe 22%) auf Galeriezellen",
-      "FR6_micro":            "hohe Radien überall: Button 999px, Karte 1.2rem, Abschnittskap 2rem"
+      "FR2_scale_jumps": "moderat — grosses Display-Serif, dann kompakter Fliesstext",
+      "FR3_transitions": "aktiv — Hero auf getönter Fläche, Preise auf Primärfarbe, Kontakt mit gerundetem Oberkap",
+      "FR4_held_form": "Zitat-Karte mit gerundeten Ecken auf weissem Grund",
+      "FR5_images": "warm-getöntes Overlay (Primärfarbe 22%) auf Galeriezellen",
+      "FR6_micro": "hohe Radien überall: Button 999px, Karte 1.2rem, Abschnittskap 2rem"
+    },
+    "quantity_rules": {
+      "quotes": [
+        {
+          "min": 0,
+          "max": 0,
+          "layout": "hidden",
+          "overflow": null,
+          "cap": null
+        },
+        {
+          "min": 1,
+          "max": 1,
+          "layout": "solo_large",
+          "overflow": null,
+          "cap": null
+        },
+        {
+          "min": 2,
+          "max": 3,
+          "layout": "card_row",
+          "overflow": null,
+          "cap": null
+        },
+        {
+          "min": 4,
+          "max": null,
+          "layout": "top3_select",
+          "overflow": "discard",
+          "cap": 3
+        }
+      ],
+      "gallery_items": [
+        {
+          "min": 0,
+          "max": 0,
+          "layout": "hidden",
+          "overflow": null,
+          "cap": null
+        },
+        {
+          "min": 1,
+          "max": 2,
+          "layout": "feature_single",
+          "overflow": null,
+          "cap": null
+        },
+        {
+          "min": 3,
+          "max": 5,
+          "layout": "asymmetric_grid",
+          "overflow": null,
+          "cap": null
+        },
+        {
+          "min": 6,
+          "max": null,
+          "layout": "capped_grid",
+          "overflow": "discard",
+          "cap": 5
+        }
+      ],
+      "services": [
+        {
+          "min": 0,
+          "max": 0,
+          "layout": "hidden",
+          "overflow": null,
+          "cap": null
+        },
+        {
+          "min": 1,
+          "max": 3,
+          "layout": "inline_list",
+          "overflow": null,
+          "cap": null
+        },
+        {
+          "min": 4,
+          "max": 6,
+          "layout": "two_column",
+          "overflow": null,
+          "cap": null
+        },
+        {
+          "min": 7,
+          "max": null,
+          "layout": "capped_two_column",
+          "overflow": "discard",
+          "cap": 6
+        }
+      ],
+      "facts": [
+        {
+          "min": 0,
+          "max": 0,
+          "layout": "hidden",
+          "overflow": null,
+          "cap": null
+        },
+        {
+          "min": 1,
+          "max": 2,
+          "layout": "inline_facts",
+          "overflow": null,
+          "cap": null
+        },
+        {
+          "min": 3,
+          "max": null,
+          "layout": "fact_panel",
+          "overflow": "discard",
+          "cap": 5
+        }
+      ]
     }
   }
 }

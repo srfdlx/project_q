@@ -3,72 +3,219 @@
   "id": "trendig-mutig",
   "label": "Trendig & mutig",
   "tagline": "hier passiert was",
-
   "design_tokens": {
     "colors": {
-      "primary":      "#0d0d0d",
+      "primary": "#0d0d0d",
       "surface_base": "#f5f3ee",
-      "accent":       "#e6007e",
-      "muted":        "#8a8a8a",
+      "accent": "#e6007e",
+      "muted": "#8a8a8a",
       "text_on_dark": "#f5f3ee",
-      "text":         "#0d0d0d"
+      "text": "#0d0d0d"
     },
     "fonts": {
-      "display":      { "family": "Anton",      "google": "Anton",                   "role": "headlines_uppercase" },
-      "body":         { "family": "Archivo",    "google": "Archivo:wght@400;700",    "role": "body_ui" },
-      "utility_mono": { "family": "Space Mono", "google": "Space+Mono:wght@400;700", "role": "facts_prices_only" }
+      "display": {
+        "family": "Anton",
+        "google": "Anton",
+        "role": "headlines_uppercase"
+      },
+      "body": {
+        "family": "Archivo",
+        "google": "Archivo:wght@400;700",
+        "role": "body_ui"
+      },
+      "utility_mono": {
+        "family": "Space Mono",
+        "google": "Space+Mono:wght@400;700",
+        "role": "facts_prices_only"
+      }
     },
     "radii": {
-      "button":      "0",
-      "card":        "0",
+      "button": "0",
+      "card": "0",
       "section_cap": "0"
     },
     "type_scale": {
-      "display_clamp":       "clamp(3.2rem, 12vw, 8rem)",
-      "display_weight":      "400",
+      "display_clamp": "clamp(3.2rem, 12vw, 8rem)",
+      "display_weight": "400",
       "display_line_height": "0.9",
-      "display_transform":   "uppercase",
-      "h2_clamp":            "clamp(2rem, 5vw, 3.5rem)",
-      "h2_transform":        "uppercase"
+      "display_transform": "uppercase",
+      "h2_clamp": "clamp(2rem, 5vw, 3.5rem)",
+      "h2_transform": "uppercase"
     }
   },
-
   "form_language": {
     "hero": {
-      "layout":            "dark_fullbleed",
-      "background":        "primary",
+      "layout": "dark_fullbleed",
+      "background": "primary",
       "bottom_cap_radius": false,
-      "headline_font":     "display",
-      "cta_shape":         "square",
-      "hero_image_strip":  true
+      "headline_font": "display",
+      "cta_shape": "square",
+      "hero_image_strip": true
     },
     "gallery": {
-      "columns":   "repeat(12, 1fr)",
-      "stagger":   true,
-      "cell_radius":"0",
+      "columns": "repeat(12, 1fr)",
+      "stagger": true,
+      "cell_radius": "0",
       "stagger_config": [
-        { "span_col": "1/6",  "span_row": "4", "margin_top": "0" },
-        { "span_col": "6/10", "span_row": "3", "margin_top": "2rem" },
-        { "span_col": "10/13","span_row": "2", "margin_top": "0" },
-        { "span_col": "6/9",  "span_row": "2", "margin_top": "0" },
-        { "span_col": "9/13", "span_row": "3", "margin_top": "-2rem" }
+        {
+          "span_col": "1/6",
+          "span_row": "4",
+          "margin_top": "0"
+        },
+        {
+          "span_col": "6/10",
+          "span_row": "3",
+          "margin_top": "2rem"
+        },
+        {
+          "span_col": "10/13",
+          "span_row": "2",
+          "margin_top": "0"
+        },
+        {
+          "span_col": "6/9",
+          "span_row": "2",
+          "margin_top": "0"
+        },
+        {
+          "span_col": "9/13",
+          "span_row": "3",
+          "margin_top": "-2rem"
+        }
       ]
     },
     "sections": {
-      "transition":    "hard_cuts",
+      "transition": "hard_cuts",
       "eyebrow_labels": false,
-      "dark_sections": ["hero"],
+      "dark_sections": [
+        "hero"
+      ],
       "contact_style": "accent_fullbleed",
-      "has_marquee":   true,
-      "marquee_text":  "Schnitt — Farbe — Balayage — Styling — "
+      "has_marquee": true,
+      "marquee_text": "Schnitt — Farbe — Balayage — Styling — "
     },
     "freiheitsgrade": {
       "FR1_layout_asymmetry": "maximal — 12-Spalten-Versatzraster mit negativen Margins (Überlappung)",
-      "FR2_scale_jumps":      "maximal — Anton 8rem neben Fliesstext: typografischer Schock ist Programm",
-      "FR3_transitions":      "aktiv — harte Schnitte ohne Übergang; Hero dunkel / Content hell / Kontakt Akzentfarbe",
-      "FR4_held_form":        "linkes Zitat-Border (6px Akzent), Preis-Liste in Space Mono gross",
-      "FR5_images":           "dunkles Gradient-Overlay auf Galeriezellen (Farb-Labels als Beschriftung)",
-      "FR6_micro":            "null Radien sind Designprinzip; Akzentfarbe (pink) punktuell und bewusst eingesetzt"
+      "FR2_scale_jumps": "maximal — Anton 8rem neben Fliesstext: typografischer Schock ist Programm",
+      "FR3_transitions": "aktiv — harte Schnitte ohne Übergang; Hero dunkel / Content hell / Kontakt Akzentfarbe",
+      "FR4_held_form": "linkes Zitat-Border (6px Akzent), Preis-Liste in Space Mono gross",
+      "FR5_images": "dunkles Gradient-Overlay auf Galeriezellen (Farb-Labels als Beschriftung)",
+      "FR6_micro": "null Radien sind Designprinzip; Akzentfarbe (pink) punktuell und bewusst eingesetzt"
+    },
+    "quantity_rules": {
+      "quotes": [
+        {
+          "min": 0,
+          "max": 0,
+          "layout": "hidden",
+          "overflow": null,
+          "cap": null
+        },
+        {
+          "min": 1,
+          "max": 1,
+          "layout": "solo_large",
+          "overflow": null,
+          "cap": null
+        },
+        {
+          "min": 2,
+          "max": 3,
+          "layout": "card_row",
+          "overflow": null,
+          "cap": null
+        },
+        {
+          "min": 4,
+          "max": null,
+          "layout": "top3_select",
+          "overflow": "discard",
+          "cap": 3
+        }
+      ],
+      "gallery_items": [
+        {
+          "min": 0,
+          "max": 0,
+          "layout": "hidden",
+          "overflow": null,
+          "cap": null
+        },
+        {
+          "min": 1,
+          "max": 2,
+          "layout": "feature_single",
+          "overflow": null,
+          "cap": null
+        },
+        {
+          "min": 3,
+          "max": 5,
+          "layout": "asymmetric_grid",
+          "overflow": null,
+          "cap": null
+        },
+        {
+          "min": 6,
+          "max": null,
+          "layout": "capped_grid",
+          "overflow": "discard",
+          "cap": 5
+        }
+      ],
+      "services": [
+        {
+          "min": 0,
+          "max": 0,
+          "layout": "hidden",
+          "overflow": null,
+          "cap": null
+        },
+        {
+          "min": 1,
+          "max": 3,
+          "layout": "inline_list",
+          "overflow": null,
+          "cap": null
+        },
+        {
+          "min": 4,
+          "max": 6,
+          "layout": "two_column",
+          "overflow": null,
+          "cap": null
+        },
+        {
+          "min": 7,
+          "max": null,
+          "layout": "capped_two_column",
+          "overflow": "discard",
+          "cap": 6
+        }
+      ],
+      "facts": [
+        {
+          "min": 0,
+          "max": 0,
+          "layout": "hidden",
+          "overflow": null,
+          "cap": null
+        },
+        {
+          "min": 1,
+          "max": 2,
+          "layout": "inline_facts",
+          "overflow": null,
+          "cap": null
+        },
+        {
+          "min": 3,
+          "max": null,
+          "layout": "fact_panel",
+          "overflow": "discard",
+          "cap": 5
+        }
+      ]
     }
   }
 }

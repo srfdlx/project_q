@@ -459,6 +459,50 @@ mit Claude Code). Natürlicher nächster Meilenstein: **erster Generierungs-Vers
 am echten Output zeigt sich, ob die Freiheitsgrade Wow erzeugen oder die
 Grammatik zu eng ist.
 
+### Mengenadaptive Komposition
+
+**Kernproblem:** Dieselbe Sektion (Zitate, Galerie, Leistungen, Fakten) wird mit
+1 oder 8 Elementen befüllt — ein statisches Layout funktioniert an beiden Extremen
+selten. Ein einzelnes Zitat sieht in einer 3-Karten-Reihe verloren aus; 8 Zitate
+sprengen dasselbe Layout.
+
+**Lösung:** Jede Welt definiert pro mengenvariablem Sektionstyp eine geordnete Liste
+von `quantity_rules`. Jede Regel beschreibt einen Mengenbereich (`min`/`max`) und
+die zugehörige Layout-Variante (`layout`). Die Generierungs-Engine wählt automatisch
+die passende Variante — nie eine globale Standardlösung.
+
+**Obergrenzen sind Regeln, keine Fehler:** Wenn der Inhalt das Maximum einer Variante
+überschreitet, greift `overflow: "discard"` — das System zeigt die Top-N, Rest fällt
+weg. Das ist eine Gestaltungsentscheidung, keine Fehlerbehandlung. Beispiel Zitate:
+4+ Einträge → `top3_select` (3 beste), Rest stumm. Der Nutzer kann priorisieren;
+der Renderer zeigt nie mehr als das weltdefinierte Maximum.
+
+**Layout-Varianten sind welt-spezifisch:** `card_row` sieht in `warm-nahbar`
+(gerundete Karten, warme Farben) anders aus als in `trendig-mutig` (scharfe Kanten,
+grosses Zitat-Border). Der Identifier ist welt-übergreifend stabil; das konkrete
+Rendering ist welt-spezifisch. Dasselbe Prinzip wie Token-Treue: der Name ist der
+Vertrag, die Ausprägung ist die Welt.
+
+**Mengenvariable Sektionstypen (MVP):**
+
+| Typ | Felder |
+|---|---|
+| `quotes` | Kundenstimmen / Testimonials |
+| `gallery_items` | Portfolio-/Galerie-Fotos |
+| `services` | Leistungen / Angebote |
+| `facts` | Regulatorische Fakten, Qualifikationen |
+
+**Befüllungs-Stufen für die Spielwiese:**
+
+| Stufe | Quotes | Gallery | Services | Facts |
+|---|---|---|---|---|
+| `minimal` | 1 | 2 | 2 | 1 |
+| `typical` | 2 | 5 | 4 | 2 |
+| `maximal` | 6 | 9 | 8 | 4 |
+
+Die Spielwiese schaltet zwischen Stufen um — so wird sichtbar, ob eine Welt bei
+beiden Extremen hält oder bricht.
+
 ---
 
 ## 8. Durchgängige Prinzipien (Leitplanken)
