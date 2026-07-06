@@ -48,7 +48,7 @@ describe("UI-Smoke: Branchenauswahl + Fragefluss", () => {
     expect(document.getElementById("app")!.textContent).toContain("scalable_question");
     clickByText("booking_tool");
     expect(document.getElementById("app")!.textContent).toContain("character_question");
-    clickByText("gepflegt-gehoben");
+    clickByText("Warm & nahbar");
     expect(document.getElementById("app")!.textContent).toContain("facts_form");
     clickByText("Weiter");
     expect(document.getElementById("app")!.textContent).toContain("material_collect");

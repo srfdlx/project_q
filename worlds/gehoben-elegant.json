@@ -1,0 +1,67 @@
+{
+  "$comment": "Charakter-Welt gehoben-elegant — neu entworfen (kein Referenz-Template in diagnose-prototyp.html)",
+  "id": "gehoben-elegant",
+  "label": "Gehoben & elegant",
+  "tagline": "hier weiss man, was man tut",
+
+  "design_tokens": {
+    "colors": {
+      "primary":        "#1a1814",
+      "surface_base":   "#f9f7f3",
+      "surface_tinted": "#ede8df",
+      "accent":         "#b8935a",
+      "text":           "#1a1814",
+      "text_muted":     "#6b6560"
+    },
+    "fonts": {
+      "display": { "family": "Cormorant Garamond", "google": "Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400", "role": "headlines" },
+      "body":    { "family": "DM Sans",            "google": "DM+Sans:wght@300;400;500",                                    "role": "body_ui" }
+    },
+    "radii": {
+      "button":      "0",
+      "card":        "2px",
+      "section_cap": "0"
+    },
+    "type_scale": {
+      "display_clamp":       "clamp(2.8rem, 5vw, 5rem)",
+      "display_weight":      "300",
+      "display_line_height": "1.1",
+      "h2":                  "2rem",
+      "h2_weight":           "300"
+    }
+  },
+
+  "form_language": {
+    "hero": {
+      "layout":              "editorial_split",
+      "split":               "55fr 45fr",
+      "background":          "surface_base",
+      "bottom_cap_radius":   false,
+      "headline_font":       "display",
+      "cta_shape":           "outlined",
+      "rule_above_headline": true
+    },
+    "gallery": {
+      "columns":     "1fr 1fr 1fr",
+      "gap":         "1.5rem",
+      "cell_radius": "2px",
+      "stagger":     false
+    },
+    "sections": {
+      "transition":     "fine_line_separators",
+      "eyebrow_labels": false,
+      "dark_sections":  [],
+      "contact_style":  "tinted_surface",
+      "has_marquee":    false,
+      "section_spacing":"6rem"
+    },
+    "freiheitsgrade": {
+      "FR1_layout_asymmetry": "aktiv — 55/45-Split im Hero; Bild überlappt per negativem margin-bottom in nächste Sektion",
+      "FR2_scale_jumps":      "moderat — Cormorant 300 wirkt durch Kontrast zu kompaktem DM Sans, nicht durch Grösse",
+      "FR3_transitions":      "subtil — 1px-Trennlinien statt Farbflächen; Weissraum ist der eigentliche Übergang",
+      "FR4_held_form":        "grosse isolierte Zahl auf Weissraum (editorial — wirkt durch Einsamkeit, nicht Rahmung)",
+      "FR5_images":           "angeschnittenes Bild im Split-Hero überlappt visuell in folgende Sektion",
+      "FR6_micro":            "null Radien (Schärfe als Raffinesse), 1px-Linien, Goldakzent sehr sparsam"
+    }
+  }
+}

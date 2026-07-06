@@ -31,11 +31,37 @@
   "semi_dynamic_modules": ["guest_spot", "availability_status"],
   "regulatory_facts": [],
 
-  "character_set": [
-    { "label": { "de": "düster-elegant" }, "subtitle": { "de": "hier entsteht etwas Eindrückliches" } },
-    { "label": { "de": "fein-minimalistisch" }, "subtitle": { "de": "die Linie sitzt, ohne viel Lärm" } },
-    { "label": { "de": "bunt-verspielt" }, "subtitle": { "de": "hier darf es auffallen" } },
-    { "label": { "de": "roh-mutig" }, "subtitle": { "de": "das ist Handwerk mit Haltung" } }
+  "offered_worlds": [
+    {
+      "world_id": "trendig-mutig",
+      "label": { "de": "Düster & mutig" },
+      "subtitle": { "de": "hier entsteht etwas Eindrückliches" },
+      "skin": {
+        "color_overrides": { "accent": "#c0392b" },
+        "wording_note": "Tonalität direkter, Statement-Sprache, Du-Form"
+      }
+    },
+    {
+      "world_id": "modern-transparent",
+      "label": { "de": "Fein & minimalistisch" },
+      "subtitle": { "de": "die Linie sitzt, ohne viel Lärm" }
+    },
+    {
+      "world_id": "warm-nahbar",
+      "label": { "de": "Bunt & verspielt" },
+      "subtitle": { "de": "hier darf es auffallen" },
+      "skin": {
+        "color_overrides": { "accent": "#e040fb" }
+      }
+    },
+    {
+      "world_id": "gehoben-elegant",
+      "label": { "de": "Roh & handwerklich" },
+      "subtitle": { "de": "das ist Handwerk mit Haltung" },
+      "skin": {
+        "color_overrides": { "accent": "#8b7355" }
+      }
+    }
   ],
 
   "out_of_scope_signals": [

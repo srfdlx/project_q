@@ -1,0 +1,65 @@
+{
+  "$comment": "Charakter-Welt warm-nahbar — extrahiert aus diagnose-prototyp.html weltWarm() / physioWarm()",
+  "id": "warm-nahbar",
+  "label": "Warm & nahbar",
+  "tagline": "hier fühl ich mich willkommen",
+
+  "design_tokens": {
+    "colors": {
+      "primary":        "#5c2e3e",
+      "primary_dark":   "#3f1e2b",
+      "surface_tinted": "#f3e2dc",
+      "surface_base":   "#faf5f0",
+      "accent":         "#d99a3d",
+      "text":           "#33232a"
+    },
+    "fonts": {
+      "display":      { "family": "Young Serif",  "google": "Young+Serif",        "role": "headlines" },
+      "body":         { "family": "Karla",         "google": "Karla:wght@400;700", "role": "body_ui" },
+      "utility_mono": { "family": "IBM Plex Mono", "google": "IBM+Plex+Mono",     "role": "facts_prices_only" }
+    },
+    "radii": {
+      "button":      "999px",
+      "card":        "1.2rem",
+      "section_cap": "2rem"
+    },
+    "type_scale": {
+      "display_clamp":      "clamp(2.4rem, 7vw, 4.5rem)",
+      "display_weight":     "400",
+      "display_line_height":"1.0",
+      "h2":                 "1.9rem"
+    }
+  },
+
+  "form_language": {
+    "hero": {
+      "layout":            "stacked",
+      "background":        "surface_tinted",
+      "bottom_cap_radius": true,
+      "headline_font":     "display",
+      "subline_max_chars": 42,
+      "cta_shape":         "pill"
+    },
+    "gallery": {
+      "columns":     "2fr 1fr 1fr",
+      "row_height":  180,
+      "cell_radius": "8px",
+      "stagger":     false
+    },
+    "sections": {
+      "transition":         "alternating_surfaces",
+      "eyebrow_labels":     false,
+      "dark_sections":      ["preise"],
+      "contact_style":      "rounded_top",
+      "has_marquee":        false
+    },
+    "freiheitsgrade": {
+      "FR1_layout_asymmetry": "mild — asymmetrisches Galerie-Raster (2fr 1fr 1fr)",
+      "FR2_scale_jumps":      "moderat — grosses Display-Serif, dann kompakter Fliesstext",
+      "FR3_transitions":      "aktiv — Hero auf getönter Fläche, Preise auf Primärfarbe, Kontakt mit gerundetem Oberkap",
+      "FR4_held_form":        "Zitat-Karte mit gerundeten Ecken auf weissem Grund",
+      "FR5_images":           "warm-getöntes Overlay (Primärfarbe 22%) auf Galeriezellen",
+      "FR6_micro":            "hohe Radien überall: Button 999px, Karte 1.2rem, Abschnittskap 2rem"
+    }
+  }
+}

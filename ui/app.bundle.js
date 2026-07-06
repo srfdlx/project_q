@@ -125,9 +125,10 @@ function getRenderModel(session) {
         type: node.type,
         terminal: false,
         emphasis,
-        character_set: profile.character_set.map((c) => ({
-          label: pickLocalized(c.label),
-          subtitle: pickLocalized(c.subtitle)
+        character_set: profile.offered_worlds.map((w) => ({
+          world_id: w.world_id,
+          label: pickLocalized(w.skin?.label_override ?? w.label),
+          subtitle: pickLocalized(w.subtitle)
         }))
       };
     }
@@ -4318,10 +4319,15 @@ var RegulatoryFactSchema = external_exports.object({
   placement: external_exports.enum(["hero", "prominent", "standard"]),
   conversion_critical: external_exports.boolean()
 });
-var CharacterSetEntrySchema = external_exports.object({
+var WorldRefSchema = external_exports.object({
+  world_id: external_exports.string().min(1),
   label: LocalizedSchema,
   subtitle: LocalizedSchema,
-  design_tokens: external_exports.record(external_exports.unknown()).optional()
+  skin: external_exports.object({
+    color_overrides: external_exports.record(external_exports.string()).optional(),
+    label_override: LocalizedSchema.optional(),
+    wording_note: external_exports.string().optional()
+  }).optional()
 });
 var BranchProfileSchema = external_exports.object({
   branch_id: external_exports.string().min(1),
@@ -4342,7 +4348,12 @@ var BranchProfileSchema = external_exports.object({
   optional_blocks: external_exports.array(BlockIdSchema).optional(),
   semi_dynamic_modules: external_exports.array(SemiDynamicModuleSchema).optional(),
   regulatory_facts: external_exports.array(RegulatoryFactSchema).optional(),
-  character_set: external_exports.array(CharacterSetEntrySchema).min(3).max(4),
+  // Geordnete Liste globaler Charakter-Welten; Index 0 = Default-Vorauswahl.
+  // Enthält label/subtitle für Fragebogen-Rendering; world_id für Generierungs-Engine.
+  offered_worlds: external_exports.array(WorldRefSchema).min(2).max(4),
+  // Dringlichkeits-Flag: true → Erreichbarkeit wird Held und wandert in den Hero (I3).
+  // Entdeckt durch Sanitär-Branche. Default: false (nicht gesetzt = nicht dringlich).
+  urgency_driven: external_exports.boolean().optional(),
   out_of_scope_signals: external_exports.array(external_exports.string()).optional()
 });
 
@@ -4580,11 +4591,27 @@ var coiffeur_default = {
   optional_blocks: ["team", "booking", "testimonials"],
   semi_dynamic_modules: ["promotion", "holiday_hours", "job_opening"],
   regulatory_facts: [],
-  character_set: [
-    { label: { de: "gepflegt-gehoben" }, subtitle: { de: "hier bin ich in guten H\xE4nden" } },
-    { label: { de: "modern-minimal" }, subtitle: { de: "die sind auf der H\xF6he der Zeit" } },
-    { label: { de: "warm-nahbar" }, subtitle: { de: "hier f\xFChl ich mich willkommen" } },
-    { label: { de: "trendig-mutig" }, subtitle: { de: "hier passiert was" } }
+  offered_worlds: [
+    {
+      world_id: "warm-nahbar",
+      label: { de: "Warm & nahbar" },
+      subtitle: { de: "hier f\xFChl ich mich willkommen" }
+    },
+    {
+      world_id: "trendig-mutig",
+      label: { de: "Trendig & mutig" },
+      subtitle: { de: "hier passiert was" }
+    },
+    {
+      world_id: "modern-transparent",
+      label: { de: "Modern & klar" },
+      subtitle: { de: "die sind auf der H\xF6he der Zeit" }
+    },
+    {
+      world_id: "gehoben-elegant",
+      label: { de: "Gepflegt & gehoben" },
+      subtitle: { de: "hier bin ich in guten H\xE4nden" }
+    }
   ],
   out_of_scope_signals: [
     "nur Pflegeprodukte verkaufen",
@@ -4620,10 +4647,22 @@ var treuhaender_default = {
   optional_blocks: ["team", "testimonials", "pricing"],
   semi_dynamic_modules: ["news_notice"],
   regulatory_facts: [],
-  character_set: [
-    { label: { de: "seri\xF6s-etabliert" }, subtitle: { de: "hier ist man in erfahrenen H\xE4nden" } },
-    { label: { de: "modern-transparent" }, subtitle: { de: "die zeigen offen, wie sie arbeiten" } },
-    { label: { de: "pers\xF6nlich-nahbar" }, subtitle: { de: "hier kennt man mich beim Namen" } }
+  offered_worlds: [
+    {
+      world_id: "modern-transparent",
+      label: { de: "Modern & transparent" },
+      subtitle: { de: "die zeigen offen, wie sie arbeiten" }
+    },
+    {
+      world_id: "gehoben-elegant",
+      label: { de: "Seri\xF6s & etabliert" },
+      subtitle: { de: "hier ist man in erfahrenen H\xE4nden" }
+    },
+    {
+      world_id: "warm-nahbar",
+      label: { de: "Pers\xF6nlich & nahbar" },
+      subtitle: { de: "hier kennt man mich beim Namen" }
+    }
   ],
   out_of_scope_signals: [
     "Online-Shop",
@@ -4659,11 +4698,37 @@ var tatowierer_default = {
   optional_blocks: ["pricing", "testimonials"],
   semi_dynamic_modules: ["guest_spot", "availability_status"],
   regulatory_facts: [],
-  character_set: [
-    { label: { de: "d\xFCster-elegant" }, subtitle: { de: "hier entsteht etwas Eindr\xFCckliches" } },
-    { label: { de: "fein-minimalistisch" }, subtitle: { de: "die Linie sitzt, ohne viel L\xE4rm" } },
-    { label: { de: "bunt-verspielt" }, subtitle: { de: "hier darf es auffallen" } },
-    { label: { de: "roh-mutig" }, subtitle: { de: "das ist Handwerk mit Haltung" } }
+  offered_worlds: [
+    {
+      world_id: "trendig-mutig",
+      label: { de: "D\xFCster & mutig" },
+      subtitle: { de: "hier entsteht etwas Eindr\xFCckliches" },
+      skin: {
+        color_overrides: { accent: "#c0392b" },
+        wording_note: "Tonalit\xE4t direkter, Statement-Sprache, Du-Form"
+      }
+    },
+    {
+      world_id: "modern-transparent",
+      label: { de: "Fein & minimalistisch" },
+      subtitle: { de: "die Linie sitzt, ohne viel L\xE4rm" }
+    },
+    {
+      world_id: "warm-nahbar",
+      label: { de: "Bunt & verspielt" },
+      subtitle: { de: "hier darf es auffallen" },
+      skin: {
+        color_overrides: { accent: "#e040fb" }
+      }
+    },
+    {
+      world_id: "gehoben-elegant",
+      label: { de: "Roh & handwerklich" },
+      subtitle: { de: "das ist Handwerk mit Haltung" },
+      skin: {
+        color_overrides: { accent: "#8b7355" }
+      }
+    }
   ],
   out_of_scope_signals: [
     "Mitglieder-/Login-Bereich",
@@ -4706,10 +4771,22 @@ var physiotherapie_default = {
       conversion_critical: true
     }
   ],
-  character_set: [
-    { label: { de: "ruhig-vertrauensvoll" }, subtitle: { de: "hier nimmt man sich Zeit f\xFCr mich" } },
-    { label: { de: "klar-fachlich" }, subtitle: { de: "die wissen genau, was sie tun" } },
-    { label: { de: "warm-zugewandt" }, subtitle: { de: "hier f\xFChl ich mich aufgehoben" } }
+  offered_worlds: [
+    {
+      world_id: "warm-nahbar",
+      label: { de: "Ruhig & zugewandt" },
+      subtitle: { de: "hier nimmt man sich Zeit f\xFCr mich" }
+    },
+    {
+      world_id: "modern-transparent",
+      label: { de: "Klar & fachlich" },
+      subtitle: { de: "die wissen genau, was sie tun" }
+    },
+    {
+      world_id: "gehoben-elegant",
+      label: { de: "Hochwertig & vertrauensvoll" },
+      subtitle: { de: "eine Praxis, der ich mich anvertraue" }
+    }
   ],
   out_of_scope_signals: [
     "Mitglieder-/Login-Bereich mit Patientendaten",

@@ -31,10 +31,22 @@
   "semi_dynamic_modules": ["news_notice"],
   "regulatory_facts": [],
 
-  "character_set": [
-    { "label": { "de": "seriös-etabliert" }, "subtitle": { "de": "hier ist man in erfahrenen Händen" } },
-    { "label": { "de": "modern-transparent" }, "subtitle": { "de": "die zeigen offen, wie sie arbeiten" } },
-    { "label": { "de": "persönlich-nahbar" }, "subtitle": { "de": "hier kennt man mich beim Namen" } }
+  "offered_worlds": [
+    {
+      "world_id": "modern-transparent",
+      "label": { "de": "Modern & transparent" },
+      "subtitle": { "de": "die zeigen offen, wie sie arbeiten" }
+    },
+    {
+      "world_id": "gehoben-elegant",
+      "label": { "de": "Seriös & etabliert" },
+      "subtitle": { "de": "hier ist man in erfahrenen Händen" }
+    },
+    {
+      "world_id": "warm-nahbar",
+      "label": { "de": "Persönlich & nahbar" },
+      "subtitle": { "de": "hier kennt man mich beim Namen" }
+    }
   ],
 
   "out_of_scope_signals": [

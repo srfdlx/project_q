@@ -1,0 +1,637 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>Welten-Spielwiese — Design-System-Labor</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: system-ui, sans-serif; background: #111; color: #f0ede8; height: 100dvh; display: flex; flex-direction: column; overflow: hidden; }
+
+  /* ── Toolbar ── */
+  #toolbar {
+    display: flex; align-items: center; gap: 8px; padding: 8px 12px;
+    background: #1a1a1a; border-bottom: 1px solid #333; flex-shrink: 0; flex-wrap: wrap;
+  }
+  .tb-label { font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: .06em; margin-right: 2px; }
+  .world-btn, .skin-btn {
+    padding: 5px 13px; font-size: 13px; border: 1px solid #444; background: #222;
+    color: #ccc; cursor: pointer; border-radius: 3px; transition: all .15s;
+  }
+  .world-btn:hover, .skin-btn:hover { border-color: #888; color: #fff; }
+  .world-btn.active { background: #f0ede8; color: #111; border-color: #f0ede8; }
+  .skin-btn.active  { background: #3a5a4a; color: #d0f0d8; border-color: #3a5a4a; }
+  .sep { width: 1px; height: 24px; background: #333; margin: 0 4px; }
+  #toggle-inspector {
+    margin-left: auto; padding: 5px 12px; font-size: 12px; border: 1px solid #555;
+    background: transparent; color: #aaa; cursor: pointer; border-radius: 3px;
+  }
+  #toggle-inspector.open { background: #222; color: #fff; border-color: #888; }
+
+  /* ── Inspector ── */
+  #inspector {
+    background: #1a1a1a; border-bottom: 1px solid #333; flex-shrink: 0;
+    overflow: hidden; max-height: 0; transition: max-height .25s ease;
+  }
+  #inspector.open { max-height: 400px; overflow-y: auto; }
+  #inspector-inner { padding: 16px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  @media (max-width: 700px) { #inspector-inner { grid-template-columns: 1fr; } }
+  .insp-section h4 { font-size: 10px; text-transform: uppercase; letter-spacing: .1em; color: #888; margin-bottom: 10px; }
+  .token-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; font-size: 12px; color: #ccc; }
+  .swatch { width: 18px; height: 18px; border-radius: 3px; border: 1px solid rgba(255,255,255,.15); flex-shrink: 0; }
+  .token-key { color: #888; min-width: 110px; font-family: monospace; font-size: 11px; }
+  .token-val { font-family: monospace; font-size: 11px; color: #e0ddd8; }
+  .font-row { margin-bottom: 6px; font-size: 12px; }
+  .font-name { color: #e0ddd8; font-weight: 500; }
+  .font-role { color: #666; font-size: 11px; margin-left: 6px; }
+  .fr-row { margin-bottom: 5px; font-size: 11px; color: #aaa; line-height: 1.4; }
+  .fr-key { color: #666; font-size: 10px; font-family: monospace; }
+  .radius-badge { display: inline-block; background: #2a2a2a; border: 1px solid #444; border-radius: 2px; padding: 1px 6px; font-family: monospace; font-size: 11px; color: #ccc; margin-right: 6px; }
+
+  /* ── Preview frame ── */
+  #frame-wrap { flex: 1; overflow: hidden; }
+  #frame { width: 100%; height: 100%; border: none; background: #fff; }
+</style>
+</head>
+<body>
+
+<div id="toolbar">
+  <span class="tb-label">Welt</span>
+  <button class="world-btn active" onclick="switchWorld('warm-nahbar')">Warm & nahbar</button>
+  <button class="world-btn" onclick="switchWorld('modern-transparent')">Modern & transparent</button>
+  <button class="world-btn" onclick="switchWorld('trendig-mutig')">Trendig & mutig</button>
+  <button class="world-btn" onclick="switchWorld('gehoben-elegant')">Gehoben & elegant</button>
+  <div class="sep"></div>
+  <span class="tb-label">Skin</span>
+  <button class="skin-btn active" onclick="switchSkin('coiffeur')">Salon Mia</button>
+  <button class="skin-btn" onclick="switchSkin('physio')">Praxis Mia</button>
+  <button id="toggle-inspector" onclick="toggleInspector()">Tokens &amp; Formsprache</button>
+</div>
+
+<div id="inspector"><div id="inspector-inner"></div></div>
+<div id="frame-wrap"><iframe id="frame" title="Welt-Preview"></iframe></div>
+
+<script>
+/* ================================================================
+   WELT-DATEN (gespiegelt aus worlds/*.json)
+   ================================================================ */
+const WORLDS = {
+  'warm-nahbar': {
+    id: 'warm-nahbar', label: 'Warm & nahbar', tagline: 'hier fühl ich mich willkommen',
+    design_tokens: {
+      colors: { primary:'#5c2e3e', primary_dark:'#3f1e2b', surface_tinted:'#f3e2dc', surface_base:'#faf5f0', accent:'#d99a3d', text:'#33232a' },
+      fonts: {
+        display: { family:'Young Serif', google:'Young+Serif', role:'headlines' },
+        body:    { family:'Karla', google:'Karla:wght@400;700', role:'body_ui' },
+        utility_mono: { family:'IBM Plex Mono', google:'IBM+Plex+Mono', role:'facts_prices_only' }
+      },
+      radii: { button:'999px', card:'1.2rem', section_cap:'2rem' }
+    },
+    form_language: {
+      hero: { layout:'stacked', background:'surface_tinted', bottom_cap_radius:true, cta_shape:'pill' },
+      gallery: { columns:'2fr 1fr 1fr', row_height:180, cell_radius:'8px', stagger:false },
+      sections: { transition:'alternating_surfaces', eyebrow_labels:false, dark_sections:['preise'], contact_style:'rounded_top', has_marquee:false },
+      freiheitsgrade: {
+        FR1: 'mild — asymmetrisches Galerie-Raster (2fr 1fr 1fr)',
+        FR2: 'moderat — grosses Display-Serif, dann Fliesstext',
+        FR3: 'aktiv — Hero auf getönter Fläche, Preise auf Primärfarbe, Kontakt gerundet',
+        FR4: 'Zitat-Karte mit gerundeten Ecken',
+        FR5: 'warm-getöntes Overlay auf Galeriezellen',
+        FR6: 'hohe Radien: Button 999px, Karte 1.2rem, Kap 2rem'
+      }
+    }
+  },
+  'modern-transparent': {
+    id: 'modern-transparent', label: 'Modern & transparent', tagline: 'die arbeiten zeitgemäss, keine Blackbox',
+    design_tokens: {
+      colors: { primary:'#0e4f5c', primary_dark:'#093843', surface_sage:'#c9d8ce', surface_base:'#f4f0e8', accent:'#e0a13a', text:'#1a2b2e' },
+      fonts: {
+        display: { family:'Bricolage Grotesque', google:'Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800', role:'headlines' },
+        body:    { family:'Instrument Sans', google:'Instrument+Sans:wght@400;600', role:'body_ui' },
+        utility_mono: { family:'IBM Plex Mono', google:'IBM+Plex+Mono', role:'facts_prices_only' }
+      },
+      radii: { button:'4px', card:'6px', section_cap:'0' }
+    },
+    form_language: {
+      hero: { layout:'stacked_labeled', background:'surface_base', bottom_cap_radius:false, cta_shape:'square' },
+      gallery: { columns:'1fr 1fr', row_height:null, cell_radius:'6px', card_top_border:true, stagger:false },
+      sections: { transition:'systematic_dark_accent', eyebrow_labels:true, dark_sections:['fakten','kontakt'], contact_style:'dark_block', has_marquee:false },
+      freiheitsgrade: {
+        FR1: 'mild — 2:3-Raster im Fakten-Abschnitt',
+        FR2: 'stark — Bricolage Grotesque 800 vs. Fliesstext: dramatischer Massensprung',
+        FR3: 'aktiv — dunkle Primärfläche für Fakten + Kontakt',
+        FR4: 'Fakten-Panel in IBM Plex Mono (Schrift sagt: das ist Fakt)',
+        FR5: 'neutral — keine Bildveränderung',
+        FR6: 'minimale Radien (6px), Schärfe betont Systematik'
+      }
+    }
+  },
+  'trendig-mutig': {
+    id: 'trendig-mutig', label: 'Trendig & mutig', tagline: 'hier passiert was',
+    design_tokens: {
+      colors: { primary:'#0d0d0d', surface_base:'#f5f3ee', accent:'#e6007e', muted:'#8a8a8a', text:'#0d0d0d' },
+      fonts: {
+        display: { family:'Anton', google:'Anton', role:'headlines_uppercase' },
+        body:    { family:'Archivo', google:'Archivo:wght@400;700', role:'body_ui' },
+        utility_mono: { family:'Space Mono', google:'Space+Mono:wght@400;700', role:'facts_prices_only' }
+      },
+      radii: { button:'0', card:'0', section_cap:'0' }
+    },
+    form_language: {
+      hero: { layout:'dark_fullbleed', background:'primary', bottom_cap_radius:false, cta_shape:'square', hero_image_strip:true },
+      gallery: { columns:'repeat(12,1fr)', stagger:true, cell_radius:'0' },
+      sections: { transition:'hard_cuts', eyebrow_labels:false, dark_sections:['hero'], contact_style:'accent_fullbleed', has_marquee:true, marquee_text:'Schnitt — Farbe — Balayage — Styling — ' },
+      freiheitsgrade: {
+        FR1: 'maximal — 12-Spalten-Versatzraster mit überlappenden Elementen',
+        FR2: 'maximal — Anton 8rem: typografischer Schock ist Programm',
+        FR3: 'aktiv — harte Schnitte; Hero dunkel / Content hell / Kontakt Akzentfarbe',
+        FR4: 'linkes Zitat-Border (6px Akzent), Space Mono für Preise gross',
+        FR5: 'dunkles Gradient-Overlay auf Galeriezellen',
+        FR6: 'null Radien als Designprinzip; Akzentfarbe sehr punktuell'
+      }
+    }
+  },
+  'gehoben-elegant': {
+    id: 'gehoben-elegant', label: 'Gehoben & elegant', tagline: 'hier weiss man, was man tut',
+    design_tokens: {
+      colors: { primary:'#1a1814', surface_base:'#f9f7f3', surface_tinted:'#ede8df', accent:'#b8935a', text:'#1a1814', text_muted:'#6b6560' },
+      fonts: {
+        display: { family:'Cormorant Garamond', google:'Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400', role:'headlines' },
+        body:    { family:'DM Sans', google:'DM+Sans:wght@300;400;500', role:'body_ui' }
+      },
+      radii: { button:'0', card:'2px', section_cap:'0' }
+    },
+    form_language: {
+      hero: { layout:'editorial_split', split:'55fr 45fr', background:'surface_base', bottom_cap_radius:false, cta_shape:'outlined', rule_above_headline:true },
+      gallery: { columns:'1fr 1fr 1fr', gap:'1.5rem', cell_radius:'2px', stagger:false },
+      sections: { transition:'fine_line_separators', eyebrow_labels:false, dark_sections:[], contact_style:'tinted_surface', has_marquee:false },
+      freiheitsgrade: {
+        FR1: 'aktiv — 55/45-Split im Hero; Bild überlappt in nächste Sektion',
+        FR2: 'moderat — Cormorant 300 wirkt durch Kontrast zu DM Sans, nicht durch Grösse',
+        FR3: 'subtil — 1px-Linien statt Farbflächen; Weissraum ist der Übergang',
+        FR4: 'grosse isolierte Jahreszahl auf Weissraum (editorial)',
+        FR5: 'angeschnittenes Bild überlappt per negativem margin in nächste Sektion',
+        FR6: 'null Radien, 1px-Linien, Gold sehr sparsam'
+      }
+    }
+  }
+};
+
+/* ================================================================
+   INHALTE
+   ================================================================ */
+const CONTENT = {
+  coiffeur: {
+    name: 'Mia Brändle', salon: 'Salon Mia', ort: 'Zürich-Oerlikon', tel: '044 555 12 34',
+    tagline: 'Schnitt, Farbe und ehrliche Beratung — in einem Salon, in dem du dich nicht verstellen musst.',
+    headline1: 'Schön, dass', headline2: 'du da bist.',
+    cta: 'Termin buchen', cta2: 'Jetzt buchen',
+    proof: ['Galerie', 'Bewertungen'],
+    preise: [['Schnitt Damen','ab CHF 78'],['Schnitt Herren','ab CHF 52'],['Farbe / Ansatz','ab CHF 85'],['Balayage','ab CHF 160']],
+    zitat: '«Zum ersten Mal ein Schnitt, der auch nach drei Wochen noch sitzt.»',
+    over_text: 'Bei mir bekommst du keine Frisur von der Stange, sondern eine, die zu dir passt.',
+    branch_label: 'Coiffeur · Friseur',
+    fakten_title: null,
+    fakten: []
+  },
+  physio: {
+    name: 'Mia Brändle', salon: 'Physiopraxis Mia Brändle', ort: 'Zürich-Oerlikon', tel: '044 555 12 34',
+    tagline: 'Physiotherapie in Zürich — mit Händen, Herz und einem Plan, der zu Ihrem Leben passt.',
+    headline1: 'Wieder in', headline2: 'Bewegung kommen.',
+    cta: 'Erstgespräch anfragen', cta2: 'Termin anfragen',
+    proof: ['Qualifikation', 'Spezialisierung'],
+    preise: [],
+    zitat: '«Nach drei Monaten wieder schmerzfrei joggen — hätte ich nicht geglaubt.»',
+    over_text: 'Mein Ansatz verbindet Hände, Training und Zuhören. Sie sollen verstehen, was wir tun und warum.',
+    branch_label: 'Physiotherapie · Praxis',
+    fakten_title: 'Kosten & Krankenkasse',
+    fakten: ['Anerkannt von allen Schweizer Krankenkassen.','Abrechnung über die Grundversicherung mit ärztlicher Verordnung.','Verordnung vom Haus- oder Facharzt genügt — wir übernehmen die Administration.']
+  }
+};
+
+/* ================================================================
+   ZUSTAND
+   ================================================================ */
+let activeWorld = 'warm-nahbar';
+let activeSkin  = 'coiffeur';
+let inspectorOpen = false;
+
+/* ================================================================
+   RENDER-HELFER
+   ================================================================ */
+function fontUrl(world) {
+  const f = world.design_tokens.fonts;
+  const families = [f.display, f.body, f.utility_mono].filter(Boolean).map(x => 'family=' + x.google).join('&');
+  return `https://fonts.googleapis.com/css2?${families}&display=swap`;
+}
+
+function tel(c) { return c.tel.replace(/\s/g,''); }
+
+function galPlaceholders_warm() {
+  return `<div class="gal">
+    <div class="ph t"></div><div class="ph"></div><div class="ph"></div>
+    <div class="ph"></div><div class="ph"></div>
+  </div>`;
+}
+function galPlaceholders_2col() {
+  return `<div class="cards-2">
+    <div class="card-img"></div><div class="card-img"></div>
+    <div class="card-img"></div><div class="card-img"></div>
+  </div>`;
+}
+function galPlaceholders_trendig() {
+  return `<div class="gal12">
+    <div class="ph g1"><i>Portfolio</i></div>
+    <div class="ph g2"><i>Detail</i></div>
+    <div class="ph g3"><i>Stil</i></div>
+    <div class="ph g4"><i>Arbeit</i></div>
+    <div class="ph g5"><i>Werk</i></div>
+  </div>`;
+}
+function galPlaceholders_3col() {
+  return `<div class="gal3">
+    <div class="ph3"></div><div class="ph3"></div><div class="ph3"></div>
+    <div class="ph3"></div><div class="ph3"></div><div class="ph3"></div>
+  </div>`;
+}
+
+function preiseListe(c, monoFont, accentColor) {
+  if (!c.preise.length) return `<p style="opacity:.7">Leistungsübersicht folgt.</p>`;
+  return `<ul class="pl">${c.preise.map(([l,p])=>`<li><span>${l}</span><span>${p}</span></li>`).join('')}</ul>`;
+}
+
+/* ================================================================
+   WELT-RENDERER
+   ================================================================ */
+
+/* ---- 1. WARM & NAHBAR ---- */
+function renderWarmNahbar(world, c) {
+  const t = world.design_tokens.colors;
+  const f = world.design_tokens.fonts;
+  const r = world.design_tokens.radii;
+  return `<!doctype html><html lang="de-CH"><head><meta charset="utf-8">
+<link href="${fontUrl(world)}" rel="stylesheet">
+<style>
+:root{--p:${t.primary};--pd:${t.primary_dark};--r:${t.surface_tinted};--c:${t.surface_base};--h:${t.accent}}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'${f.body.family}',sans-serif;background:var(--c);color:#33232a;line-height:1.65}
+.wrap{max-width:1000px;margin:auto;padding:0 1.2rem}section{padding:4.5rem 0}
+h1{font-family:'${f.display.family}',serif;font-size:clamp(2.4rem,7vw,4.5rem);line-height:1;color:var(--pd)}
+h2{font-family:'${f.display.family}',serif;font-size:1.9rem;color:var(--pd);margin-bottom:1.5rem}
+.cta{background:var(--h);color:var(--pd);font-weight:700;text-decoration:none;padding:.7rem 1.4rem;border-radius:${r.button};display:inline-block}
+.hero{background:var(--r);padding:5rem 0;border-radius:0 0 ${r.section_cap} ${r.section_cap}}
+.hero p{max-width:42ch;margin:1rem 0 1.5rem;font-size:1.1rem}
+.gal{display:grid;grid-template-columns:2fr 1fr 1fr;gap:.8rem;grid-auto-rows:180px}
+.ph{border-radius:8px;background:linear-gradient(150deg,#e8cfc6,#d9ab9d);position:relative;overflow:hidden}
+.ph::after{content:'';position:absolute;inset:0;background:linear-gradient(160deg,rgba(92,46,62,.22),rgba(217,154,61,.1))}
+.ph.t{grid-row:span 2}
+.preise{background:var(--p);color:var(--r)}.preise h2{color:#fff}
+.pl{font-family:'${f.utility_mono?.family||'monospace'}';line-height:2.2;max-width:520px}
+.pl li{list-style:none;display:flex;justify-content:space-between;border-bottom:1px dotted rgba(243,226,220,.35)}
+.stimmen{background:var(--r)}
+.zit{background:#fff;border-radius:${r.card};padding:1.2rem 1.4rem;margin-bottom:1rem;max-width:560px}
+.zit span{font-size:.85rem;color:var(--p)}
+.kontakt{background:var(--pd);color:var(--r);border-radius:${r.section_cap} ${r.section_cap} 0 0}.kontakt h2{color:#fff}
+.tel-link{font-family:'${f.display.family}',serif;font-size:1.5rem;color:var(--h);text-decoration:none}
+footer{background:var(--pd);color:var(--r);font-size:.85rem;padding:1.2rem 0}
+footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:1rem}footer a{color:var(--r)}
+@media(max-width:700px){.gal{grid-template-columns:1fr 1fr}}
+</style></head><body>
+<header class="hero"><div class="wrap">
+<h1>${c.headline1} ${c.headline2}</h1>
+<p>${c.tagline}</p>
+<a class="cta" href="#t">${c.cta}</a>
+</div></header>
+<section><div class="wrap"><h2>Unsere Arbeiten</h2>${galPlaceholders_warm()}</div></section>
+<section class="preise"><div class="wrap"><h2>Klare Preise. Keine Überraschungen.</h2>${preiseListe(c)}</div></section>
+<section class="stimmen"><div class="wrap"><h2>Das sagen Kundinnen</h2>
+<div class="zit"><p>${c.zitat}</p><span>— S.</span></div>
+<div class="zit"><p>«Ehrliche Beratung statt Verkaufsgespräch. Genau deshalb komme ich wieder.»</p><span>— M.</span></div>
+</div></section>
+<section><div class="wrap"><h2>Über uns</h2><p style="max-width:52ch">${c.over_text}</p></div></section>
+<section class="kontakt" id="t"><div class="wrap"><h2>${c.cta}</h2>
+<p>${c.name} · ${c.ort}</p>
+<a class="tel-link" href="tel:${tel(c)}">${c.tel}</a>
+</div></section>
+<footer><div class="wrap"><span>© 2026 ${c.name}, ${c.ort}</span><span><a href="#">Impressum</a> · <a href="#">Datenschutz</a></span></div></footer>
+</body></html>`;
+}
+
+/* ---- 2. MODERN & TRANSPARENT ---- */
+function renderModernTransparent(world, c) {
+  const t = world.design_tokens.colors;
+  const f = world.design_tokens.fonts;
+  const r = world.design_tokens.radii;
+  const hasFakten = c.fakten.length > 0;
+  return `<!doctype html><html lang="de-CH"><head><meta charset="utf-8">
+<link href="${fontUrl(world)}" rel="stylesheet">
+<style>
+:root{--p:${t.primary};--pd:${t.primary_dark};--sa:${t.surface_sage||'#c9d8ce'};--sd:${t.surface_base};--am:${t.accent}}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'${f.body.family}',sans-serif;background:var(--sd);color:#1a2b2e;line-height:1.6}
+.wrap{max-width:1000px;margin:auto;padding:0 1.2rem}section{padding:4.5rem 0}
+h1{font-family:'${f.display.family}',sans-serif;font-weight:800;font-size:clamp(2.4rem,6.5vw,4.6rem);line-height:1;color:var(--pd);letter-spacing:-.02em}
+h1 em{font-style:normal;color:var(--p);font-weight:400}
+h2{font-family:'${f.display.family}',sans-serif;font-weight:600;font-size:1.9rem;color:var(--pd);margin-bottom:1.4rem}
+.cta{background:var(--am);color:var(--pd);font-weight:600;text-decoration:none;padding:.7rem 1.4rem;border-radius:${r.button};display:inline-block}
+.eyebrow{font-family:'${f.utility_mono?.family||'monospace'}';font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;color:var(--p);margin-bottom:.6rem}
+.hero{padding:5rem 0 4rem}
+.hero p{max-width:46ch;margin:1rem 0 1.5rem;font-size:1.1rem}
+.fakten-sec{background:var(--p);color:var(--sd)}.fakten-sec h2{color:#fff}.fakten-sec .eyebrow{color:var(--sa)}
+.fakten-grid{display:grid;grid-template-columns:2fr 3fr;gap:3rem;align-items:start}
+.fakten-panel{background:#fff;color:#1a2b2e;border-radius:${r.card};padding:1.8rem;font-family:'${f.utility_mono?.family||'monospace'}';font-size:.92rem;line-height:1.9}
+.fakten-panel li{list-style:none;padding-left:1.5rem;position:relative;margin-bottom:.8rem}
+.fakten-panel li::before{content:"—";position:absolute;left:0;color:var(--p)}
+.cards-2{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem}
+.card-img{height:180px;background:linear-gradient(140deg,#d0ddd9,#b8ccc6);border-radius:${r.card};border-top:5px solid var(--p)}
+.preise-sec{background:var(--p);color:var(--sd)}.preise-sec h2{color:#fff}.preise-sec .eyebrow{color:var(--sa)}
+.pl{font-family:'${f.utility_mono?.family||'monospace'}';font-size:.95rem;line-height:2.2;max-width:520px}
+.pl li{list-style:none;display:flex;justify-content:space-between;border-bottom:1px solid rgba(244,240,232,.25)}
+.zit{background:#fff;border-radius:${r.card};padding:1.2rem 1.4rem;margin-bottom:1rem;max-width:560px}
+.zit span{font-size:.85rem;color:var(--p)}
+.kontakt{background:var(--pd);color:var(--sd)}.kontakt h2{color:#fff}.kontakt .eyebrow{color:var(--sa)}
+.tel-link{font-family:'${f.display.family}';font-weight:600;font-size:1.6rem;color:var(--am);text-decoration:none}
+footer{background:var(--pd);color:var(--sa);font-size:.85rem;padding:1.2rem 0}
+footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:1rem}footer a{color:var(--sa)}
+@media(max-width:700px){.fakten-grid,.cards-2{grid-template-columns:1fr}}
+</style></head><body>
+<header class="hero"><div class="wrap">
+<p class="eyebrow">${c.branch_label} · ${c.ort}</p>
+<h1>${c.headline1} <em>${c.headline2}</em></h1>
+<p>${c.tagline}</p>
+<a class="cta" href="#t">${c.cta}</a>
+</div></header>
+${hasFakten ? `
+<section class="fakten-sec"><div class="wrap fakten-grid">
+<div><p class="eyebrow">Kosten &amp; Krankenkasse</p><h2>${c.fakten_title}</h2>
+<p style="color:var(--sa);max-width:38ch">Damit Sie sich um Ihre Genesung kümmern können — nicht um Formulare.</p></div>
+<ul class="fakten-panel">${c.fakten.map(f=>`<li>${f}</li>`).join('')}</ul>
+</div></section>` : ''}
+<section><div class="wrap">
+<p class="eyebrow">Galerie &amp; Arbeiten</p><h2>Was wir tun</h2>
+${galPlaceholders_2col()}
+</div></section>
+${c.preise.length ? `<section class="preise-sec"><div class="wrap">
+<p class="eyebrow">Preise</p><h2>Klare Konditionen.</h2>
+${preiseListe(c)}
+</div></section>` : ''}
+<section><div class="wrap">
+<p class="eyebrow">Stimmen</p>
+<div class="zit"><p>${c.zitat}</p><span>— S.</span></div>
+</div></section>
+<section><div class="wrap">
+<p class="eyebrow">Über uns</p><h2>Wer wir sind</h2>
+<p style="max-width:52ch">${c.over_text}</p>
+</div></section>
+<section class="kontakt" id="t"><div class="wrap">
+<p class="eyebrow" style="color:var(--sa)">Kontakt</p><h2>${c.cta}</h2>
+<a class="tel-link" href="tel:${tel(c)}">${c.tel}</a>
+<p style="margin-top:.8rem">${c.name} · ${c.ort}</p>
+</div></section>
+<footer><div class="wrap"><span>© 2026 ${c.name}</span><span><a href="#">Impressum</a> · <a href="#">Datenschutz</a></span></div></footer>
+</body></html>`;
+}
+
+/* ---- 3. TRENDIG & MUTIG ---- */
+function renderTrendigMutig(world, c) {
+  const t = world.design_tokens.colors;
+  const f = world.design_tokens.fonts;
+  return `<!doctype html><html lang="de-CH"><head><meta charset="utf-8">
+<link href="${fontUrl(world)}" rel="stylesheet">
+<style>
+:root{--s:${t.primary};--w:${t.surface_base};--e:${t.accent};--g:${t.muted||'#8a8a8a'}}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'${f.body.family}',sans-serif;background:var(--w);color:var(--s);line-height:1.55}
+.wrap{max-width:1100px;margin:auto;padding:0 1.2rem}section{padding:4.5rem 0}
+h1{font-family:'${f.display.family}',sans-serif;font-size:clamp(3.2rem,12vw,8rem);line-height:.9;text-transform:uppercase}
+h1 .z2{color:var(--e);display:block;margin-left:6vw}
+h2{font-family:'${f.display.family}',sans-serif;font-size:clamp(2rem,5vw,3.5rem);text-transform:uppercase;margin-bottom:1.5rem;line-height:.95}
+.cta{background:var(--e);color:var(--w);font-weight:700;text-transform:uppercase;letter-spacing:.06em;text-decoration:none;padding:.7rem 1.4rem;display:inline-block}
+.hero{background:var(--s);color:var(--w);padding:4rem 0 0}
+.hero .sub{display:flex;gap:1.5rem;align-items:center;margin:1.8rem 0 3rem;flex-wrap:wrap}
+.hero .sub p{max-width:32ch;color:var(--g)}
+.heroimg{height:28vh;background:linear-gradient(120deg,#2a2a2a,#111)}
+.mq{background:var(--e);color:var(--s);overflow:hidden;padding:.45rem 0;font-family:'${f.display.family}';text-transform:uppercase;white-space:nowrap;font-size:.9rem;letter-spacing:.05em}
+.mq span{display:inline-block;padding-right:3rem;animation:mq 18s linear infinite}
+@keyframes mq{to{transform:translateX(-50%)}}
+@media(prefers-reduced-motion:reduce){.mq span{animation:none}}
+.gal12{display:grid;grid-template-columns:repeat(12,1fr);grid-auto-rows:72px;gap:.6rem;margin-top:1rem}
+.ph{background:linear-gradient(140deg,#3a3a3a,#1a1a1a);position:relative;overflow:hidden}
+.ph i{position:absolute;bottom:0;left:0;background:var(--s);color:var(--w);font-style:normal;font-family:'${f.utility_mono?.family||'monospace'}';font-size:.65rem;padding:.2rem .5rem}
+.g1{grid-column:1/6;grid-row:span 4}.g2{grid-column:6/10;grid-row:span 3;margin-top:2rem}
+.g3{grid-column:10/13;grid-row:span 2}.g4{grid-column:6/9;grid-row:span 2}
+.g5{grid-column:9/13;grid-row:span 3;margin-top:-2rem}
+.preise-s{background:var(--s);color:var(--w)}.preise-s h2 em{font-style:normal;color:var(--e)}
+.pl{font-family:'${f.utility_mono?.family||'monospace'}';font-size:1.15rem;line-height:2.4;max-width:560px}
+.pl li{list-style:none;display:flex;justify-content:space-between;border-bottom:2px solid var(--w)}
+.pl b{color:var(--e)}
+.zit{border-left:6px solid var(--e);padding:.4rem 0 .4rem 1.2rem;margin-bottom:1.4rem;max-width:560px}
+.zit p{font-size:1.2rem;font-weight:700}.zit span{font-family:'${f.utility_mono?.family||'monospace'}';font-size:.8rem;color:var(--g)}
+.kontakt{background:var(--e);color:var(--s)}.kontakt h2,.kontakt a.tel{color:var(--s)}
+.kontakt a.tel{font-family:'${f.display.family}';font-size:clamp(1.8rem,4.5vw,3rem);text-decoration:none;text-transform:uppercase;display:block;margin-bottom:1rem}
+footer{background:var(--s);color:var(--g);font-size:.85rem;padding:1.2rem 0}
+footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:1rem}footer a{color:var(--w)}
+@media(max-width:700px){.gal12{grid-template-columns:repeat(6,1fr)}.g1{grid-column:1/7}.g2{grid-column:1/5;margin-top:0}.g3{grid-column:5/7}.g4{grid-column:1/4}.g5{grid-column:4/7;margin-top:0}}
+</style></head><body>
+<header class="hero"><div class="wrap">
+<h1>${c.headline1.toUpperCase()} <span class="z2">${c.headline2.toUpperCase()}</span></h1>
+<div class="sub"><a class="cta" href="#t">${c.cta.toUpperCase()}</a><p>${c.tagline}</p></div>
+</div><div class="heroimg"></div></header>
+<div class="mq" aria-hidden="true"><span>${world.form_language.sections.marquee_text.repeat(4)}</span></div>
+<section><div class="wrap"><h2>Arbeiten</h2>${galPlaceholders_trendig()}</div></section>
+${c.preise.length ? `<section class="preise-s"><div class="wrap"><h2>Preise. <em>Klar.</em></h2>
+<ul class="pl">${c.preise.map(([l,p])=>`<li><span>${l}</span><b>${p}</b></li>`).join('')}</ul>
+</div></section>` : ''}
+<section><div class="wrap">
+<div class="zit"><p>${c.zitat}</p><span>— S.</span></div>
+<div class="zit"><p>«${c.over_text}»</p><span>— ${c.name}</span></div>
+</div></section>
+<section class="kontakt" id="t"><div class="wrap"><h2>${c.cta.toUpperCase()}</h2>
+<a class="tel" href="tel:${tel(c)}">${c.tel}</a>
+<span style="font-family:'${f.utility_mono?.family||'monospace'}';font-size:.9rem">${c.name} · ${c.ort}</span>
+</div></section>
+<footer><div class="wrap"><span>© 2026 ${c.name}</span><span><a href="#">Impressum</a> · <a href="#">Datenschutz</a></span></div></footer>
+</body></html>`;
+}
+
+/* ---- 4. GEHOBEN & ELEGANT ---- */
+function renderGehobentElegant(world, c) {
+  const t = world.design_tokens.colors;
+  const f = world.design_tokens.fonts;
+  const hasFakten = c.fakten.length > 0;
+  return `<!doctype html><html lang="de-CH"><head><meta charset="utf-8">
+<link href="${fontUrl(world)}" rel="stylesheet">
+<style>
+:root{--p:${t.primary};--sb:${t.surface_base};--st:${t.surface_tinted};--a:${t.accent};--mu:${t.text_muted||'#6b6560'}}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'${f.body.family}',sans-serif;background:var(--sb);color:var(--p);line-height:1.7;font-weight:300}
+.wrap{max-width:1020px;margin:auto;padding:0 1.5rem}
+.sep{height:1px;background:rgba(26,24,20,.15);margin:0}
+h1{font-family:'${f.display.family}',serif;font-weight:300;font-size:clamp(2.8rem,5vw,5rem);line-height:1.1}
+h1 em{font-style:italic;color:var(--a)}
+h2{font-family:'${f.display.family}',serif;font-weight:300;font-size:2rem;margin-bottom:1.8rem;line-height:1.15}
+h2 em{font-style:italic}
+.cta{border:1px solid var(--p);color:var(--p);font-weight:400;letter-spacing:.08em;font-size:.9rem;text-decoration:none;padding:.65rem 1.6rem;display:inline-block;transition:all .2s}
+.cta:hover{background:var(--p);color:var(--sb)}
+.hero{display:grid;grid-template-columns:55fr 45fr;min-height:72vh;align-items:center;position:relative;overflow:hidden}
+.hero-text{padding:5rem 3rem 5rem 0}
+.rule{width:2.5rem;height:1px;background:var(--a);margin-bottom:2rem}
+.hero-text p{max-width:42ch;margin:1.2rem 0 2rem;color:var(--mu);font-size:1rem}
+.hero-img{background:linear-gradient(160deg,${t.surface_tinted||'#ede8df'},#c8bfb0);align-self:stretch;margin-bottom:-4rem;position:relative}
+.hero-img::after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,transparent 60%,rgba(26,24,20,.08))}
+section{padding:6rem 0}
+${hasFakten ? `.fakten-row{display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:start}
+.fakten-card{border:1px solid rgba(26,24,20,.2);padding:2rem;font-size:.9rem;line-height:2}
+.fakten-card li{list-style:none;padding-left:1.4rem;position:relative;margin-bottom:.6rem}
+.fakten-card li::before{content:'—';position:absolute;left:0;color:var(--a)}` : ''}
+.gal3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.5rem}
+.ph3{height:240px;background:linear-gradient(140deg,#e0d8cd,#c8bfb0);border-radius:2px}
+.number-hero{text-align:center;padding:2rem 0}
+.number-hero .n{font-family:'${f.display.family}',serif;font-weight:300;font-size:clamp(5rem,14vw,10rem);line-height:1;color:var(--a);display:block}
+.number-hero .nl{font-size:.9rem;letter-spacing:.12em;text-transform:uppercase;color:var(--mu)}
+.zit{border-left:1px solid var(--a);padding:.6rem 0 .6rem 1.4rem;margin-bottom:1.2rem;max-width:520px}
+.zit p{font-family:'${f.display.family}',serif;font-style:italic;font-size:1.2rem;font-weight:300}
+.zit span{font-size:.8rem;color:var(--mu);letter-spacing:.06em}
+.kontakt{background:var(--st)}.kontakt h2{margin-bottom:1rem}
+.tel-link{font-family:'${f.display.family}',serif;font-weight:300;font-size:1.8rem;color:var(--a);text-decoration:none}
+footer{border-top:1px solid rgba(26,24,20,.15);padding:1.2rem 0;font-size:.8rem;color:var(--mu)}
+footer .wrap{display:flex;justify-content:space-between;gap:1rem}footer a{color:var(--mu)}
+@media(max-width:700px){.hero{grid-template-columns:1fr}.hero-img{display:none}.gal3{grid-template-columns:1fr 1fr}${hasFakten?'.fakten-row{grid-template-columns:1fr}':''}}
+</style></head><body>
+<header class="hero">
+<div class="hero-text wrap" style="grid-column:1;padding-left:1.5rem">
+  <div class="rule"></div>
+  <h1>${c.headline1} <em>${c.headline2}</em></h1>
+  <p>${c.tagline}</p>
+  <a class="cta" href="#t">${c.cta}</a>
+</div>
+<div class="hero-img"></div>
+</header>
+<div class="sep"></div>
+${hasFakten ? `<section><div class="wrap">
+<h2><em>${c.fakten_title}</em></h2>
+<div class="fakten-row">
+<p style="color:var(--mu);max-width:38ch">Damit Sie sich um Ihre Genesung kümmern können — nicht um Formulare und Abklärungen.</p>
+<ul class="fakten-card">${c.fakten.map(f=>`<li>${f}</li>`).join('')}</ul>
+</div>
+</div></section><div class="sep"></div>` : ''}
+<section><div class="wrap"><h2>Unsere <em>Arbeiten</em></h2>${galPlaceholders_3col()}</div></section>
+<div class="sep"></div>
+<section><div class="wrap number-hero">
+<span class="n">8</span>
+<span class="nl">Jahre Erfahrung in ${c.ort}</span>
+</div></section>
+<div class="sep"></div>
+<section><div class="wrap">
+<h2><em>Das sagen</em> unsere Kunden</h2>
+<div class="zit"><p>${c.zitat}</p><span>— S., ${c.ort}</span></div>
+</div></section>
+<div class="sep"></div>
+<section><div class="wrap"><h2>Über <em>uns</em></h2>
+<p style="max-width:52ch;color:var(--mu)">${c.over_text}</p>
+</div></section>
+<div class="sep"></div>
+<section class="kontakt" id="t"><div class="wrap">
+<h2><em>${c.cta}</em></h2>
+<a class="tel-link" href="tel:${tel(c)}">${c.tel}</a>
+<p style="margin-top:.8rem;color:var(--mu)">${c.name} · ${c.ort}</p>
+</div></section>
+<footer><div class="wrap"><span>© 2026 ${c.name}, ${c.ort}</span><span><a href="#">Impressum</a> · <a href="#">Datenschutz</a></span></div></footer>
+</body></html>`;
+}
+
+/* ================================================================
+   INSPEKTOR
+   ================================================================ */
+function renderInspector(world) {
+  const t = world.design_tokens;
+  const fl = world.form_language;
+
+  const colorRows = Object.entries(t.colors).map(([k,v]) =>
+    `<div class="token-row">
+      <div class="swatch" style="background:${v}"></div>
+      <span class="token-key">${k}</span>
+      <span class="token-val">${v}</span>
+    </div>`
+  ).join('');
+
+  const fontRows = Object.entries(t.fonts).map(([k,f]) =>
+    `<div class="font-row">
+      <span class="font-name">${f.family}</span>
+      <span class="font-role">[${k}] ${f.role}</span>
+    </div>`
+  ).join('');
+
+  const radiiRow = Object.entries(t.radii).map(([k,v]) =>
+    `<span class="radius-badge">${k}: ${v||'0'}</span>`
+  ).join('');
+
+  const heroFields = Object.entries(fl.hero).map(([k,v]) =>
+    `<div class="token-row"><span class="token-key">${k}</span><span class="token-val">${JSON.stringify(v)}</span></div>`
+  ).join('');
+
+  const secFields = Object.entries(fl.sections).map(([k,v]) =>
+    `<div class="token-row"><span class="token-key">${k}</span><span class="token-val">${JSON.stringify(v)}</span></div>`
+  ).join('');
+
+  const frRows = Object.entries(fl.freiheitsgrade).map(([k,v]) =>
+    `<div class="fr-row"><span class="fr-key">${k}</span><br>${v}</div>`
+  ).join('');
+
+  return `
+  <div class="insp-section">
+    <h4>Farb-Tokens</h4>${colorRows}
+    <h4 style="margin-top:12px">Schriften</h4>${fontRows}
+    <h4 style="margin-top:12px">Radien</h4><div style="margin-top:4px">${radiiRow}</div>
+  </div>
+  <div class="insp-section">
+    <h4>Formsprache · Hero</h4>${heroFields}
+    <h4 style="margin-top:12px">Formsprache · Sektionen</h4>${secFields}
+    <h4 style="margin-top:12px">Freiheitsgrade (FR1–FR6)</h4>${frRows}
+  </div>`;
+}
+
+/* ================================================================
+   HAUPT-STEUERUNG
+   ================================================================ */
+function getRenderer(worldId) {
+  switch(worldId) {
+    case 'warm-nahbar':       return renderWarmNahbar;
+    case 'modern-transparent': return renderModernTransparent;
+    case 'trendig-mutig':     return renderTrendigMutig;
+    case 'gehoben-elegant':   return renderGehobentElegant;
+  }
+}
+
+function refresh() {
+  const world   = WORLDS[activeWorld];
+  const content = CONTENT[activeSkin];
+  const html    = getRenderer(activeWorld)(world, content);
+  document.getElementById('frame').srcdoc = html;
+  document.getElementById('inspector-inner').innerHTML = renderInspector(world);
+}
+
+function switchWorld(id) {
+  activeWorld = id;
+  document.querySelectorAll('.world-btn').forEach(b => b.classList.toggle('active', b.textContent.trim() === WORLDS[id].label));
+  refresh();
+}
+
+function switchSkin(id) {
+  activeSkin = id;
+  document.querySelectorAll('.skin-btn').forEach(b => {
+    b.classList.toggle('active', (id === 'coiffeur' && b.textContent.includes('Salon')) || (id === 'physio' && b.textContent.includes('Praxis')));
+  });
+  refresh();
+}
+
+function toggleInspector() {
+  inspectorOpen = !inspectorOpen;
+  document.getElementById('inspector').classList.toggle('open', inspectorOpen);
+  document.getElementById('toggle-inspector').classList.toggle('open', inspectorOpen);
+}
+
+/* Bootstrap */
+refresh();
+</script>
+</body>
+</html>

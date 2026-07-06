@@ -40,10 +40,22 @@
     }
   ],
 
-  "character_set": [
-    { "label": { "de": "ruhig-vertrauensvoll" }, "subtitle": { "de": "hier nimmt man sich Zeit für mich" } },
-    { "label": { "de": "klar-fachlich" }, "subtitle": { "de": "die wissen genau, was sie tun" } },
-    { "label": { "de": "warm-zugewandt" }, "subtitle": { "de": "hier fühl ich mich aufgehoben" } }
+  "offered_worlds": [
+    {
+      "world_id": "warm-nahbar",
+      "label": { "de": "Ruhig & zugewandt" },
+      "subtitle": { "de": "hier nimmt man sich Zeit für mich" }
+    },
+    {
+      "world_id": "modern-transparent",
+      "label": { "de": "Klar & fachlich" },
+      "subtitle": { "de": "die wissen genau, was sie tun" }
+    },
+    {
+      "world_id": "gehoben-elegant",
+      "label": { "de": "Hochwertig & vertrauensvoll" },
+      "subtitle": { "de": "eine Praxis, der ich mich anvertraue" }
+    }
   ],
 
   "out_of_scope_signals": [

@@ -159,9 +159,10 @@ export function getRenderModel(session: Session): RenderModel {
         type: node.type,
         terminal: false,
         emphasis,
-        character_set: profile.character_set.map((c) => ({
-          label: pickLocalized(c.label),
-          subtitle: pickLocalized(c.subtitle),
+        character_set: profile.offered_worlds.map((w) => ({
+          world_id: w.world_id,
+          label: pickLocalized(w.skin?.label_override ?? w.label),
+          subtitle: pickLocalized(w.subtitle),
         })),
       };
     }

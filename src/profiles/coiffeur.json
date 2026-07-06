@@ -32,11 +32,27 @@
   "semi_dynamic_modules": ["promotion", "holiday_hours", "job_opening"],
   "regulatory_facts": [],
 
-  "character_set": [
-    { "label": { "de": "gepflegt-gehoben" }, "subtitle": { "de": "hier bin ich in guten Händen" } },
-    { "label": { "de": "modern-minimal" }, "subtitle": { "de": "die sind auf der Höhe der Zeit" } },
-    { "label": { "de": "warm-nahbar" }, "subtitle": { "de": "hier fühl ich mich willkommen" } },
-    { "label": { "de": "trendig-mutig" }, "subtitle": { "de": "hier passiert was" } }
+  "offered_worlds": [
+    {
+      "world_id": "warm-nahbar",
+      "label": { "de": "Warm & nahbar" },
+      "subtitle": { "de": "hier fühl ich mich willkommen" }
+    },
+    {
+      "world_id": "trendig-mutig",
+      "label": { "de": "Trendig & mutig" },
+      "subtitle": { "de": "hier passiert was" }
+    },
+    {
+      "world_id": "modern-transparent",
+      "label": { "de": "Modern & klar" },
+      "subtitle": { "de": "die sind auf der Höhe der Zeit" }
+    },
+    {
+      "world_id": "gehoben-elegant",
+      "label": { "de": "Gepflegt & gehoben" },
+      "subtitle": { "de": "hier bin ich in guten Händen" }
+    }
   ],
 
   "out_of_scope_signals": [
