@@ -231,6 +231,236 @@ Annotationen im Review werden **nach Art klassifiziert** (nicht nach Anzahl):
 
 ---
 
+## 7b. Nach dem Review: Generierung, Lead-Sorten, Pricing, Hosting
+
+Der Fragebogen endet mit einem Strukturvorschlag. Was danach passiert, entscheidet
+sich an einer Frage: **Ist dieser Fall automatisierbar — und wenn nicht, warum?**
+Grundhaltung: Der Fragebogen *weiss schon am Ende*, in welche Sorte ein Fall fällt
+(die Komplexitätsachsen kodieren es). Kein Scheitern-dann-Lead, sondern Vorab-Weiche.
+
+### Die drei Lead-/Reibungs-Sorten
+
+| Sorte | Auslöser | Reaktion | Ist es ein Lead? |
+|---|---|---|---|
+| **A — Out of Scope** | Komplexität sprengt MVP-Quadrant (mehrzweckig / lebend+CMS / geschützt) | bestehender F1-NEIN-**Gatekeeper**: „bauen wir, noch nicht" | **Ja**, echter Lead |
+| **B — Material fehlt** | Fall *wäre* automatisierbar, aber Rohmaterial fehlt/unbrauchbar | *Generieren-statt-Liefern*-Gabel: trotzdem bauen mit generiertem Content → **Upsell** (Content-Service). Nur wenn *unverzichtbares* Kernmaterial fehlt (Tattoo-Portfolio) → Lead | meist **nein** (Upsell) |
+| **C — Qualitäts-/Vertrauensschwelle** | technisch machbar, aber riskant: regulierte Branche (heikle Pflicht-Fakten) oder kein erprobtes Profil (Freitext-Branche) | **Pflicht-Review** vor Live-Gang | **nein**, menschlicher Check im Premium-Pfad |
+
+**Konsequenz:** Nur Sorte A ist ein echter „geht nicht automatisch"-Lead. B ist meist
+Upsell, C ist abgesicherter Premium-Pfad. Die „nicht automatisierbaren" Fälle sind
+*seltener* als zunächst gedacht — die meiste Reibung ist Upsell-Gelegenheit.
+
+### Sorte C im Detail — Human-in-the-loop ist Pflicht
+
+Bei regulierten Branchen geht **nie** etwas ungeprüft live. Mechanik:
+- **Generierte Checkliste** (kein generisches Formular): aus den Profil-Antworten
+  abgeleitet, speziell aus `regulatory_facts` mit `conversion_critical: true`.
+  Beispiel Physio: „Stimmt die angezeigte Abrechnungsart? Zulassungsnummer korrekt?"
+  → kurz, relevant, wird gelesen. Nebenprodukt der Diagnose, kein neues System.
+- **Verantwortung vs. Prüfung getrennt:** Kunde trägt die *inhaltliche* Verantwortung
+  (nur er kann die Fragen beantworten), Ersteller garantiert *handwerkliche* Qualität.
+  Du garantierst „korrekt gebaut", nicht „inhaltlich wahr".
+- **Dokumentierte Kundenfreigabe:** aktives, protokolliertes Abnicken der Checkliste
+  vor Live-Gang — nicht nur angezeigte Liste. Das ist die juristisch relevante Geste.
+- ⚠️ **Vor Launch anwaltlich klären** (AGB/Haftung, speziell regulierte Branchen).
+
+### Pricing (grobes Mapping, Detail später)
+
+- **Basic:** sauberer automatischer Fall. Vollautomatische Website, parametrische
+  Self-Service-Anpassungen (s. Abschnitt 7).
+- **Premium:** menschliches Sparring/Politur (qualitative + strukturelle
+  Annotationen) **plus** abgesicherte Sorte-C-Fälle. Positiv geframt als
+  „Designer-Freigabe/Qualitätsgarantie", **nicht** als „Auto gescheitert".
+- **Support** gehört ins Pricing (Stufe noch offen).
+- Leitlinie: Premium ist *zusätzlicher Wert*, in den man freiwillig geht — nicht der
+  Fehlerfall, in den man fällt.
+
+### Hosting
+
+- **Erstellungsphase** auf eigenem Server/Provider.
+- **Default-Gedanke: Hosting selbst anbieten**, nicht nur Übergabe. Die Übergabe auf
+  Kundenserver (Domains, DNS, Mail, N Schweizer Provider) ist der unterschätzte
+  Support-Albtraum. Selbst-Hosting erspart den Schmerz *und* bringt wiederkehrenden
+  Umsatz → als Default denken, Übergabe als Ausnahme/Option.
+
+---
+
+## 7c. Generierung: Wow-Schichten & Held-Logik
+
+### Generierungs-Ansatz: Variante 2 mit Leitplanken
+
+Drei mögliche Welten: (1) Komposition aus fertigen Bausteinen, (2) freie
+Code-Generierung, (3) Template + Theming. Gewählt: **Variante 2, aber innerhalb
+eines Design-Systems.** Begründung: (1) und (3) sehen trotz unterschiedlicher
+Befüllung immer gleich aus → kein Wow. Freie Generierung (2) liefert Varianz, ist
+aber unberechenbar (= Lovable-Falle).
+
+**Lösung — kuratierte Freiheit:** LLM generiert *innerhalb* fester Design-Tokens
+(Typo-Skala, Spacing, Farb-Logik, Grid) und erlaubter Sektions-*Muster*, aber mit
+freier Komposition/Anordnung/Proportion darin. Analogie: nicht Bausteine
+zusammenstecken, sondern frei schreiben — in einer definierten Sprache mit
+Grammatik. Überrascht (Wow), ohne zu entgleisen (Garantie).
+→ Die Leitplanken zu bauen ist **anspruchsvolle Design-System-Arbeit** (Senior,
+einmal pro System) und **Voraussetzung**, nicht Beiwerk. Ohne sie = Lovable. Das
+ist der Burggraben — entspricht „Quelle 3 / kuratierte Parametrik" aus Abschnitt 5.
+
+### Die drei Wow-Schichten (Budget 70/30 zugunsten Passung)
+
+| Schicht | Quelle | Liefert | Risiko |
+|---|---|---|---|
+| **Basis** | Design-System/Leitplanken | „nie hässlich, immer professionell" | gering (kontrolliert) |
+| **Gestalterisches Wow** (≈30%) | kuratierte Freiheit (Q3) + echtes Material (Q2: Fotos, Logo-Farben) | „sieht aus wie teure Agentur" | schwankend, kopierbar, geschmacksabhängig |
+| **Passungs-Wow** (≈70%) | **die Diagnose selbst**, prominent inszeniert | „die haben *mein* Geschäft verstanden" | gering — niemand widerspricht eigener Passung |
+
+**Kernsatz:** Passungs-Wow ist seltener, billiger und unkopierbar — und großteils
+**schon gebaut** (steckt in der Diagnose). Die Engine muss es nur *inszenieren*,
+nicht erzeugen. Ästhetik muss nur zuverlässig die Schwelle „professionell"
+überspringen (das leisten die Leitplanken); den emotionalen Treffer landet die Passung.
+
+### Held-Logik (was auf der Seite zum Helden wird)
+
+**Definition:** Der Held ist **nicht** „das Wichtigste am Geschäft", sondern
+**das, was die Conversion-Hürde dieser Branche knackt** — die Info, deren Fehlen
+den Besucher zögern lässt. 1–2 Helden pro Branche.
+
+**Ableitungsregel (statt manuell pro Branche):**
+- `conversion_class: trust` → Held 1 = stärkster `proof_type`, Held 2 = **Spezialisierung/Passung**
+  (Vertrauensbranchen leben davon, dass der Kunde sich *gemeint* fühlt).
+- `conversion_class: action` → Held 1 = Können/Beleg zeigen, Held 2 = Conversion-Weg.
+- `conversion_class: mixed` → beide Achsen, je nach dominantem proof_type.
+
+**Erprobte Helden:**
+| Branche | Klasse | Held 1 | Held 2 |
+|---|---|---|---|
+| Coiffeur | action | Arbeit zeigen (Galerie/Stil) | reibungsloser Termin-Weg |
+| Treuhänder | trust | Qualifikation/Zulassung | Spezialisierung/Passung |
+| Tätowierer | mixed | Portfolio (dominant) | Stil-Passung |
+| Physio | trust+reg. | Krankenkassen-Abrechnung | Spezialisierung |
+| Sanitär | (urgency) | Leistungsumfang + **Erreichbarkeit/Notdienst** | Einzugsgebiet |
+| Fensterbauer | action/beleg | Referenzen/Arbeiten (Bilder) | Leistungsspektrum |
+| Maler | action/beleg | Portfolio/Referenzobjekte | Leistungsart (innen/außen) |
+
+### Neuer Fund: Dringlichkeit/Verfügbarkeit (fehlende Dimension)
+
+Sanitär deckt eine Lücke auf: **Notdienst/Dringlichkeit** passt in keine
+bestehende Stellschraube. Vorschlag: Flag `urgency_driven` (oder Modul
+„Notfall/Soforthilfe"). Wenn gesetzt → **Erreichbarkeit wird Held UND wandert in
+den Hero** (jede Sekunde Scrollen verliert den Panik-Kunden).
+
+**Platzierung des Helden hängt an Dringlichkeit, nicht fix above-the-fold:**
+- dringlich (Sanitär-Notfall) → Held MUSS in den Hero.
+- nicht dringlich (Maler, Physio-Abrechnung) → Held garantiert prominent, aber
+  Höhe flexibel (Kunde vergleicht in Ruhe, darf zweite Sektion sein).
+
+→ Held großteils **aus Profil ableitbar** (`conversion_class` + stärkster
+`proof_type` + Dringlichkeits-Flag) statt manuell — entspricht „ein Motor, N Profile".
+„Handwerker" ist *keine* einheitliche Klasse: Sanitär = verfügbarkeitsgetrieben,
+Fensterbauer/Maler = beleg-/passungsgetrieben.
+
+---
+
+## 7d. Constraint-/Hierarchie-Schicht (Schritt 1+2: Invarianten & Held-Durchsetzung)
+
+**Ordnungsprinzip:** Jede Regel muss *maschinell prüfbar* sein — eine unprüfbare
+Regel ist ein Wunsch, keine Leitplanke. Erarbeitungs-Reihenfolge der Gesamtschicht:
+(1) Invarianten → (2) Held-Durchsetzung → (3) Struktur-Grammatik → (4) Freiheitsgrade
+explizit → (5) Tokens → (6) Validator. Bewusst invarianten-first: Wer mit Tokens
+beginnt, baut Vokabeln ohne Satzbau.
+
+### Schritt 1 — Invarianten (nie verletzbar)
+
+| # | Regel | Prüfbar via |
+|---|---|---|
+| I1 | Impressum + Datenschutz vorhanden & erreichbar | Link-Existenz |
+| I2 | Jeder Profil-Held als eigenständiges Element (nicht Nebensatz) | Element-Zuordnung |
+| I3 | `urgency_driven` → Erreichbarkeit im Hero-Viewport, klickbar (tel:) | Position + Link-Typ |
+| I4 | Conversion-Element von überall in ≤ 1 Scroll+Klick (sticky/wiederholt) | Element-Abstände |
+| I5 | **Null-Freiheits-Zone:** `regulatory_facts` (conversion_critical) erscheinen **wörtlich**, Engine darf nicht umformulieren | String-Match |
+| I6 | Kontrast ≥ WCAG AA, Fliesstext ≥ 16px, Zeilenlänge 45–90 Zeichen | berechenbar |
+| I7 | **Token-Treue:** nur Werte der gewählten Charakter-Welt; **2 gestalterische Schriftfamilien (Display+Body) + optional 1 funktionale Utility-Schrift nur für Fakten** (Preise, Regulatorik — nie Fliesstext/Headlines); Spacing aus Skala | Ist ⊆ Token-Menge |
+| I8 | Texte in Profil-Sprache(n), keine Platzhalter-Reste | Pattern-Check |
+
+### Schritt 2 — Held-Durchsetzung (Hierarchie-Mechanik)
+
+| # | Regel | Prüfbar |
+|---|---|---|
+| H1 | **Visuelle Masse:** Held dominiert seine Sektion flächenmässig, nichts Dekoratives grösser | Flächenvergleich |
+| H2 | **Positions-Rang:** Held 1 vor allen Nicht-Held-Sektionen (ausser Hero); Held 2 obere Seitenhälfte; Ausnahme I3 zieht Held in Hero | Sektions-Reihenfolge |
+| H3 | **Konkurrenz-Verbot:** ein Held pro Viewport — kein zweites Element gleichen Gewichts, kein zweiter CTA | Gewichts-Heuristik |
+| H4 | **Klassen-Tonalität:** trust-Helden ruhig (Fakten, keine Superlative); action-Helden handlungsnah (Held + CTA im selben Viewport) | teilw. (CTA-Nähe hart, Tonalität weich) |
+
+### Zwei Prinzipien daraus
+
+1. **Harte Constraints vs. weiche Direktiven:** Nicht alles ist maschinell prüfbar
+   (z.B. Tonalität). Harte Regeln erzwingt der Validator; weiche laufen als
+   Prompt-Direktiven + menschliches Review. Die Grenze *bewusst* ziehen — damit
+   klar ist, was garantiert vs. kuratiert wird.
+2. **Null-Freiheits-Zonen (Verallgemeinerung von I5):** Kreative Freiheit der
+   Engine ist **umgekehrt proportional zur Haftungsrelevanz** des Inhalts.
+   Stimmungstexte: frei. Preise, Öffnungszeiten, Regulatorik: wörtlich.
+
+**Physio-Referenzfall:** Abrechnungs-Block als eigene Sektion (I2), darf zweite
+Sektion sein, nie unter „Über mich"/Galerie (H2), sachlich-klar statt Banner (H4),
+Wortlaut exakt wie vom Kunden bestätigt (I5).
+
+### Schritt 3 — Struktur-Grammatik (erlaubte Kompositionen)
+
+| # | Regel | Prüfbar via |
+|---|---|---|
+| G1 | **Feste Ränder, freie Mitte:** Seite beginnt mit Hero, endet mit Kontakt/Conversion + Footer (legal); dazwischen Reihenfolge frei (innerhalb H2) | erste/letzte Sektion |
+| G2 | **Seitenlänge folgt Klasse:** urgency → max. 4–5 Sektionen; action → 5–7; trust → 6–9 (Vergleichs-Kunde liest) | Sektions-Zählung |
+| G3 | **Rhythmus:** keine zwei gleichartigen Sektionstypen hintereinander; visuell-dicht und text-dicht wechseln ab | Typ-Sequenz |
+| G4 | **Ein-Zweck-Sektionen:** jede Sektion genau eine Aufgabe, keine Misch-Sektionen | Inhaltstyp-Zuordnung |
+| G5 | **Galerie nach craft_slider:** hoch → Portfolio direkt nach Hero erwünscht; niedrig → keine eigenständige Galerie vor den Helden | Position × Slider |
+
+### Schritt 4 — Freiheitsgrade (was die Engine variieren DARF)
+
+Quelle: *„Was würde ein mutiger Designer variieren, was ein Template nie täte?"*
+
+| # | Freiheit | Grenze |
+|---|---|---|
+| FR1 | **Layout-Asymmetrie:** 60/40-Splits, versetzte Raster, angeschnittene Elemente | I6 Lesbarkeit, H1 Held-Masse |
+| FR2 | **Skalensprünge:** dramatische Typo-Sprünge (Display neben Klein) statt braver Stufen | nur Skalen-Werte (I7) |
+| FR3 | **Sektions-Übergänge:** Hintergrundwechsel, Farbflächen, Bildanschnitte | Farben aus Charakter-Welt |
+| FR4 | **Held-Inszenierungsform:** grosse Zahl, Zitat-Karte, Vollbild-Statement — H1 verlangt Dominanz, nicht eine Form | H1–H4 |
+| FR5 | **Bildbehandlung:** Zuschnitt, Duotone in Weltfarben, Freisteller, Überlappung | Regulatorik-/Personenbilder unverfremdet |
+| FR6 | **Micro-Varianz:** Radien, Linienstärken, Akzent-Nuancen im Welt-Korridor (= Quelle-3-Parametrik) | Korridor |
+
+**Meta-Regel (wichtigster Satz):** Die Freiheitsliste wird der Engine **aktiv als
+Auftrag** mitgegeben („nutze mind. zwei dieser Freiheiten pro Seite deutlich"),
+nicht nur als Erlaubnis. Bloss erlaubte Freiheit wird aus Sicherheit nicht
+genutzt → uniforme Mitte → kein Wow. **Mut muss beauftragt werden.**
+
+**Erkenntnisse aus Generierungs-Versuch 1 (Physio, bestanden):** Passungs-Wow
+zündete am härtesten Fall (trockene Branche, Regulatorik-Held) — 70/30-Wette
+bestätigt. Zwei Regel-Lerneffekte: (a) I7 kalibriert auf 2+1-Schriftenregel — die
+funktionale Mono machte die Fakten-Karte semantisch stark („Schrift sagt: das ist
+Fakt, nicht Marketing"); (b) **H1 ist erst nach Rendering hart prüfbar** — der
+Validator braucht Layout-Rendering, nicht nur HTML-Analyse. Gestalterisches Wow
+hängt erwartungsgemäss an Quelle 2 (echtes Material) + Token-Politur.
+
+**Erkenntnisse aus Generierungs-Versuch 2 (Coiffeur A/B, Varianz-Test NICHT
+bestanden):** Trotz anderer Tokens erinnerte der Coiffeur an den Physio — die
+Ähnlichkeit kommt aus der **Komposition** (gleiches Skelett: Hero-Anatomie,
+Sektions-Aufbau, 2:3-Grids), nicht aus den Tokens. Der Generator entwickelt eine
+eigene Handschrift = uniforme Mitte eine Ebene höher. Zwei Korrekturen:
+(a) **Charakter-Welten definieren Tokens + Formsprache/Kompositions-Direktiven**
+(z.B. warm-nahbar: organische Formen, Überlappungen, geschwungene Übergänge;
+modern-transparent: strenges Raster, harte Kanten, Weissraum). `design_tokens`
+im character_set bekommt diese Ebene dazu. (b) **Meta-Regel präzisiert:** nicht
+„nutze zwei beliebige Freiheiten", sondern „nutze die Freiheiten, die deine Welt
+vorschreibt, auf die Art, die sie vorschreibt" — beauftragter Mut *mit Richtung*.
+
+**Stand der Schicht:** Schritte 1–4 konzeptionell komplett (nie / immer / Satzbau /
+beauftragter Mut). Offen: Schritt 5 **Tokens** (Figma-/Claude-Design-Arbeit pro
+Charakter-Welt, Ziel „Tokens raus, nicht Frames") + Schritt 6 **Validator** (Code,
+mit Claude Code). Natürlicher nächster Meilenstein: **erster Generierungs-Versuch**
+(Physio oder Coiffeur) gegen diese Regeln, auch mit provisorischen Tokens — erst
+am echten Output zeigt sich, ob die Freiheitsgrade Wow erzeugen oder die
+Grammatik zu eng ist.
+
+---
+
 ## 8. Durchgängige Prinzipien (Leitplanken)
 
 - **Defaults werden immer offengelegt, nie versteckt** („Die meisten Coiffeure
@@ -278,8 +508,17 @@ Produkt sein.
       will sie *nicht* zu früh (wirkt pushy). Vorerst: Kontaktdaten in F5, kein
       Early-Capture. Im Prototyping testen, ob ein „Fortschritt sichern"-Frame nach
       F2 ohne Vertrauensverlust funktioniert.
-- [ ] **Hosting / Domain:** noch nicht entschieden.
+- [ ] **Hosting / Domain:** Grobrichtung geklärt (Selbst-Hosting als Default, s. 7b).
+      Detail: Provider-Wahl, Übergabe-Prozess als Option, Domain-Handling offen.
 - [ ] **Engine-Entscheidung** Stufe-2/3-Pflege (Strapi vs. Eigenbau) — bewusst
       vertagt bis lebender Quadrant.
-- [ ] **Pricing-Modell** ausarbeiten (Basis/Premium entlang der Review-Weiche;
-      evtl. Wartungs-Abo für Pflege).
+- [ ] **Pricing-Modell** Grobrichtung geklärt (Basic auto / Premium human+Sorte-C,
+      s. 7b). Detail: Preispunkte, Support-Stufen, Hosting-/Content-Module, Wartungs-Abo.
+- [ ] **Generierungs-Engine:** vom Strukturvorschlag zur echten Website — der grosse
+      ungebaute Brocken. Ansatz geklärt (Variante 2 mit Leitplanken, s. 7c), aber
+      Design-System/Leitplanken noch zu bauen (Senior-Arbeit, Voraussetzung).
+- [ ] **Neue Profil-Dimension „Dringlichkeit/Verfügbarkeit"** (`urgency_driven`):
+      von Sanitär aufgedeckt, noch nicht im Schema. Mit Claude Code einpflegen,
+      sobald bestätigt. Steuert Held-Platzierung (Hero bei Dringlichkeit).
+- [ ] **Erst-Erleben / Usability-Tests:** möglich erst, wenn eine generierte Website
+      als Resultat vorliegt (nicht nur der Fragefluss).
