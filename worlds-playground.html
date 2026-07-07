@@ -260,6 +260,14 @@ const WORLDS = {
 /* ================================================================
    INHALTE
    ================================================================ */
+/* Lokale Dummy-Fotos statt externer Bildquelle — immer im Format 3:2 (1200x800),
+   damit jedes Layout ohne Anpassung damit rechnen kann. */
+const DUMMY_IMAGES = [
+  'assets/images/dummy-1.jpg',
+  'assets/images/dummy-2.jpg',
+  'assets/images/dummy-3.jpg'
+];
+
 const CONTENT_POOL = {
   coiffeur: {
     name:'Mia Brändle', salon:'Salon Mia', ort:'Zürich-Oerlikon', tel:'044 555 12 34',
@@ -280,17 +288,8 @@ const CONTENT_POOL = {
     preise:[['Schnitt Damen','ab CHF 78'],['Schnitt Herren','ab CHF 52'],['Farbe / Ansatz','ab CHF 85'],['Balayage','ab CHF 160']],
     facts_all:[],
     fakten_title: null,
-    gallery_images:[
-      'https://loremflickr.com/800/600/hairdresser?lock=4',
-      'https://loremflickr.com/800/600/hairdresser?lock=6',
-      'https://loremflickr.com/800/600/hairdresser?lock=5',
-      'https://loremflickr.com/800/600/barber?lock=1',
-      'https://loremflickr.com/800/600/barber?lock=2',
-      'https://loremflickr.com/800/600/barber?lock=3',
-      'https://loremflickr.com/800/600/hairdresser?lock=1',
-      'https://loremflickr.com/800/600/barber?lock=5'
-    ],
-    hero_strip_image:'https://loremflickr.com/1600/400/hairdresser?lock=4'
+    gallery_images: DUMMY_IMAGES,
+    hero_strip_image: DUMMY_IMAGES[0]
   },
   physio: {
     name:'Mia Brändle', salon:'Physiopraxis Mia Brändle', ort:'Zürich-Oerlikon', tel:'044 555 12 34',
@@ -316,17 +315,8 @@ const CONTENT_POOL = {
       'Zusatzversicherte und Selbstzahler: Termin auch ohne Verordnung möglich.'
     ],
     fakten_title:'Kosten & Krankenkasse',
-    gallery_images:[
-      'https://loremflickr.com/800/600/stretching?lock=1',
-      'https://loremflickr.com/800/600/wellness?lock=1',
-      'https://loremflickr.com/800/600/yoga?lock=1',
-      'https://loremflickr.com/800/600/fitness?lock=2',
-      'https://loremflickr.com/800/600/stretching?lock=3',
-      'https://loremflickr.com/800/600/yoga?lock=3',
-      'https://loremflickr.com/800/600/fitness?lock=4',
-      'https://loremflickr.com/800/600/wellness?lock=2'
-    ],
-    hero_strip_image:'https://loremflickr.com/1600/400/fitness?lock=4'
+    gallery_images: DUMMY_IMAGES,
+    hero_strip_image: DUMMY_IMAGES[1]
   }
 };
 
@@ -406,27 +396,20 @@ function renderWarmNahbar(world, skin, fill) {
       </section>`;
   }
 
-  function photoCell(i, extraStyle) {
+  function photoCell(i) {
     const src = c.gallery_images[i % c.gallery_images.length];
-    return `<div style="border-radius:8px;background:url('${src}') center/cover;position:relative;overflow:hidden;${extraStyle||''}"><div style="position:absolute;inset:0;background:linear-gradient(160deg,rgba(92,46,62,.28),rgba(217,154,61,.1))"></div></div>`;
+    return `<div style="aspect-ratio:3/2;border-radius:8px;background:url('${src}') center/cover;position:relative;overflow:hidden"><div style="position:absolute;inset:0;background:linear-gradient(160deg,rgba(92,46,62,.28),rgba(217,154,61,.1))"></div></div>`;
   }
 
   function galleryHtml() {
     if (gL.layout === 'hidden') return '';
     const n = gL.effectiveCount;
-    if (gL.layout === 'feature_single') {
-      const cols = n === 1 ? '1fr' : '1fr 1fr';
-      return `<section class="wrap" style="padding:4.5rem 0">
-        <h2 style="font-family:'${f.display.family}',serif;font-size:1.9rem;color:${t.primary_dark};margin-bottom:1rem">Unsere Arbeiten</h2>
-        <div style="display:grid;grid-template-columns:${cols};gap:.8rem;height:280px">
-          ${Array(n).fill(0).map((_,i)=>photoCell(i)).join('')}
-        </div></section>`;
-    }
+    /* jede Kachel ist eigenständig aspect-ratio:3/2 — Bilder immer im Standardformat, egal wie viele Spalten */
+    const cols = n === 1 ? '1fr' : n === 2 ? '1fr 1fr' : '1fr 1fr 1fr';
     return `<section class="wrap" style="padding:4.5rem 0">
       <h2 style="font-family:'${f.display.family}',serif;font-size:1.9rem;color:${t.primary_dark};margin-bottom:1rem">Unsere Arbeiten</h2>
-      <div style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:.8rem;grid-auto-rows:${Math.round(180*(5/n))}px">
-        ${photoCell(0, 'grid-row:span 2')}
-        ${Array(n-1).fill(0).map((_,i)=>photoCell(i+1, 'height:100%')).join('')}
+      <div style="display:grid;grid-template-columns:${cols};gap:.8rem">
+        ${Array(n).fill(0).map((_,i)=>photoCell(i)).join('')}
       </div></section>`;
   }
 
@@ -553,26 +536,19 @@ function renderModernTransparent(world, skin, fill) {
       </div></section>`;
   }
 
-  function photoCell(i, h) {
+  function photoCell(i) {
     const src = c.gallery_images[i % c.gallery_images.length];
-    return `<div style="height:${h};background:url('${src}') center/cover;border-radius:${r.card}"></div>`;
+    return `<div style="aspect-ratio:3/2;background:url('${src}') center/cover;border-radius:${r.card}"></div>`;
   }
 
   function galleryHtml() {
     if (gL.layout === 'hidden') return '';
     const n = gL.effectiveCount;
-    if (gL.layout === 'feature_single') {
-      const cols = n === 1 ? '1fr' : '1fr 1fr';
-      return `<section style="padding:4.5rem 0"><div class="wrap">
-        ${eyebrow('Galerie & Arbeiten')}
-        <div style="display:grid;grid-template-columns:${cols};gap:1rem;height:220px;margin-top:.4rem">
-          ${Array(n).fill(0).map((_,i)=>photoCell(i,'100%')).join('')}
-        </div></div></section>`;
-    }
+    const cols = n === 1 ? '1fr' : '1fr 1fr';
     return `<section style="padding:4.5rem 0"><div class="wrap">
       ${eyebrow('Galerie & Arbeiten')}
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:.4rem">
-        ${Array(n).fill(0).map((_,i)=>photoCell(i,'160px')).join('')}
+      <div style="display:grid;grid-template-columns:${cols};gap:1rem;margin-top:.4rem">
+        ${Array(n).fill(0).map((_,i)=>photoCell(i)).join('')}
       </div></div></section>`;
   }
 
@@ -694,7 +670,7 @@ function renderTrendigMutig(world, skin, fill) {
 
   function photoCell(i, label, extraStyle) {
     const src = c.gallery_images[i % c.gallery_images.length];
-    return `<div style="background:url('${src}') center/cover;position:relative;overflow:hidden;${extraStyle||''}">
+    return `<div style="aspect-ratio:3/2;background:url('${src}') center/cover;position:relative;overflow:hidden;${extraStyle||''}">
       <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(13,13,13,.15),rgba(13,13,13,.6))"></div>
       <span style="position:absolute;bottom:.5rem;left:.5rem;font-family:'${mono}';font-size:.65rem;color:${t.surface_base};background:${t.primary};padding:.2rem .5rem;z-index:1">${label}</span>
     </div>`;
@@ -707,19 +683,21 @@ function renderTrendigMutig(world, skin, fill) {
       const cols = n === 1 ? '1fr' : '3fr 2fr';
       return `<section class="wrap" style="padding:4rem 0">
         <h2 style="font-family:'${f.display.family}';font-size:clamp(2rem,5vw,3rem);text-transform:uppercase;margin-bottom:1rem;line-height:.95">Arbeiten.</h2>
-        <div style="display:grid;grid-template-columns:${cols};gap:.6rem;height:300px">
+        <div style="display:grid;grid-template-columns:${cols};gap:.6rem">
           ${Array(n).fill(0).map((_,i)=>photoCell(i,`Beispiel ${i+1}`)).join('')}
         </div></section>`;
     }
+    /* Versatz durch unterschiedliche Spaltenbreiten + margin-top-Offsets statt Zeilen-Spans —
+       jede Kachel bleibt dadurch unabhängig aspect-ratio:3/2, nur die Breite variiert (FR1) */
     const staggerCfg = [
-      {col:'1/6',row:'4',mt:'0'},{col:'6/10',row:'3',mt:'2rem'},
-      {col:'10/13',row:'2',mt:'0'},{col:'6/9',row:'2',mt:'0'},{col:'9/13',row:'3',mt:'-2rem'}
+      {col:'1/6',mt:'0'},{col:'6/10',mt:'2rem'},{col:'10/13',mt:'-1rem'},
+      {col:'1/7',mt:'1.5rem'},{col:'7/13',mt:'0'}
     ];
     const cellsCount = Math.min(n, staggerCfg.length);
     return `<section class="wrap" style="padding:4rem 0">
       <h2 style="font-family:'${f.display.family}';font-size:clamp(2rem,5vw,3rem);text-transform:uppercase;margin-bottom:1rem;line-height:.95">Arbeiten.</h2>
-      <div style="display:grid;grid-template-columns:repeat(12,1fr);grid-auto-rows:72px;gap:.6rem">
-        ${staggerCfg.slice(0,cellsCount).map((cfg,i)=>photoCell(i,'Portfolio',`grid-column:${cfg.col};grid-row:span ${cfg.row};margin-top:${cfg.mt}`)).join('')}
+      <div style="display:grid;grid-template-columns:repeat(12,1fr);gap:.6rem">
+        ${staggerCfg.slice(0,cellsCount).map((cfg,i)=>photoCell(i,'Portfolio',`grid-column:${cfg.col};margin-top:${cfg.mt}`)).join('')}
       </div></section>`;
   }
 
@@ -846,8 +824,8 @@ function renderGehobentElegant(world, skin, fill) {
     const cols = n === 1 ? '1fr' : n === 2 ? '1fr 1fr' : '1fr 1fr 1fr';
     return `${sep}<section style="padding:7rem 0;text-align:center"><div class="wrap">
       <h2 style="font-family:'${f.display.family}',serif;font-weight:300;font-size:2rem;margin-bottom:2rem;line-height:1.15">Unsere <em style="font-style:italic">Arbeiten</em></h2>
-      <div style="display:grid;grid-template-columns:${cols};gap:2rem;height:${n===1?'420px':'320px'}">
-        ${Array(n).fill(0).map((_,i)=>`<div style="background:url('${c.gallery_images[i%c.gallery_images.length]}') center/cover;filter:sepia(.25) saturate(.55) brightness(1.02)"></div>`).join('')}
+      <div style="display:grid;grid-template-columns:${cols};gap:2rem">
+        ${Array(n).fill(0).map((_,i)=>`<div style="aspect-ratio:3/2;background:url('${c.gallery_images[i%c.gallery_images.length]}') center/cover;filter:sepia(.25) saturate(.55) brightness(1.02)"></div>`).join('')}
       </div></div></section>`;
   }
 

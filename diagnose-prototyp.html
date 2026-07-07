@@ -409,20 +409,14 @@ const WORLDS = {
   }
 };
 
-/* Kuratierte reale Fotos — dieselbe Auswahl wie in der Spielwiese (aus ~60 LoremFlickr-
-   Kandidaten von Hand gewählt), damit beide Artefakte gleich aussehen. */
-const GALLERY_IMAGES = {
-  coiffeur:[
-    'https://loremflickr.com/800/600/hairdresser?lock=4',
-    'https://loremflickr.com/800/600/hairdresser?lock=6',
-    'https://loremflickr.com/800/600/hairdresser?lock=5',
-    'https://loremflickr.com/800/600/barber?lock=1',
-    'https://loremflickr.com/800/600/barber?lock=2',
-    'https://loremflickr.com/800/600/barber?lock=3',
-    'https://loremflickr.com/800/600/hairdresser?lock=1',
-    'https://loremflickr.com/800/600/barber?lock=5'
-  ]
-};
+/* Lokale Dummy-Fotos statt externer Bildquelle — immer im Format 3:2 (1200x800),
+   damit jedes Layout ohne Anpassung damit rechnen kann. Dieselben drei Dateien wie
+   in worlds-playground.html. */
+const DUMMY_IMAGES = [
+  'assets/images/dummy-1.jpg',
+  'assets/images/dummy-2.jpg',
+  'assets/images/dummy-3.jpg'
+];
 
 /* ================= HILFSFUNKTIONEN ================= */
 function resolveLayout(rules, count) {
@@ -513,7 +507,7 @@ function buildContent(){
      ? [{text:'Mia hat mir zum ersten Mal erklärt, WARUM wir was machen.',who:'M.'},{text:'Nach drei Monaten wieder schmerzfrei joggen — hätte ich nicht geglaubt.',who:'S.'}]
      : [{text:'Zum ersten Mal ein Schnitt, der auch nach drei Wochen noch sitzt.',who:'S.'},{text:'Ehrliche Beratung statt Verkaufsgespräch. Genau deshalb komme ich wieder.',who:'M.'}],
    quotesN: A.vertrauen.includes('bewertungen') ? 2 : 0,
-   gallery_images: physio ? [] : GALLERY_IMAGES.coiffeur,
+   gallery_images: physio ? [] : DUMMY_IMAGES,
    galleryN: (!physio && A.vertrauen.includes('arbeiten')) ? 4 : 0,
    facts_all: physio ? regFakten() : [],
    factsN: physio ? regFakten().length : 0,
@@ -629,20 +623,16 @@ function renderWarmNahbar(world, c) {
           ${quotes.map(q=>`<div style="background:#fff;border-radius:${r.card};padding:1.4rem"><p style="font-size:1rem;line-height:1.6;color:${t.primary_dark}">«${q.text}»</p><p style="margin-top:.8rem;font-size:.85rem;color:${t.primary}">— ${q.who}</p></div>`).join('')}
         </div></div></section>`;
   }
-  function photoCell(i, extraStyle){
+  function photoCell(i){
     const src = c.gallery_images[i % c.gallery_images.length];
-    return `<div style="border-radius:8px;background:url('${src}') center/cover;position:relative;overflow:hidden;${extraStyle||''}"><div style="position:absolute;inset:0;background:linear-gradient(160deg,rgba(92,46,62,.28),rgba(217,154,61,.1))"></div></div>`;
+    return `<div style="aspect-ratio:3/2;border-radius:8px;background:url('${src}') center/cover;position:relative;overflow:hidden"><div style="position:absolute;inset:0;background:linear-gradient(160deg,rgba(92,46,62,.28),rgba(217,154,61,.1))"></div></div>`;
   }
   function galleryHtml(){
     if(gL.layout==='hidden') return '';
     const n=gL.effectiveCount;
-    if(gL.layout==='feature_single'){ const cols=n===1?'1fr':'1fr 1fr'; return `
-      <section class="wrap" style="padding:4.5rem 0"><h2 style="font-family:'${f.display.family}',serif;font-size:1.9rem;color:${t.primary_dark};margin-bottom:1rem">Unsere Arbeiten</h2>
-      <div style="display:grid;grid-template-columns:${cols};gap:.8rem;height:280px">${Array(n).fill(0).map((_,i)=>photoCell(i)).join('')}</div></section>`; }
+    const cols = n===1?'1fr':n===2?'1fr 1fr':'1fr 1fr 1fr';
     return `<section class="wrap" style="padding:4.5rem 0"><h2 style="font-family:'${f.display.family}',serif;font-size:1.9rem;color:${t.primary_dark};margin-bottom:1rem">Unsere Arbeiten</h2>
-      <div style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:.8rem;grid-auto-rows:${Math.round(180*(5/n))}px">
-        ${photoCell(0,'grid-row:span 2')}${Array(n-1).fill(0).map((_,i)=>photoCell(i+1,'height:100%')).join('')}
-      </div></section>`;
+      <div style="display:grid;grid-template-columns:${cols};gap:.8rem">${Array(n).fill(0).map((_,i)=>photoCell(i)).join('')}</div></section>`;
   }
   function factsHtml(){
     if(fL.layout==='hidden' || !facts.length) return '';
@@ -727,15 +717,13 @@ function renderModernTransparent(world, c) {
           ${quotes.map(q=>`<div style="background:#fff;border-radius:${r.card};padding:1.4rem"><p style="font-size:.95rem;line-height:1.6;color:${t.primary_dark}">«${q.text}»</p><p style="margin-top:.8rem;font-family:'${mono}';font-size:.78rem;color:${t.primary}">— ${q.who}</p></div>`).join('')}
         </div></div></section>`;
   }
-  function photoCell(i,h){ const src=c.gallery_images[i%c.gallery_images.length]; return `<div style="height:${h};background:url('${src}') center/cover;border-radius:${r.card}"></div>`; }
+  function photoCell(i){ const src=c.gallery_images[i%c.gallery_images.length]; return `<div style="aspect-ratio:3/2;background:url('${src}') center/cover;border-radius:${r.card}"></div>`; }
   function galleryHtml(){
     if(gL.layout==='hidden') return '';
     const n=gL.effectiveCount;
-    if(gL.layout==='feature_single'){ const cols=n===1?'1fr':'1fr 1fr'; return `
-      <section style="padding:4.5rem 0"><div class="wrap">${eyebrow('Galerie & Arbeiten')}
-        <div style="display:grid;grid-template-columns:${cols};gap:1rem;height:220px;margin-top:.4rem">${Array(n).fill(0).map((_,i)=>photoCell(i,'100%')).join('')}</div></div></section>`; }
+    const cols = n===1?'1fr':'1fr 1fr';
     return `<section style="padding:4.5rem 0"><div class="wrap">${eyebrow('Galerie & Arbeiten')}
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:.4rem">${Array(n).fill(0).map((_,i)=>photoCell(i,'160px')).join('')}</div></div></section>`;
+      <div style="display:grid;grid-template-columns:${cols};gap:1rem;margin-top:.4rem">${Array(n).fill(0).map((_,i)=>photoCell(i)).join('')}</div></div></section>`;
   }
   function factsHtml(){
     if(fL.layout==='hidden' || !facts.length) return '';
@@ -811,7 +799,7 @@ function renderTrendigMutig(world, c) {
           ${quotes.map(q=>`<div style="border-left:6px solid ${t.accent};padding:.6rem 0 .6rem 1.2rem"><p style="font-size:1.1rem;font-weight:700;line-height:1.4">«${q.text}»</p><p style="font-family:'${mono}';font-size:.8rem;color:${t.muted};margin-top:.3rem">— ${q.who}</p></div>`).join('')}
         </div></div></section>`;
   }
-  function photoCell(i,label,extraStyle){ const src=c.gallery_images[i%c.gallery_images.length]; return `<div style="background:url('${src}') center/cover;position:relative;overflow:hidden;${extraStyle||''}">
+  function photoCell(i,label,extraStyle){ const src=c.gallery_images[i%c.gallery_images.length]; return `<div style="aspect-ratio:3/2;background:url('${src}') center/cover;position:relative;overflow:hidden;${extraStyle||''}">
       <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(13,13,13,.15),rgba(13,13,13,.6))"></div>
       <span style="position:absolute;bottom:.5rem;left:.5rem;font-family:'${mono}';font-size:.65rem;color:${t.surface_base};background:${t.primary};padding:.2rem .5rem;z-index:1">${label}</span></div>`; }
   function galleryHtml(){
@@ -819,12 +807,12 @@ function renderTrendigMutig(world, c) {
     const n=gL.effectiveCount;
     if(gL.layout==='feature_single'){ const cols=n===1?'1fr':'3fr 2fr'; return `
       <section class="wrap" style="padding:4rem 0"><h2 style="font-family:'${f.display.family}';font-size:clamp(2rem,5vw,3rem);text-transform:uppercase;margin-bottom:1rem;line-height:.95">Arbeiten.</h2>
-      <div style="display:grid;grid-template-columns:${cols};gap:.6rem;height:300px">${Array(n).fill(0).map((_,i)=>photoCell(i,`Beispiel ${i+1}`)).join('')}</div></section>`; }
-    const staggerCfg=[{col:'1/6',row:'4',mt:'0'},{col:'6/10',row:'3',mt:'2rem'},{col:'10/13',row:'2',mt:'0'},{col:'6/9',row:'2',mt:'0'},{col:'9/13',row:'3',mt:'-2rem'}];
+      <div style="display:grid;grid-template-columns:${cols};gap:.6rem">${Array(n).fill(0).map((_,i)=>photoCell(i,`Beispiel ${i+1}`)).join('')}</div></section>`; }
+    const staggerCfg=[{col:'1/6',mt:'0'},{col:'6/10',mt:'2rem'},{col:'10/13',mt:'-1rem'},{col:'1/7',mt:'1.5rem'},{col:'7/13',mt:'0'}];
     const cellsCount=Math.min(n,staggerCfg.length);
     return `<section class="wrap" style="padding:4rem 0"><h2 style="font-family:'${f.display.family}';font-size:clamp(2rem,5vw,3rem);text-transform:uppercase;margin-bottom:1rem;line-height:.95">Arbeiten.</h2>
-      <div style="display:grid;grid-template-columns:repeat(12,1fr);grid-auto-rows:72px;gap:.6rem">
-        ${staggerCfg.slice(0,cellsCount).map((cfg,i)=>photoCell(i,'Portfolio',`grid-column:${cfg.col};grid-row:span ${cfg.row};margin-top:${cfg.mt}`)).join('')}
+      <div style="display:grid;grid-template-columns:repeat(12,1fr);gap:.6rem">
+        ${staggerCfg.slice(0,cellsCount).map((cfg,i)=>photoCell(i,'Portfolio',`grid-column:${cfg.col};margin-top:${cfg.mt}`)).join('')}
       </div></section>`;
   }
 
@@ -849,7 +837,7 @@ function renderTrendigMutig(world, c) {
     <p style="max-width:32ch;color:${t.muted}">${c.tagline}</p>
   </div></div>
   <div style="height:26vh;position:relative;overflow:hidden">
-    <div style="position:absolute;inset:0;background:url('${GALLERY_IMAGES.coiffeur[0]}') center/cover"></div>
+    <div style="position:absolute;inset:0;background:url('${DUMMY_IMAGES[0]}') center/cover"></div>
     <div style="position:absolute;inset:0;background:linear-gradient(120deg,rgba(42,42,42,.55),rgba(17,17,17,.85))"></div>
   </div></header>
 <div style="background:${t.accent};overflow:hidden;padding:.4rem 0;font-family:'${f.display.family}';text-transform:uppercase;white-space:nowrap;font-size:.85rem;letter-spacing:.04em" aria-hidden="true">
@@ -893,8 +881,8 @@ function renderGehobenElegant(world, c) {
     const cols = n===1?'1fr':n===2?'1fr 1fr':'1fr 1fr 1fr';
     return `${sep}<section style="padding:7rem 0;text-align:center"><div class="wrap">
       <h2 style="font-family:'${f.display.family}',serif;font-weight:300;font-size:2rem;margin-bottom:2rem;line-height:1.15">Unsere <em style="font-style:italic">Arbeiten</em></h2>
-      <div style="display:grid;grid-template-columns:${cols};gap:2rem;height:${n===1?'420px':'320px'}">
-        ${Array(n).fill(0).map((_,i)=>`<div style="background:url('${c.gallery_images[i%c.gallery_images.length]}') center/cover;filter:sepia(.25) saturate(.55) brightness(1.02)"></div>`).join('')}
+      <div style="display:grid;grid-template-columns:${cols};gap:2rem">
+        ${Array(n).fill(0).map((_,i)=>`<div style="aspect-ratio:3/2;background:url('${c.gallery_images[i%c.gallery_images.length]}') center/cover;filter:sepia(.25) saturate(.55) brightness(1.02)"></div>`).join('')}
       </div></div></section>`;
   }
   function factsHtml(){
