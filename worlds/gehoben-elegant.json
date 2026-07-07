@@ -1,16 +1,17 @@
 {
-  "$comment": "Charakter-Welt gehoben-elegant — neu entworfen (kein Referenz-Template in diagnose-prototyp.html)",
+  "$comment": "Charakter-Welt gehoben-elegant — neu entworfen (kein Referenz-Template in diagnose-prototyp.html, dort als 'Welt in Arbeit' markiert)",
   "id": "gehoben-elegant",
   "label": "Gehoben & elegant",
-  "tagline": "hier weiss man, was man tut",
+  "tagline": "hier bin ich in exklusiven Händen",
   "design_tokens": {
     "colors": {
-      "primary": "#1a1814",
-      "surface_base": "#f9f7f3",
-      "surface_tinted": "#ede8df",
-      "accent": "#b8935a",
-      "text": "#1a1814",
-      "text_muted": "#6b6560"
+      "primary": "#1c2420",
+      "primary_dark": "#121712",
+      "surface_base": "#f7f4ee",
+      "surface_tinted": "#eae4d8",
+      "accent": "#a8823f",
+      "text": "#1c2420",
+      "text_muted": "#6b6a63"
     },
     "fonts": {
       "display": {
@@ -22,35 +23,42 @@
         "family": "DM Sans",
         "google": "DM+Sans:wght@300;400;500",
         "role": "body_ui"
+      },
+      "utility_mono": {
+        "family": "IBM Plex Mono",
+        "google": "IBM+Plex+Mono",
+        "role": "facts_prices_only"
       }
     },
     "radii": {
       "button": "0",
-      "card": "2px",
+      "card": "0",
       "section_cap": "0"
     },
     "type_scale": {
-      "display_clamp": "clamp(2.8rem, 5vw, 5rem)",
+      "display_clamp": "clamp(2.2rem, 3.6vw, 3.6rem)",
       "display_weight": "300",
-      "display_line_height": "1.1",
-      "h2": "2rem",
+      "display_line_height": "1.15",
+      "h2": "1.7rem",
       "h2_weight": "300"
     }
   },
   "form_language": {
     "hero": {
-      "layout": "editorial_split",
-      "split": "55fr 45fr",
+      "layout": "centered_symmetric",
       "background": "surface_base",
       "bottom_cap_radius": false,
       "headline_font": "display",
       "cta_shape": "outlined",
-      "rule_above_headline": true
+      "rule_above_headline": true,
+      "text_align": "center",
+      "max_width_headline": "26ch"
     },
     "gallery": {
-      "columns": "1fr 1fr 1fr",
-      "gap": "1.5rem",
-      "cell_radius": "2px",
+      "layout_bias": "large_single_or_pair",
+      "columns": "1fr",
+      "gap": "2rem",
+      "cell_radius": "0",
       "stagger": false
     },
     "sections": {
@@ -59,129 +67,36 @@
       "dark_sections": [],
       "contact_style": "tinted_surface",
       "has_marquee": false,
-      "section_spacing": "6rem"
+      "section_spacing": "8rem",
+      "rhythm": "langsam"
     },
     "freiheitsgrade": {
-      "FR1_layout_asymmetry": "aktiv — 55/45-Split im Hero; Bild überlappt per negativem margin-bottom in nächste Sektion",
-      "FR2_scale_jumps": "moderat — Cormorant 300 wirkt durch Kontrast zu kompaktem DM Sans, nicht durch Grösse",
-      "FR3_transitions": "subtil — 1px-Trennlinien statt Farbflächen; Weissraum ist der eigentliche Übergang",
-      "FR4_held_form": "grosse isolierte Zahl auf Weissraum (editorial — wirkt durch Einsamkeit, nicht Rahmung)",
-      "FR5_images": "angeschnittenes Bild im Split-Hero überlappt visuell in folgende Sektion",
-      "FR6_micro": "null Radien (Schärfe als Raffinesse), 1px-Linien, Goldakzent sehr sparsam"
+      "FR1_layout_asymmetry": "zurückhaltend — Seite ist symmetrisch/zentriert angelegt (der Differenzierer zu den anderen drei Welten); keine Versätze, keine Splits",
+      "FR2_scale_jumps": "sehr gedämpft — kleine Typo neben viel Weissraum statt Riesen-Sprüngen; Display bleibt kompakt (max. 3.6rem)",
+      "FR3_transitions": "ruhig — feine 1px-Hairlines trennen Sektionen statt Farbwechsel; Weissraum ist der Übergang",
+      "FR4_held_form": "grosse isolierte Kennzahl auf viel Weissraum, zentriert (Einsamkeit als Inszenierung)",
+      "FR5_images": "betont — grosszügige, ruhige Anschnitte einzelner grossformatiger Bilder statt dichter Galerien",
+      "FR6_micro": "betont — Hairlines als durchgängiges Ornament, null Radien als Prinzip, Gold/Messing-Akzent sehr sparsam (Buttons, Kennzahl, Trennstriche)"
     },
     "quantity_rules": {
       "quotes": [
-        {
-          "min": 0,
-          "max": 0,
-          "layout": "hidden",
-          "overflow": null,
-          "cap": null
-        },
-        {
-          "min": 1,
-          "max": 1,
-          "layout": "solo_large",
-          "overflow": null,
-          "cap": null
-        },
-        {
-          "min": 2,
-          "max": 3,
-          "layout": "card_row",
-          "overflow": null,
-          "cap": null
-        },
-        {
-          "min": 4,
-          "max": null,
-          "layout": "top3_select",
-          "overflow": "discard",
-          "cap": 3
-        }
+        { "min": 0, "max": 0, "layout": "hidden", "overflow": null, "cap": null },
+        { "min": 1, "max": null, "layout": "solo_large", "overflow": "discard", "cap": 1 }
       ],
       "gallery_items": [
-        {
-          "min": 0,
-          "max": 0,
-          "layout": "hidden",
-          "overflow": null,
-          "cap": null
-        },
-        {
-          "min": 1,
-          "max": 2,
-          "layout": "feature_single",
-          "overflow": null,
-          "cap": null
-        },
-        {
-          "min": 3,
-          "max": 5,
-          "layout": "asymmetric_grid",
-          "overflow": null,
-          "cap": null
-        },
-        {
-          "min": 6,
-          "max": null,
-          "layout": "capped_grid",
-          "overflow": "discard",
-          "cap": 5
-        }
+        { "min": 0, "max": 0, "layout": "hidden", "overflow": null, "cap": null },
+        { "min": 1, "max": 3, "layout": "feature_single", "overflow": null, "cap": null },
+        { "min": 4, "max": null, "layout": "feature_single", "overflow": "discard", "cap": 3 }
       ],
       "services": [
-        {
-          "min": 0,
-          "max": 0,
-          "layout": "hidden",
-          "overflow": null,
-          "cap": null
-        },
-        {
-          "min": 1,
-          "max": 3,
-          "layout": "inline_list",
-          "overflow": null,
-          "cap": null
-        },
-        {
-          "min": 4,
-          "max": 6,
-          "layout": "two_column",
-          "overflow": null,
-          "cap": null
-        },
-        {
-          "min": 7,
-          "max": null,
-          "layout": "capped_two_column",
-          "overflow": "discard",
-          "cap": 6
-        }
+        { "min": 0, "max": 0, "layout": "hidden", "overflow": null, "cap": null },
+        { "min": 1, "max": 4, "layout": "inline_list", "overflow": null, "cap": null },
+        { "min": 5, "max": null, "layout": "inline_list", "overflow": "discard", "cap": 4 }
       ],
       "facts": [
-        {
-          "min": 0,
-          "max": 0,
-          "layout": "hidden",
-          "overflow": null,
-          "cap": null
-        },
-        {
-          "min": 1,
-          "max": 2,
-          "layout": "inline_facts",
-          "overflow": null,
-          "cap": null
-        },
-        {
-          "min": 3,
-          "max": null,
-          "layout": "fact_panel",
-          "overflow": "discard",
-          "cap": 5
-        }
+        { "min": 0, "max": 0, "layout": "hidden", "overflow": null, "cap": null },
+        { "min": 1, "max": 3, "layout": "inline_facts", "overflow": null, "cap": null },
+        { "min": 4, "max": null, "layout": "fact_panel", "overflow": "discard", "cap": 3 }
       ]
     }
   }

@@ -80,12 +80,63 @@
 /* ================================================================
    WELT-DATEN
    ================================================================ */
-const QR_DEFAULT = {
+/* Jede Welt hat eigene quantity_rules — Layout-Varianten sind welt-spezifisch (s. konzept-snapshot 7d) */
+const QR_WARM = {
+  quotes: [
+    {min:0,max:0,layout:'hidden',overflow:null,cap:null},
+    {min:1,max:1,layout:'solo_large',overflow:null,cap:null},
+    {min:2,max:4,layout:'card_row',overflow:null,cap:null},
+    {min:5,max:null,layout:'top3_select',overflow:'discard',cap:4}
+  ],
+  gallery_items: [
+    {min:0,max:0,layout:'hidden',overflow:null,cap:null},
+    {min:1,max:2,layout:'feature_single',overflow:null,cap:null},
+    {min:3,max:6,layout:'asymmetric_grid',overflow:null,cap:null},
+    {min:7,max:null,layout:'capped_grid',overflow:'discard',cap:6}
+  ],
+  services: [
+    {min:0,max:0,layout:'hidden',overflow:null,cap:null},
+    {min:1,max:4,layout:'inline_list',overflow:null,cap:null},
+    {min:5,max:7,layout:'two_column',overflow:null,cap:null},
+    {min:8,max:null,layout:'capped_two_column',overflow:'discard',cap:7}
+  ],
+  facts: [
+    {min:0,max:0,layout:'hidden',overflow:null,cap:null},
+    {min:1,max:2,layout:'inline_facts',overflow:null,cap:null},
+    {min:3,max:null,layout:'fact_panel',overflow:'discard',cap:5}
+  ]
+};
+const QR_MODERN = {
   quotes: [
     {min:0,max:0,layout:'hidden',overflow:null,cap:null},
     {min:1,max:1,layout:'solo_large',overflow:null,cap:null},
     {min:2,max:3,layout:'card_row',overflow:null,cap:null},
     {min:4,max:null,layout:'top3_select',overflow:'discard',cap:3}
+  ],
+  gallery_items: [
+    {min:0,max:0,layout:'hidden',overflow:null,cap:null},
+    {min:1,max:2,layout:'feature_single',overflow:null,cap:null},
+    {min:3,max:4,layout:'asymmetric_grid',overflow:null,cap:null},
+    {min:5,max:null,layout:'capped_grid',overflow:'discard',cap:4}
+  ],
+  services: [
+    {min:0,max:0,layout:'hidden',overflow:null,cap:null},
+    {min:1,max:3,layout:'inline_list',overflow:null,cap:null},
+    {min:4,max:6,layout:'two_column',overflow:null,cap:null},
+    {min:7,max:null,layout:'capped_two_column',overflow:'discard',cap:6}
+  ],
+  facts: [
+    {min:0,max:0,layout:'hidden',overflow:null,cap:null},
+    {min:1,max:3,layout:'inline_facts',overflow:null,cap:null},
+    {min:4,max:null,layout:'fact_panel',overflow:'discard',cap:6}
+  ]
+};
+const QR_TRENDIG = {
+  quotes: [
+    {min:0,max:0,layout:'hidden',overflow:null,cap:null},
+    {min:1,max:1,layout:'solo_large',overflow:null,cap:null},
+    {min:2,max:4,layout:'card_row',overflow:null,cap:null},
+    {min:5,max:null,layout:'top3_select',overflow:'discard',cap:4}
   ],
   gallery_items: [
     {min:0,max:0,layout:'hidden',overflow:null,cap:null},
@@ -96,13 +147,34 @@ const QR_DEFAULT = {
   services: [
     {min:0,max:0,layout:'hidden',overflow:null,cap:null},
     {min:1,max:3,layout:'inline_list',overflow:null,cap:null},
-    {min:4,max:6,layout:'two_column',overflow:null,cap:null},
-    {min:7,max:null,layout:'capped_two_column',overflow:'discard',cap:6}
+    {min:4,max:8,layout:'two_column',overflow:null,cap:null},
+    {min:9,max:null,layout:'capped_two_column',overflow:'discard',cap:8}
   ],
   facts: [
     {min:0,max:0,layout:'hidden',overflow:null,cap:null},
     {min:1,max:2,layout:'inline_facts',overflow:null,cap:null},
-    {min:3,max:null,layout:'fact_panel',overflow:'discard',cap:5}
+    {min:3,max:null,layout:'fact_panel',overflow:'discard',cap:3}
+  ]
+};
+const QR_GEHOBEN = {
+  quotes: [
+    {min:0,max:0,layout:'hidden',overflow:null,cap:null},
+    {min:1,max:null,layout:'solo_large',overflow:'discard',cap:1}
+  ],
+  gallery_items: [
+    {min:0,max:0,layout:'hidden',overflow:null,cap:null},
+    {min:1,max:3,layout:'feature_single',overflow:null,cap:null},
+    {min:4,max:null,layout:'feature_single',overflow:'discard',cap:3}
+  ],
+  services: [
+    {min:0,max:0,layout:'hidden',overflow:null,cap:null},
+    {min:1,max:4,layout:'inline_list',overflow:null,cap:null},
+    {min:5,max:null,layout:'inline_list',overflow:'discard',cap:4}
+  ],
+  facts: [
+    {min:0,max:0,layout:'hidden',overflow:null,cap:null},
+    {min:1,max:3,layout:'inline_facts',overflow:null,cap:null},
+    {min:4,max:null,layout:'fact_panel',overflow:'discard',cap:3}
   ]
 };
 
@@ -122,7 +194,7 @@ const WORLDS = {
       hero:{layout:'stacked',background:'surface_tinted',bottom_cap_radius:true,cta_shape:'pill'},
       gallery:{columns:'2fr 1fr 1fr',row_height:180,cell_radius:'8px',stagger:false},
       sections:{transition:'alternating_surfaces',eyebrow_labels:false,dark_sections:['preise'],contact_style:'rounded_top',has_marquee:false},
-      quantity_rules: QR_DEFAULT,
+      quantity_rules: QR_WARM,
       freiheitsgrade:{FR1:'mild — 2fr 1fr 1fr Galerie',FR2:'moderat — Display-Serif vs. Fliesstext',FR3:'aktiv — getönte Hero-Fläche + dunkle Preissektion + gerundeter Kontakt',FR4:'Zitat-Karte gerundet',FR5:'warm-getöntes Overlay',FR6:'hohe Radien überall'}
     }
   },
@@ -141,7 +213,7 @@ const WORLDS = {
       hero:{layout:'stacked_labeled',background:'surface_base',bottom_cap_radius:false,cta_shape:'square'},
       gallery:{columns:'1fr 1fr',row_height:null,cell_radius:'6px',card_top_border:true,stagger:false},
       sections:{transition:'systematic_dark_accent',eyebrow_labels:true,dark_sections:['fakten','kontakt'],contact_style:'dark_block',has_marquee:false},
-      quantity_rules: QR_DEFAULT,
+      quantity_rules: QR_MODERN,
       freiheitsgrade:{FR1:'mild — 2:3-Raster',FR2:'stark — Bricolage 800 Massensprung',FR3:'aktiv — dunkle Fakten+Kontakt-Blöcke',FR4:'Fakten-Panel IBM Plex Mono',FR5:'neutral',FR6:'minimale Radien (6px)'}
     }
   },
@@ -160,26 +232,27 @@ const WORLDS = {
       hero:{layout:'dark_fullbleed',background:'primary',bottom_cap_radius:false,cta_shape:'square',hero_image_strip:true},
       gallery:{columns:'repeat(12,1fr)',stagger:true,cell_radius:'0'},
       sections:{transition:'hard_cuts',eyebrow_labels:false,dark_sections:['hero'],contact_style:'accent_fullbleed',has_marquee:true,marquee_text:'Schnitt — Farbe — Balayage — Styling — '},
-      quantity_rules: QR_DEFAULT,
+      quantity_rules: QR_TRENDIG,
       freiheitsgrade:{FR1:'maximal — 12-Spalten-Versatzraster',FR2:'maximal — Anton 8rem Schock',FR3:'aktiv — harte Schnitte dunkel/hell/Akzent',FR4:'Zitat-Border 6px Akzent',FR5:'dunkles Gradient-Overlay',FR6:'null Radien als Prinzip'}
     }
   },
   'gehoben-elegant': {
-    id:'gehoben-elegant', label:'Gehoben & elegant', tagline:'hier weiss man, was man tut',
+    id:'gehoben-elegant', label:'Gehoben & elegant', tagline:'hier bin ich in exklusiven Händen',
     design_tokens: {
-      colors:{primary:'#1a1814',surface_base:'#f9f7f3',surface_tinted:'#ede8df',accent:'#b8935a',text:'#1a1814',text_muted:'#6b6560'},
+      colors:{primary:'#1c2420',surface_base:'#f7f4ee',surface_tinted:'#eae4d8',accent:'#a8823f',text:'#1c2420',text_muted:'#6b6a63'},
       fonts:{
         display:{family:'Cormorant Garamond',google:'Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400',role:'headlines'},
-        body:{family:'DM Sans',google:'DM+Sans:wght@300;400;500',role:'body_ui'}
+        body:{family:'DM Sans',google:'DM+Sans:wght@300;400;500',role:'body_ui'},
+        utility_mono:{family:'IBM Plex Mono',google:'IBM+Plex+Mono',role:'facts_prices_only'}
       },
-      radii:{button:'0',card:'2px',section_cap:'0'}
+      radii:{button:'0',card:'0',section_cap:'0'}
     },
     form_language:{
-      hero:{layout:'editorial_split',split:'55fr 45fr',background:'surface_base',bottom_cap_radius:false,cta_shape:'outlined',rule_above_headline:true},
-      gallery:{columns:'1fr 1fr 1fr',gap:'1.5rem',cell_radius:'2px',stagger:false},
-      sections:{transition:'fine_line_separators',eyebrow_labels:false,dark_sections:[],contact_style:'tinted_surface',has_marquee:false},
-      quantity_rules: QR_DEFAULT,
-      freiheitsgrade:{FR1:'aktiv — 55/45-Split, Bild überlappt',FR2:'moderat — Kontrast durch Gewicht',FR3:'subtil — 1px-Linien + Weissraum',FR4:'grosse isolierte Jahreszahl',FR5:'angeschnittenes Bild überlappt',FR6:'null Radien, Gold sparsam'}
+      hero:{layout:'centered_symmetric',background:'surface_base',bottom_cap_radius:false,cta_shape:'outlined',rule_above_headline:true},
+      gallery:{layout_bias:'large_single_or_pair',columns:'1fr',gap:'2rem',cell_radius:'0',stagger:false},
+      sections:{transition:'fine_line_separators',eyebrow_labels:false,dark_sections:[],contact_style:'tinted_surface',has_marquee:false,rhythm:'langsam'},
+      quantity_rules: QR_GEHOBEN,
+      freiheitsgrade:{FR1:'zurückhaltend — symmetrisch/zentriert, keine Versätze (der Differenzierer zu den anderen drei Welten)',FR2:'sehr gedämpft — kleine Typo neben viel Weissraum statt Riesen-Sprüngen',FR3:'ruhig — feine Hairlines statt Farbwechsel, Weissraum als Übergang',FR4:'grosse isolierte Kennzahl, zentriert',FR5:'betont — grosszügige ruhige Einzelbild-Anschnitte statt dichter Galerien',FR6:'betont — Hairlines durchgängig, null Radien, Gold/Messing sehr sparsam'}
     }
   }
 };
@@ -713,48 +786,31 @@ function renderGehobentElegant(world, skin, fill) {
   const services = c.services_all.slice(0, sL.effectiveCount);
   const facts    = c.facts_all.slice(0, fL.effectiveCount);
 
-  const sep = `<div style="height:1px;background:rgba(26,24,20,.15);margin:0"></div>`;
+  const sep = `<div style="height:1px;background:rgba(28,36,32,.15);margin:0"></div>`;
 
   function quotesHtml() {
     if (qL.layout === 'hidden') return '';
-    if (qL.layout === 'solo_large') return `
+    /* diese Welt zeigt Zitate immer solo, gross, zentriert — Knappheit als Inszenierung */
+    return `
       ${sep}
-      <section style="padding:7rem 0;text-align:center"><div class="wrap">
+      <section style="padding:8rem 0;text-align:center"><div class="wrap">
         <p style="font-family:'${f.display.family}',serif;font-style:italic;font-weight:300;font-size:clamp(2rem,4vw,3.2rem);line-height:1.2;max-width:26ch;margin:0 auto;color:${t.primary}">
           «${quotes[0].text}»
         </p>
         <p style="margin-top:1.5rem;font-size:.8rem;letter-spacing:.1em;text-transform:uppercase;color:${muted}">— ${quotes[0].who}</p>
-      </div></section>`;
-    return `
-      ${sep}
-      <section style="padding:6rem 0"><div class="wrap">
-        <h2 style="font-family:'${f.display.family}',serif;font-weight:300;font-size:2rem;margin-bottom:2rem;line-height:1.15">Was <em style="font-style:italic">Kunden sagen</em></h2>
-        <div style="display:grid;grid-template-columns:repeat(${quotes.length},1fr);gap:1.5rem">
-          ${quotes.map(q=>`
-            <div style="border:1px solid rgba(26,24,20,.18);padding:1.6rem;border-radius:2px">
-              <p style="font-family:'${f.display.family}',serif;font-style:italic;font-size:1.05rem;line-height:1.55;color:${t.primary};font-weight:300">«${q.text}»</p>
-              <p style="margin-top:1rem;font-size:.78rem;letter-spacing:.06em;color:${muted}">— ${q.who}</p>
-            </div>`).join('')}
-        </div>
       </div></section>`;
   }
 
   function galleryHtml() {
     if (gL.layout === 'hidden') return '';
     const n = gL.effectiveCount;
-    const grads = ['#e0d8cd,#c8bfb0','#d4ccc0,#bbb0a0','#c8c0b4,#b0a898','#dcd4c8,#c4bbb0','#d8d0c4,#c0b8ac'];
-    if (gL.layout === 'feature_single') {
-      const cols = n === 1 ? '1fr' : '3fr 2fr';
-      return `${sep}<section style="padding:6rem 0"><div class="wrap">
-        <h2 style="font-family:'${f.display.family}',serif;font-weight:300;font-size:2rem;margin-bottom:1.5rem;line-height:1.15">Unsere <em style="font-style:italic">Arbeiten</em></h2>
-        <div style="display:grid;grid-template-columns:${cols};gap:1.5rem;height:320px">
-          ${Array(n).fill(0).map((_,i)=>`<div style="background:linear-gradient(140deg,${grads[i%5]});border-radius:2px"></div>`).join('')}
-        </div></div></section>`;
-    }
-    return `${sep}<section style="padding:6rem 0"><div class="wrap">
-      <h2 style="font-family:'${f.display.family}',serif;font-weight:300;font-size:2rem;margin-bottom:1.5rem;line-height:1.15">Unsere <em style="font-style:italic">Arbeiten</em></h2>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.5rem">
-        ${Array(n).fill(0).map((_,i)=>`<div style="height:200px;background:linear-gradient(140deg,${grads[i%5]});border-radius:2px"></div>`).join('')}
+    const grads = ['#dcd4c4,#bfb49e','#d0c8b8,#b3a790','#c8bfae,#a89b84'];
+    /* symmetrisch: 1 grosses Bild, ein ruhiges Paar oder ein gleichmässiges Trio — nie versetzt */
+    const cols = n === 1 ? '1fr' : n === 2 ? '1fr 1fr' : '1fr 1fr 1fr';
+    return `${sep}<section style="padding:7rem 0;text-align:center"><div class="wrap">
+      <h2 style="font-family:'${f.display.family}',serif;font-weight:300;font-size:2rem;margin-bottom:2rem;line-height:1.15">Unsere <em style="font-style:italic">Arbeiten</em></h2>
+      <div style="display:grid;grid-template-columns:${cols};gap:2rem;height:${n===1?'420px':'320px'}">
+        ${Array(n).fill(0).map((_,i)=>`<div style="background:linear-gradient(140deg,${grads[i%3]})"></div>`).join('')}
       </div></div></section>`;
   }
 
@@ -799,39 +855,36 @@ function renderGehobentElegant(world, skin, fill) {
 
   const css = `
     *{margin:0;padding:0;box-sizing:border-box}body{font-family:'${f.body.family}',sans-serif;background:${t.surface_base};color:${t.primary};line-height:1.7;font-weight:300}
-    .wrap{max-width:1020px;margin:auto;padding:0 1.5rem}
-    .cta{border:1px solid ${t.primary};color:${t.primary};font-size:.85rem;letter-spacing:.1em;text-decoration:none;padding:.65rem 1.6rem;display:inline-block}
-    footer{border-top:1px solid rgba(26,24,20,.15);padding:1.2rem 0;font-size:.8rem;color:${muted}}
-    footer .wrap{display:flex;justify-content:space-between;gap:1rem}footer a{color:${muted}}`;
+    .wrap{max-width:900px;margin:auto;padding:0 1.5rem}
+    .cta{border:1px solid ${t.primary};color:${t.primary};font-size:.85rem;letter-spacing:.1em;text-decoration:none;padding:.65rem 1.8rem;display:inline-block}
+    footer{border-top:1px solid rgba(28,36,32,.15);padding:1.2rem 0;font-size:.8rem;color:${muted}}
+    footer .wrap{display:flex;justify-content:space-between;gap:1rem;max-width:1020px}footer a{color:${muted}}`;
 
   return `<!doctype html><html lang="de-CH"><head><meta charset="utf-8">
 <link href="${fontUrl(world)}" rel="stylesheet">
 <style>${css}</style></head><body>
-<header style="display:grid;grid-template-columns:55fr 45fr;min-height:72vh;overflow:hidden">
-  <div class="wrap" style="display:flex;flex-direction:column;justify-content:center;padding:5rem 3rem 5rem 1.5rem">
-    <div style="width:2.5rem;height:1px;background:${t.accent};margin-bottom:2rem"></div>
-    <h1 style="font-family:'${f.display.family}',serif;font-weight:300;font-size:clamp(2.8rem,5vw,5rem);line-height:1.1">
-      ${c.headline1} <em style="font-style:italic">${c.headline2}</em>
-    </h1>
-    <p style="max-width:40ch;margin:1.4rem 0 2rem;color:${muted};font-size:.95rem">${c.tagline}</p>
-    <a class="cta" href="#t">${c.cta}</a>
-  </div>
-  <div style="background:linear-gradient(160deg,${t.surface_tinted},#c8bfb0);margin-bottom:-5rem"></div>
-</header>
+<header style="padding:8rem 0;text-align:center"><div class="wrap">
+  <div style="width:2.5rem;height:1px;background:${t.accent};margin:0 auto 2rem"></div>
+  <h1 style="font-family:'${f.display.family}',serif;font-weight:300;font-size:clamp(2.2rem,3.6vw,3.6rem);line-height:1.15;max-width:22ch;margin:0 auto">
+    ${c.headline1} <em style="font-style:italic">${c.headline2}</em>
+  </h1>
+  <p style="max-width:38ch;margin:1.6rem auto 2.2rem;color:${muted};font-size:.95rem">${c.tagline}</p>
+  <a class="cta" href="#t">${c.cta}</a>
+</div></header>
 ${sep}
 ${factsHtml()}
 ${galleryHtml()}
 ${sep}
-<section style="padding:7rem 0;text-align:center"><div class="wrap">
+<section style="padding:8rem 0;text-align:center"><div class="wrap">
   <span style="font-family:'${f.display.family}',serif;font-weight:300;font-size:clamp(5rem,14vw,10rem);line-height:1;color:${t.accent};display:block">8</span>
   <span style="font-size:.85rem;letter-spacing:.12em;text-transform:uppercase;color:${muted}">Jahre Erfahrung in ${c.ort}</span>
 </div></section>
 ${servicesHtml()}
 ${quotesHtml()}
 ${sep}
-<section style="padding:6rem 0"><div class="wrap"><p style="max-width:52ch;color:${muted}">${c.over_text}</p></div></section>
+<section style="padding:7rem 0;text-align:center"><div class="wrap"><p style="max-width:52ch;margin:0 auto;color:${muted}">${c.over_text}</p></div></section>
 ${sep}
-<section style="background:${t.surface_tinted};padding:6rem 0" id="t"><div class="wrap">
+<section style="background:${t.surface_tinted};padding:7rem 0;text-align:center" id="t"><div class="wrap">
   <h2 style="font-family:'${f.display.family}',serif;font-weight:300;font-size:2rem;margin-bottom:1.2rem;line-height:1.15"><em style="font-style:italic">${c.cta}</em></h2>
   <a style="font-family:'${f.display.family}',serif;font-weight:300;font-size:1.8rem;color:${t.accent};text-decoration:none" href="tel:${tel(c)}">${c.tel}</a>
   <p style="margin-top:.8rem;color:${muted}">${c.name} · ${c.ort}</p>
