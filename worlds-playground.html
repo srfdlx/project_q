@@ -63,8 +63,10 @@
   <button class="tb-btn" onclick="switchWorld('gehoben-elegant')">Gehoben &amp; elegant</button>
   <div class="sep"></div>
   <span class="tb-label">Skin</span>
-  <button class="tb-btn skin-active" onclick="switchSkin('coiffeur')">Salon Mia</button>
-  <button class="tb-btn" onclick="switchSkin('physio')">Praxis Mia</button>
+  <button class="tb-btn skin-active" data-skin="coiffeur" onclick="switchSkin('coiffeur')">Salon Mia</button>
+  <button class="tb-btn" data-skin="physio" onclick="switchSkin('physio')">Praxis Mia</button>
+  <button class="tb-btn" data-skin="treuhaender" onclick="switchSkin('treuhaender')">Treuhand Mia</button>
+  <button class="tb-btn" data-skin="tatowierer" onclick="switchSkin('tatowierer')">Ink Mia</button>
   <div class="sep"></div>
   <span class="tb-label">Befüllung</span>
   <button class="tb-btn fill-active" onclick="switchFill('minimal')">Minimal</button>
@@ -275,6 +277,7 @@ const CONTENT_POOL = {
     tagline:'Schnitt, Farbe und ehrliche Beratung — in einem Salon, in dem du dich nicht verstellen musst.',
     cta:'Termin buchen',
     branch_label:'Coiffeur · Friseur',
+    audience:'Kundinnen',
     quotes_all:[
       {text:'Zum ersten Mal ein Schnitt, der auch nach drei Wochen noch sitzt.',who:'S.'},
       {text:'Ehrliche Beratung statt Verkaufsgespräch. Genau deshalb komme ich wieder.',who:'M.'},
@@ -297,6 +300,7 @@ const CONTENT_POOL = {
     tagline:'Physiotherapie in Zürich — mit Händen, Herz und einem Plan, der zu Ihrem Leben passt.',
     cta:'Erstgespräch anfragen',
     branch_label:'Physiotherapie · Praxis',
+    audience:'Patientinnen',
     quotes_all:[
       {text:'Nach drei Monaten wieder schmerzfrei joggen — hätte ich nicht geglaubt.',who:'S.'},
       {text:'Mia hat mir zum ersten Mal erklärt, WARUM wir was machen.',who:'M.'},
@@ -317,8 +321,70 @@ const CONTENT_POOL = {
     fakten_title:'Kosten & Krankenkasse',
     gallery_images: DUMMY_IMAGES,
     hero_strip_image: DUMMY_IMAGES[1]
+  },
+  treuhaender: {
+    name:'Mia Brändle', salon:'Treuhand Mia Brändle', ort:'Zürich-Oerlikon', tel:'044 555 12 34',
+    headline1:'Klarheit für', headline2:'Ihre Zahlen.',
+    tagline:'Buchhaltung, Steuern und Beratung — persönlich betreut, verständlich erklärt.',
+    cta:'Erstgespräch anfragen',
+    branch_label:'Treuhänder · Treuhandbüro',
+    audience:'Mandantinnen',
+    quotes_all:[
+      {text:'Endlich jemand, der mir meine Steuererklärung verständlich erklärt.',who:'R.'},
+      {text:'Zuverlässig, genau und immer erreichbar, wenn ich Fragen habe.',who:'B.'},
+      {text:'Die Übergabe meiner Firma haben wir gemeinsam bestens gelöst.',who:'H.'},
+      {text:'Seit Jahren meine erste Anlaufstelle für alle Finanzfragen.',who:'S.'},
+      {text:'Schnelle Antworten, klare Zahlen, kein Fachchinesisch.',who:'M.'},
+      {text:'Ich fühle mich mit meinen Finanzen endlich sicher.',who:'K.'}
+    ],
+    services_all:['Buchhaltung','Steuererklärung','Lohnbuchhaltung','Mehrwertsteuer-Abrechnung','Jahresabschluss','Unternehmensberatung','Gründungsberatung','Nachfolgeplanung'],
+    over_text:'Ich begleite Einzelunternehmen und KMU durch alle Finanzfragen — persönlich, verständlich und immer erreichbar.',
+    preise:[['Buchhaltung','ab CHF 180/Mt.'],['Steuererklärung','ab CHF 250'],['Lohnbuchhaltung','ab CHF 45/Mitarb.'],['Erstberatung','kostenlos']],
+    facts_all:[],
+    fakten_title: null,
+    gallery_images: DUMMY_IMAGES,
+    hero_strip_image: DUMMY_IMAGES[2]
+  },
+  tatowierer: {
+    name:'Mia Brändle', salon:'Ink & Mia Tattoo', ort:'Zürich-Oerlikon', tel:'044 555 12 34',
+    headline1:'Kunst, die', headline2:'bleibt.',
+    tagline:'Tattoos mit Handschrift — von der ersten Skizze bis zum fertigen Motiv.',
+    cta:'Anfrage stellen',
+    branch_label:'Tätowierer · Tattoo-Studio',
+    audience:'Kundinnen',
+    quotes_all:[
+      {text:'Das Motiv hat meine Erwartungen komplett übertroffen.',who:'J.'},
+      {text:'Hygiene und Beratung auf höchstem Niveau.',who:'L.'},
+      {text:'Endlich ein Stil, der wirklich zu mir passt.',who:'A.'},
+      {text:'Geduldig, kreativ und super sauber gearbeitet.',who:'N.'},
+      {text:'Bestes Studio der Stadt — komme garantiert wieder.',who:'T.'},
+      {text:'Aus meiner vagen Idee wurde ein Kunstwerk.',who:'P.'}
+    ],
+    services_all:['Fine Line','Realistic','Blackwork','Traditional','Old School','Lettering','Cover-ups','Piercing'],
+    over_text:'Jedes Motiv entsteht im Dialog — deine Idee, meine Handschrift, gemeinsam bis zum fertigen Entwurf.',
+    preise:[['Kleines Motiv','ab CHF 120'],['Unterarm','ab CHF 250'],['Grossflächig','auf Anfrage'],['Cover-up','auf Anfrage']],
+    facts_all:[],
+    fakten_title: null,
+    gallery_images: DUMMY_IMAGES,
+    hero_strip_image: DUMMY_IMAGES[2]
   }
 };
+
+/* Branchenspezifische Akzent-Overrides je Welt — 1:1 aus src/profiles/tatowierer.json
+   (offered_worlds[].skin.color_overrides). Treuhänder nutzt Welten unverändert. */
+const SKIN_COLOR_OVERRIDES = {
+  tatowierer: {
+    'trendig-mutig': {accent:'#c0392b'},
+    'warm-nahbar': {accent:'#e040fb'},
+    'gehoben-elegant': {accent:'#8b7355'}
+  }
+};
+function effectiveWorld(worldId, skin) {
+  const base = WORLDS[worldId];
+  const override = SKIN_COLOR_OVERRIDES[skin]?.[worldId];
+  if (!override) return base;
+  return {...base, design_tokens: {...base.design_tokens, colors: {...base.design_tokens.colors, ...override}}};
+}
 
 /* ================================================================
    BEFÜLLUNGS-STUFEN
@@ -384,7 +450,7 @@ function renderWarmNahbar(world, skin, fill) {
       </section>`;
     return `
       <section style="background:${t.surface_tinted};padding:4rem 0">
-        <div class="wrap"><h2>Das sagen ${skin==='physio'?'Patientinnen':'Kundinnen'}</h2>
+        <div class="wrap"><h2>Das sagen ${c.audience}</h2>
           <div style="display:grid;grid-template-columns:repeat(${quotes.length},1fr);gap:1rem">
             ${quotes.map(q=>`
               <div style="background:#fff;border-radius:${r.card};padding:1.4rem">
@@ -1001,8 +1067,9 @@ function getRenderer(id) {
 }
 
 function refresh() {
-  const world = WORLDS[activeWorld];
-  const fill  = FILLS[activeFill];
+  const world = effectiveWorld(activeWorld, activeSkin);
+  let fill = FILLS[activeFill];
+  if (activeSkin === 'treuhaender') fill = {...fill, galleryN: 0}; // kein gallery_portfolio-Block im echten Profil
   document.getElementById('frame').srcdoc = getRenderer(activeWorld)(world, activeSkin, fill);
   document.getElementById('inspector-inner').innerHTML = renderInspector(world, activeSkin, fill);
 }
@@ -1018,10 +1085,7 @@ function switchWorld(id) {
 
 function switchSkin(id) {
   activeSkin = id;
-  document.querySelectorAll('.tb-btn').forEach(b => {
-    if (b.textContent.includes('Salon') || b.textContent.includes('Praxis'))
-      b.classList.toggle('skin-active', (id==='coiffeur'&&b.textContent.includes('Salon'))||(id==='physio'&&b.textContent.includes('Praxis')));
-  });
+  document.querySelectorAll('.tb-btn[data-skin]').forEach(b => b.classList.toggle('skin-active', b.dataset.skin === id));
   refresh();
 }
 

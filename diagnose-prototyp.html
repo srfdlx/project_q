@@ -72,11 +72,16 @@ const A = {branche:null,zweck:null,charakter:null,vertrauen:[],spez:[],reg:null,
 let step = 0, returnToReview = false;
 
 /* ================= BRANCHENPROFILE (Fragen als Daten — Motor/Profil-Prinzip) =================
-   welten-IDs entsprechen 1:1 den world_id-Werten aus src/profiles/*.json (offered_worlds) und
-   worlds/*.json — keine "Welt in Arbeit"-Platzhalter mehr, alle vier Welten sind gebaut. */
+   1:1 aus src/profiles/*.json: welten-IDs = offered_worlds[].world_id, vertrauenOpts = proof_types,
+   hatSpez = specialization_relevant, hatReg = regulatory_facts.length>0, convOpts-Reihenfolge
+   orientiert an conversion_type + conversion_fallbacks. Alle vier echten Branchen sind jetzt
+   vertreten (vorher nur Coiffeur/Physio, Treuhand/Tätowierer als Platzhalter). */
 const PROFILES = {
  coiffeur:{
-  label:'Coiffeur', platzhalterName:'z.B. Salon Mia', defaultOrt:'Baden',
+  label:'Coiffeur', platzhalterName:'z.B. Salon Mia', defaultOrt:'Baden', defaultBusinessNoun:'Dein Salon',
+  branchLabel:'Coiffeur · Friseur', audience:'Kundinnen',
+  headline1:'Schön, dass', headline2:'du da bist.',
+  tagline:'Schnitt, Farbe und ehrliche Beratung — in einem Salon, in dem du dich nicht verstellen musst.',
   zweckSatz:'Die meisten Coiffeure wollen vor allem eins: dass neue Kunden sie online finden und einfach einen Termin bekommen. Stimmt das für dich?',
   welten:[ ['warm-nahbar','Warm & nahbar','„hier fühl ich mich willkommen"'],
            ['trendig-mutig','Trendig & mutig','„hier passiert was"'],
@@ -86,15 +91,29 @@ const PROFILES = {
   vertrauenOpts:[ ['arbeiten','Meine Arbeiten','Galerie mit deinen Frisuren'],
                   ['bewertungen','Bewertungen & Stimmen','Zitate zufriedener Kundinnen'],
                   ['erfahrung','Meine Erfahrung','Jahre, Geschichte, Persönlichkeit'] ],
-  hatSpez:false, hatReg:false, convClass:'action',
+  hatSpez:false, hatReg:false, hatAblauf:false, hatGalerieToggle:true, galerieImmer:false,
+  convClass:'action',
   convFrage:'Wie sollen Kunden einen Termin bekommen?',
   convHint:'Wir fragen nach Verhalten — nicht nach Widgets.',
-  convOpts:[ ['anruf','Anrufen oder WhatsApp genügt','Nummer prominent, ein Fingertipp'],
-             ['formular','Online-Anfrage, ich melde mich','Formular mit Wunschtermin'],
-             ['buchung','Echte Online-Buchung','Kalender-Tool — wir bauen die Seite buchungsbereit'] ],
+  convOpts:[ ['anruf','Anrufen oder WhatsApp genügt','Nummer prominent, ein Fingertipp','call_whatsapp'],
+             ['formular','Online-Anfrage, ich melde mich','Formular mit Wunschtermin','formular'],
+             ['buchung','Echte Online-Buchung','Kalender-Tool — wir bauen die Seite buchungsbereit','buchung'] ],
+  ctaLabelHero:'Termin anfragen', ctaLabelKontakt:'Termin buchen',
+  callText:'Ruf einfach an oder schreib per WhatsApp — wir finden einen Termin.',
+  formularText:'Schreib kurz, was du brauchst — du hörst innert eines Arbeitstags von uns.', formularFields:'Name · Wunschleistung · Wunschtermin',
+  buchungText:'Buch deinen Termin direkt online — in zwei Minuten.',
+  quotesPool:[{text:'Zum ersten Mal ein Schnitt, der auch nach drei Wochen noch sitzt.',who:'S.'},{text:'Ehrliche Beratung statt Verkaufsgespräch. Genau deshalb komme ich wieder.',who:'M.'}],
+  preise:[['Schnitt Damen','ab CHF 78'],['Schnitt Herren','ab CHF 52'],['Farbe / Ansatz','ab CHF 85'],['Balayage','ab CHF 160']],
+  teamLabel:'Unser Team',
+  soloText:'Bei mir bekommst du keine Frisur von der Stange, sondern eine, die zu dir passt.',
+  teamText:'Wir sind ein kleines Team mit einem gemeinsamen Anspruch: Frisuren, die zu deinem Alltag passen.',
+  erfahrungSuffix:' Seit acht Jahren führe ich diesen Salon — klein, persönlich und mit viel Zeit für dich.'
  },
  physio:{
-  label:'Physiotherapie', platzhalterName:'z.B. Physiotherapie Lindenhof', defaultOrt:'Aarau',
+  label:'Physiotherapie', platzhalterName:'z.B. Physiotherapie Lindenhof', defaultOrt:'Aarau', defaultBusinessNoun:'Deine Praxis',
+  branchLabel:'Physiotherapie', audience:'Patientinnen',
+  headline1:'Wieder in', headline2:'Bewegung kommen.',
+  tagline:'Physiotherapie — mit Händen, Herz und einem Plan, der zu Ihrem Leben passt.',
   zweckSatz:'Die meisten Physiotherapeutinnen wollen vor allem eins: dass Patienten sie finden, Vertrauen fassen und unkompliziert einen Termin anfragen. Stimmt das für dich?',
   welten:[ ['warm-nahbar','Ruhig & zugewandt','„hier nimmt man sich Zeit für mich"'],
            ['modern-transparent','Klar & fachlich','„die wissen genau, was sie tun"'],
@@ -103,14 +122,128 @@ const PROFILES = {
   vertrauenOpts:[ ['quali','Qualifikation & Zulassung','dipl. FH, Weiterbildungen, Verbände'],
                   ['spez','Meine Spezialgebiete','Patienten suchen sehr gezielt'],
                   ['erfahrung','Meine Erfahrung','Jahre, Ansatz, Persönlichkeit'] ],
-  hatSpez:true, hatReg:true, convClass:'trust',
+  hatSpez:true, hatReg:true, hatAblauf:true, hatGalerieToggle:false, galerieImmer:false,
+  spezFrage:'Welche Spezialgebiete deckst du ab?', spezHint:'Sie werden zum Herzstück deiner Seite — Patienten suchen genau danach.',
+  spezLabel:'Spezialisierung',
+  spezOpts:[ ['sport','Sportphysiotherapie'],['manuell','Manuelle Therapie'],['lymph','Lymphdrainage'],['neuro','Neuro-Rehabilitation'] ],
+  spezMap:{ sport:['Sportphysiotherapie','Vom Wiedereinstieg nach Verletzung bis zur gezielten Leistungsvorbereitung.'],
+            manuell:['Manuelle Therapie','Gezielte Behandlung von Gelenken, Muskulatur und Nervensystem.'],
+            lymph:['Lymphdrainage','Sanfte Entstauungstherapie nach Operationen oder bei chronischen Schwellungen.'],
+            neuro:['Neuro-Rehabilitation','Begleitung nach Schlaganfall, bei MS oder Parkinson — alltagsnah und geduldig.'] },
+  qualiText:'dipl. Physiotherapeutin FH<br>CAS Sportphysiotherapie (ESP)<br>Mitglied physioswiss',
+  convClass:'trust',
   convFrage:'Wie sollen Patientinnen Kontakt aufnehmen?',
   convHint:'Kurze Frage, kurze Antwort — bei Vertrauensberufen ist der Kontaktweg selten das Problem.',
-  convOpts:[ ['anruf','Anrufen','Nummer gut sichtbar'],
-             ['formular','Anfrage-Formular','du meldest dich zurück'] ],
+  convOpts:[ ['anruf','Anrufen','Nummer gut sichtbar','call'],
+             ['formular','Anfrage-Formular','du meldest dich zurück','formular'] ],
+  ctaLabelHero:'Erstgespräch anfragen', ctaLabelKontakt:'Erstgespräch anfragen',
+  callText:'Rufen Sie an — wir finden gemeinsam einen passenden Termin.',
+  formularText:'Schreiben Sie kurz, worum es geht — Sie erhalten innert eines Arbeitstags eine Antwort.', formularFields:'Name · Anliegen · Verordnung vorhanden?',
+  quotesPool:[], /* proof_types kennt keine testimonials — bewusst keine 'bewertungen'-Option, Zitate bleiben aus */
+  preise:[],
+  teamLabel:'Unser Praxisteam',
+  soloText:'Mein Ansatz verbindet Hände, Training und Zuhören. Sie sollen verstehen, was wir tun und warum.',
+  teamText:'Wir sind ein kleines Team mit einem gemeinsamen Ansatz: Hände, Training und Zuhören verbinden.',
+  erfahrungSuffix:' Seit über zwölf Jahren begleite ich Menschen zurück in ihre Bewegung.'
+ },
+ treuhaender:{
+  label:'Treuhänder', platzhalterName:'z.B. Treuhand Weber', defaultOrt:'Zug', defaultBusinessNoun:'Dein Treuhandbüro',
+  branchLabel:'Treuhänder · Treuhandbüro', audience:'Mandantinnen',
+  headline1:'Klarheit für', headline2:'Ihre Zahlen.',
+  tagline:'Buchhaltung, Steuern und Beratung — persönlich betreut, verständlich erklärt.',
+  zweckSatz:'Die meisten Treuhandbüros wollen vor allem eins: dass potenzielle Mandanten Vertrauen aufbauen und ein Erstgespräch anfragen. Stimmt das für dich?',
+  welten:[ ['modern-transparent','Modern & transparent','„die zeigen offen, wie sie arbeiten"'],
+           ['gehoben-elegant','Seriös & etabliert','„hier ist man in erfahrenen Händen"'],
+           ['warm-nahbar','Persönlich & nahbar','„hier kennt man mich beim Namen"'] ],
+  vertrauenFrage:'Was überzeugt jemanden, dass er bei DIR in guten Händen ist?',
+  vertrauenOpts:[ ['quali','Qualifikation & Zertifizierung','eidg. Fachausweis, Verbandsmitgliedschaft'],
+                  ['spez','Meine Spezialisierung','KMU, Startups, Vereine — wer wird gezielt betreut'],
+                  ['bewertungen','Bewertungen & Stimmen','Zitate zufriedener Mandanten'],
+                  ['erfahrung','Meine Erfahrung','Jahre im Beruf, Werdegang'] ],
+  hatSpez:true, hatReg:false, hatAblauf:false, hatGalerieToggle:false, galerieImmer:false,
+  spezFrage:'Welche Mandantengruppen betreust du bevorzugt?', spezHint:'Sie werden zum Herzstück deiner Seite — Mandanten suchen genau danach.',
+  spezLabel:'Mandantengruppen',
+  spezOpts:[ ['kmu','KMU & Startups'],['selbststaendige','Einzelunternehmen'],['vereine','Vereine & NPO'],['immobilien','Immobilien-Buchhaltung'] ],
+  spezMap:{ kmu:['KMU & Startups','Buchhaltung und Beratung für kleine und mittlere Unternehmen sowie Jungfirmen.'],
+            selbststaendige:['Einzelunternehmen','Einfache, faire Buchhaltung für Selbstständige ohne Schnickschnack.'],
+            vereine:['Vereine & NPO','Spezialisiert auf die Buchhaltungspflichten von Vereinen und Non-Profit-Organisationen.'],
+            immobilien:['Immobilien-Buchhaltung','Nebenkostenabrechnungen, Stockwerkeigentum und Liegenschaftsbuchhaltung.'] },
+  qualiText:'eidg. Fachausweis Treuhänderin<br>Mitglied TREUHAND|SUISSE<br>Zertifizierte Steuerberaterin',
+  convClass:'trust',
+  convFrage:'Wie sollen Mandanten Kontakt aufnehmen?',
+  convHint:'Kurze Frage, kurze Antwort — bei Vertrauensberufen ist der Kontaktweg selten das Problem.',
+  convOpts:[ ['formular','Anfrage-Formular','Sie melden sich zurück','formular'],
+             ['anruf','Anrufen','Nummer gut sichtbar','call'] ],
+  ctaLabelHero:'Erstgespräch anfragen', ctaLabelKontakt:'Erstgespräch anfragen',
+  callText:'Rufen Sie an — wir vereinbaren gemeinsam einen Termin.',
+  formularText:'Schreiben Sie kurz, worum es geht — Sie erhalten innert eines Arbeitstags eine Antwort.', formularFields:'Name · Unternehmensform · Anliegen',
+  quotesPool:[{text:'Endlich jemand, der mir meine Steuererklärung verständlich erklärt.',who:'R.'},{text:'Zuverlässig, genau und immer erreichbar, wenn ich Fragen habe.',who:'B.'}],
+  preise:[['Buchhaltung','ab CHF 180/Mt.'],['Steuererklärung','ab CHF 250'],['Lohnbuchhaltung','ab CHF 45/Mitarb.'],['Erstberatung','kostenlos']],
+  teamLabel:'Unser Team',
+  soloText:'Ich begleite Einzelunternehmen und KMU durch alle Finanzfragen — persönlich, verständlich und immer erreichbar.',
+  teamText:'Wir sind ein eingespieltes Team, das Mandantinnen und Mandanten persönlich und verständlich durch alle Finanzfragen begleitet.',
+  erfahrungSuffix:' Seit über zehn Jahren berate ich Unternehmen und Privatpersonen in allen Finanzfragen.'
+ },
+ tatowierer:{
+  label:'Tätowierer', platzhalterName:'z.B. Ink & Mia Tattoo', defaultOrt:'Winterthur', defaultBusinessNoun:'Dein Studio',
+  branchLabel:'Tätowierer · Tattoo-Studio', audience:'Kundinnen',
+  headline1:'Kunst, die', headline2:'bleibt.',
+  tagline:'Tattoos mit Handschrift — von der ersten Skizze bis zum fertigen Motiv.',
+  zweckSatz:'Die meisten Tattoo-Studios wollen vor allem eins: dass Interessierte das Portfolio sehen und eine Anfrage für ein individuelles Motiv stellen. Stimmt das für dich?',
+  welten:[ ['trendig-mutig','Düster & mutig','„hier entsteht etwas Eindrückliches"'],
+           ['modern-transparent','Fein & minimalistisch','„die Linie sitzt, ohne viel Lärm"'],
+           ['warm-nahbar','Bunt & verspielt','„hier darf es auffallen"'],
+           ['gehoben-elegant','Roh & handwerklich','„das ist Handwerk mit Haltung"'] ],
+  vertrauenFrage:'Was überzeugt jemanden, dass er bei DIR richtig ist?',
+  vertrauenOpts:[ ['spez','Meine Stile','Welche Tattoo-Stile du beherrschst'],
+                  ['hygiene','Hygiene & Seriosität','Sterilisation, Einwegmaterial, Zertifizierung'],
+                  ['bewertungen','Bewertungen & Stimmen','Zitate zufriedener Kundinnen'] ],
+  hatSpez:true, hatReg:false, hatAblauf:false, hatGalerieToggle:false, galerieImmer:true,
+  spezFrage:'Welche Stile tätowierst du bevorzugt?', spezHint:'Sie werden zum Herzstück deiner Seite — Kundinnen suchen genau danach.',
+  spezLabel:'Stile',
+  spezOpts:[ ['realistic','Realistic'],['blackwork','Blackwork'],['fineline','Fine Line'],['traditional','Traditional'] ],
+  spezMap:{ realistic:['Realistic','Fotorealistische Portraits und Motive mit feinsten Schattierungen.'],
+            blackwork:['Blackwork','Grossflächige Schwarzarbeiten mit starken Kontrasten und Mustern.'],
+            fineline:['Fine Line','Filigrane, feine Linien für zarte und minimalistische Motive.'],
+            traditional:['Traditional','Klassische Tattoo-Kunst mit kräftigen Linien und satten Farben.'] },
+  hygieneFacts:['Sterilisation im Autoklav nach jedem Termin.','Ausschliesslich Einweg-Nadeln, originalverpackt geöffnet.','Regelmässige Hygieneschulung und Zertifizierung.'],
+  faktenTitelHygiene:'Hygiene & Sicherheit',
+  convClass:'mixed',
+  convFrage:'Wie sollen Kundinnen eine Anfrage stellen?',
+  convHint:'Wir fragen nach Verhalten — nicht nach Widgets.',
+  convOpts:[ ['whatsapp','WhatsApp mit Bild-Idee','kurz die Motiv-Idee beschreiben','call_whatsapp'],
+             ['formular','Anfrage-Formular','du meldest dich zurück','formular'],
+             ['termin','Direkt Beratungstermin buchen','Kalender-Tool — wir bauen die Seite buchungsbereit','buchung'] ],
+  ctaLabelHero:'Anfrage stellen', ctaLabelKontakt:'Anfrage stellen',
+  callText:'Schreib per WhatsApp — am besten gleich mit einem Bild deiner Idee.',
+  formularText:'Schreib kurz deine Idee — du hörst innert weniger Tage von uns.', formularFields:'Name · Motiv-Idee · gewünschte Grösse',
+  buchungText:'Buch direkt einen Beratungstermin — für Idee und Platzierung.',
+  quotesPool:[{text:'Das Motiv hat meine Erwartungen komplett übertroffen.',who:'J.'},{text:'Hygiene und Beratung auf höchstem Niveau.',who:'L.'}],
+  preise:[['Kleines Motiv','ab CHF 120'],['Unterarm','ab CHF 250'],['Grossflächig','auf Anfrage'],['Cover-up','auf Anfrage']],
+  teamLabel:'Unser Studio-Team',
+  soloText:'Jedes Motiv entsteht im Dialog — deine Idee, meine Handschrift, gemeinsam bis zum fertigen Entwurf.',
+  teamText:'Wir sind ein Studio-Team mit unterschiedlichen Handschriften — für jeden Stil die passende Künstlerin.',
+  erfahrungSuffix:''
  }
 };
 const P = ()=>PROFILES[A.branche] || PROFILES.coiffeur;
+const BRANCHEN = ['coiffeur','physio','treuhaender','tatowierer'];
+
+/* Branchenspezifische Akzent-Overrides je Welt — 1:1 aus src/profiles/tatowierer.json
+   (offered_worlds[].skin.color_overrides). Andere Branchen nutzen Welten unverändert. */
+const SKIN_COLOR_OVERRIDES = {
+  tatowierer: {
+    'trendig-mutig': {accent:'#c0392b'},
+    'warm-nahbar': {accent:'#e040fb'},
+    'gehoben-elegant': {accent:'#8b7355'}
+  }
+};
+function effectiveWorld(worldId, branche){
+  const base = WORLDS[worldId];
+  const override = SKIN_COLOR_OVERRIDES[branche]?.[worldId];
+  if(!override) return base;
+  return {...base, design_tokens:{...base.design_tokens, colors:{...base.design_tokens.colors, ...override}}};
+}
 
 /* ================= FRAGEN-PIPELINE (dynamisch aus Profil) ================= */
 function buildSteps(){
@@ -118,9 +251,10 @@ function buildSteps(){
  st.push({ id:'F0', render(){ return q('Was machst du?','Wähle, was am ehesten passt.',
    [ opt('coiffeur','Coiffeur / Friseur'),
      opt('physio','Physiotherapie'),
-     opt('treuhand','Treuhand','Profil vorhanden — Demo folgt',true),
+     opt('treuhaender','Treuhänder / Treuhandbüro'),
+     opt('tatowierer','Tätowierer / Tattoo-Studio'),
      opt('andere','Etwas anderes','',false,'gate') ], 'branche'); },
-   valid(){ return A.branche==='coiffeur'||A.branche==='physio'; } });
+   valid(){ return BRANCHEN.includes(A.branche); } });
 
  st.push({ id:'F1', render(){ return `
    <div class="default-note">Wir legen offen, was wir annehmen — du kannst jederzeit widersprechen.</div>`
@@ -141,11 +275,8 @@ function buildSteps(){
    valid(){ return A.vertrauen.length>0; } });
 
  if(p.hatSpez) st.push({ id:'FS', skip(){ return !A.vertrauen.includes('spez'); },
-   render(){ return q('Welche Spezialgebiete deckst du ab?','Sie werden zum Herzstück deiner Seite — Patienten suchen genau danach.',
-   [ opt('sport','Sportphysiotherapie','',false,null,true),
-     opt('manuell','Manuelle Therapie','',false,null,true),
-     opt('lymph','Lymphdrainage','',false,null,true),
-     opt('neuro','Neuro-Rehabilitation','',false,null,true) ], 'spez'); },
+   render(){ return q(p.spezFrage, p.spezHint,
+   p.spezOpts.map(o=>opt(o[0],o[1],'',false,null,true)), 'spez'); },
    valid(){ return A.spez.length>0; } });
 
  if(p.hatReg) st.push({ id:'FR', render(){ return `
@@ -172,7 +303,7 @@ function buildSteps(){
    <label>Ort</label><input type="text" id="in-ort" value="${A.ort||p.defaultOrt}">
    <label>Telefon</label><input type="text" id="in-tel" value="${A.tel}">
    </div>`; },
-   collect(){ A.name=v('in-name')|| (A.branche==='physio'?'Deine Praxis':'Dein Salon'); A.ort=v('in-ort')||'…'; A.tel=v('in-tel')||'000 000 00 00'; },
+   collect(){ A.name=v('in-name')|| P().defaultBusinessNoun; A.ort=v('in-ort')||'…'; A.tel=v('in-tel')||'000 000 00 00'; },
    valid(){ return true; } });
 
  st.push({ id:'REV', final:true, render(){ return reviewHtml(st); }, valid(){ return true; } });
@@ -185,26 +316,27 @@ function idx(id){ return steps.findIndex(s=>s.id===id); }
 function reviewHtml(st){
  const p=P();
  const weltLabel = (p.welten.find(w=>w[0]===A.charakter)||['','—'])[1];
- const convLabel = (p.convOpts.find(o=>o[0]===A.conversion)||['','—'])[1] + (A.conversion==='anruf'&&A.branche==='coiffeur'?' & WhatsApp':'');
+ const convLabel = (p.convOpts.find(o=>o[0]===A.conversion)||['','—'])[1];
  const edit=(id)=>{const i=idx(id); return i>-1?`<button class="edit" onclick="editStep(${i})" title="Antwort ändern">✎</button>`:'';};
  const bloecke=[];
- bloecke.push(['Start mit klarem '+(p.convClass==='trust'?'Weg zum Erstkontakt':'Termin-Weg'), 'F3']);
- if(A.branche==='physio' && A.reg){
+ bloecke.push(['Start mit klarem '+(p.convClass==='trust'?'Weg zum Erstkontakt':'Termin-/Anfrage-Weg'), 'F3']);
+ if(p.hatReg && A.reg){
    const regTxt={grund:'Grundversicherung mit Verordnung',zusatz:'Zusatz & Selbstzahler',beides:'Grundversicherung & direkt'}[A.reg];
    bloecke.push(['Kosten & Krankenkasse — prominent: '+regTxt, 'FR']);
  }
- if(A.branche==='physio' && A.vertrauen.includes('spez') && A.spez.length) bloecke.push(['Spezialgebiete: '+A.spez.length+' Bereiche', 'FS']);
- if(A.branche==='coiffeur' && A.vertrauen.includes('arbeiten')) bloecke.push(['Galerie: Deine Arbeiten', 'F4']);
+ if(p.hatSpez && A.vertrauen.includes('spez') && A.spez.length) bloecke.push([p.spezLabel+': '+A.spez.length+' Bereiche', 'FS']);
+ if(p.galerieImmer || (p.hatGalerieToggle && A.vertrauen.includes('arbeiten'))) bloecke.push(['Galerie: Deine Arbeiten', 'F4']);
  if(A.vertrauen.includes('quali')) bloecke.push(['Qualifikation & Zulassung', 'F4']);
- bloecke.push([A.branche==='physio'?'Behandlungsablauf (Transparenz)':'Leistungen & Preise (Beispielwerte)', null]);
+ if(A.branche==='tatowierer' && A.vertrauen.includes('hygiene')) bloecke.push(['Hygiene & Sicherheit', 'F4']);
+ bloecke.push([p.hatAblauf?'Behandlungsablauf (Transparenz)':'Leistungen & Preise (Beispielwerte)', null]);
  if(A.vertrauen.includes('bewertungen')) bloecke.push(['Kundenstimmen', 'F4']);
- bloecke.push([(A.team==='team'?(A.branche==='physio'?'Unser Praxisteam':'Unser Team'):'Über mich')+(A.vertrauen.includes('erfahrung')?' — mit deiner Geschichte':''), 'FT']);
+ bloecke.push([(A.team==='team'?p.teamLabel:'Über mich')+(A.vertrauen.includes('erfahrung')?' — mit deiner Geschichte':''), 'FT']);
  bloecke.push(['Kontakt & Öffnungszeiten', 'F5'], ['Impressum & Datenschutz (automatisch)', null]);
  return `<div class="frage"><h2>Dein Vorschlag, ${A.name||'—'}.</h2>
  <p class="hint">Das haben wir aus deinen Antworten gebaut. Mit ✎ änderst du die zugehörige Antwort — der Aufbau folgt.</p>
  <div class="review-box"><h3>Branche <span class="tag">${p.label}</span>${edit('F0')}</h3>
  <h3 style="margin-top:.8rem">Designwelt <span class="tag">${weltLabel}</span>${edit('F2')}</h3>
- <h3 style="margin-top:.8rem">${p.convClass==='trust'?'Kontakt-Weg':'Termin-Weg'} <span class="tag">${convLabel}</span>${edit('F3')}</h3></div>
+ <h3 style="margin-top:.8rem">${p.convClass==='trust'?'Kontakt-Weg':'Termin-/Anfrage-Weg'} <span class="tag">${convLabel}</span>${edit('F3')}</h3></div>
  <div class="review-box"><h3>Aufbau deiner Seite</h3><ul>${bloecke.map(([b,id])=>'<li>'+b+(id?edit(id):'')+'</li>').join('')}</ul></div>
  <p class="hint">Im echten Produkt kommentierst du hier, was anders soll — ein Designer schaut vor Live-Gang drüber.</p>
  <button class="btn gen" onclick="generate()">Website ansehen →</button></div>`;
@@ -436,99 +568,89 @@ function fontUrl(world) {
 function tel(){ return A.tel.replace(/\s/g,''); }
 function wa(){ return A.tel.replace(/\D/g,''); }
 
-/* Regulatorik: WÖRTLICH nach Antwort (I5 — Null-Freiheits-Zone) */
+/* Regulatorik: WÖRTLICH nach Antwort (I5 — Null-Freiheits-Zone). Nur Physio hat hatReg. */
 function regFakten(){
  if(A.reg==='grund') return ['Anerkannt von allen Schweizer Krankenkassen.','Abrechnung über die Grundversicherung mit ärztlicher Verordnung.','Verordnung vom Haus- oder Facharzt genügt — wir übernehmen die Administration.'];
  if(A.reg==='zusatz') return ['Abrechnung über Zusatzversicherung oder als Selbstzahler.','Keine ärztliche Verordnung nötig — Termin direkt vereinbaren.'];
  return ['Anerkannt von allen Schweizer Krankenkassen.','Abrechnung über die Grundversicherung mit ärztlicher Verordnung.','Zusatzversicherte und Selbstzahler: Termin auch ohne Verordnung möglich.'];
 }
-const SPEZ_MAP={
-  sport:['Sportphysiotherapie','Vom Wiedereinstieg nach Verletzung bis zur gezielten Leistungsvorbereitung.'],
-  manuell:['Manuelle Therapie','Gezielte Behandlung von Gelenken, Muskulatur und Nervensystem.'],
-  lymph:['Lymphdrainage','Sanfte Entstauungstherapie nach Operationen oder bei chronischen Schwellungen.'],
-  neuro:['Neuro-Rehabilitation','Begleitung nach Schlaganfall, bei MS oder Parkinson — alltagsnah und geduldig.']
-};
-function ueberTitel(){ return A.team==='team' ? (A.branche==='physio'?'Unser Praxisteam':'Unser Team') : 'Über mich'; }
+function ueberTitel(){ return A.team==='team' ? P().teamLabel : 'Über mich'; }
 function ueberText(){
- const erf = A.vertrauen.includes('erfahrung') ? (A.branche==='physio'
-   ? ' Seit über zwölf Jahren begleite ich Menschen zurück in ihre Bewegung.'
-   : ' Seit acht Jahren führe ich diesen Salon — klein, persönlich und mit viel Zeit für dich.') : '';
- if(A.branche==='physio') return (A.team==='team'
-   ? 'Wir sind ein kleines Team mit einem gemeinsamen Ansatz: Hände, Training und Zuhören verbinden.'
-   : 'Mein Ansatz verbindet Hände, Training und Zuhören. Sie sollen verstehen, was wir tun und warum.')+erf;
- return (A.team==='team'
-   ? 'Wir sind ein kleines Team mit einem gemeinsamen Anspruch: Frisuren, die zu deinem Alltag passen.'
-   : 'Bei mir bekommst du keine Frisur von der Stange, sondern eine, die zu dir passt.')+erf;
+ const p = P();
+ const erf = A.vertrauen.includes('erfahrung') ? (p.erfahrungSuffix||'') : '';
+ return (A.team==='team' ? p.teamText : p.soloText) + erf;
 }
-function qualiHtml(muted){ return A.vertrauen.includes('quali') ? `
- <p style="font-family:'IBM Plex Mono',monospace;font-size:.85rem;color:${muted};margin-top:1rem;line-height:1.9">dipl. Physiotherapeutin FH<br>CAS Sportphysiotherapie (ESP)<br>Mitglied physioswiss</p>` : ''; }
+function qualiHtml(muted){
+ const txt = P().qualiText;
+ return (txt && A.vertrauen.includes('quali')) ? `
+ <p style="font-family:'IBM Plex Mono',monospace;font-size:.85rem;color:${muted};margin-top:1rem;line-height:1.9">${txt}</p>` : '';
+}
 
-/* Conversion-getriebene CTA — dieselbe Verhaltenslogik wie zuvor, jetzt token-basiert statt hartkodierter Hex-Farben */
+/* Conversion-getriebene CTA — Verhalten hängt am 'kind' des gewählten convOpt (call_whatsapp/call/formular/buchung),
+   nicht mehr an der Branche direkt. Farben/Formen kommen aus den Welt-Tokens. */
 function heroCtaHtml(t,r){
- if(A.branche==='coiffeur'){
-   if(A.conversion==='anruf') return `<span style="display:inline-flex;gap:1.2rem;align-items:center;flex-wrap:wrap">
-     <a href="tel:${tel()}" style="font-weight:700;font-size:1.2rem;color:${t.accent};text-decoration:none">📞 ${A.tel}</a>
-     <a href="https://wa.me/${wa()}" style="font-weight:700;color:${t.accent};text-decoration:none;border:2px solid ${t.accent};padding:.4rem .9rem;border-radius:${r.button==='0'?'0':'999px'}">WhatsApp</a></span>`;
-   if(A.conversion==='buchung') return `<a class="cta" href="#t">Online buchen</a>`;
-   return `<a class="cta" href="#t">Termin anfragen</a>`;
- }
- return `<a class="cta" href="#t">Erstgespräch anfragen</a>`;
+ const found = P().convOpts.find(o=>o[0]===A.conversion);
+ const kind = found ? found[3] : 'formular';
+ if(kind==='call_whatsapp') return `<span style="display:inline-flex;gap:1.2rem;align-items:center;flex-wrap:wrap">
+   <a href="tel:${tel()}" style="font-weight:700;font-size:1.2rem;color:${t.accent};text-decoration:none">📞 ${A.tel}</a>
+   <a href="https://wa.me/${wa()}" style="font-weight:700;color:${t.accent};text-decoration:none;border:2px solid ${t.accent};padding:.4rem .9rem;border-radius:${r.button==='0'?'0':'999px'}">WhatsApp</a></span>`;
+ if(kind==='buchung') return `<a class="cta" href="#t">${P().ctaLabelHero}</a>`;
+ return `<a class="cta" href="#t">${P().ctaLabelHero}</a>`;
 }
 function kontaktBodyHtml(mono){
- if(A.branche==='physio'){
-   if(A.conversion==='formular') return `<p>Schreiben Sie kurz, worum es geht — Sie erhalten innert eines Arbeitstags eine Antwort.</p>
-     <p style="font-family:'${mono}';font-size:.9rem;opacity:.7">[ Anfrage-Formular: Name · Anliegen · Verordnung vorhanden? ]</p>`;
-   return `<p>Rufen Sie an — wir finden gemeinsam einen passenden Termin.</p>`;
- }
- if(A.conversion==='formular') return `<p>Schreib kurz, was du brauchst — du hörst innert eines Arbeitstags von uns.</p>
-   <p style="font-family:'${mono}';font-size:.9rem;opacity:.7">[ Anfrage-Formular: Name · Wunschleistung · Wunschtermin ]</p>`;
- if(A.conversion==='buchung') return `<p>Buch deinen Termin direkt online — in zwei Minuten.</p>
+ const p = P();
+ const found = p.convOpts.find(o=>o[0]===A.conversion);
+ const kind = found ? found[3] : 'formular';
+ if(kind==='formular') return `<p>${p.formularText}</p>
+   <p style="font-family:'${mono}';font-size:.9rem;opacity:.7">[ Anfrage-Formular: ${p.formularFields} ]</p>`;
+ if(kind==='buchung') return `<p>${p.buchungText}</p>
    <p style="font-family:'${mono}';font-size:.9rem;opacity:.7">[ Buchungs-Tool wird hier eingebunden — Seite ist buchungsbereit ]</p>`;
- return `<p>Ruf einfach an oder schreib per WhatsApp — wir finden einen Termin.</p>
+ if(kind==='call_whatsapp') return `<p>${p.callText}</p>
    <p style="margin-top:.6rem"><a href="https://wa.me/${wa()}" style="font-weight:700;text-decoration:underline;color:inherit">→ WhatsApp öffnen</a></p>`;
+ return `<p>${p.callText}</p>`;
 }
 
 /* ================= BEFÜLLUNG: Inhalt + Mengen aus echten Antworten (kein Test-Schalter) =================
-   - quotesN: 0 wenn 'bewertungen' nicht gewählt, sonst feste Pool-Grösse (2)
-   - galleryN: 0 wenn 'arbeiten' nicht gewählt (Coiffeur) bzw. nie (Physio), sonst 4
-   - factsN: Physio — Länge von regFakten() (2 oder 3, je nach Abrechnungsantwort)
-   - spezItems: Physio — genau die gewählten Spezialgebiete (1–4) */
+   - quotesN: 0 wenn 'bewertungen' nicht wählbar/gewählt, sonst feste Pool-Grösse
+   - galleryN: galerieImmer (Tätowierer, craft_slider 95) → immer 4; hatGalerieToggle (Coiffeur) →
+     4 wenn 'arbeiten' gewählt; sonst (Physio, Treuhänder — kein gallery_portfolio im echten Profil) → 0
+   - factsN: Physio — Länge von regFakten(); Tätowierer — Hygiene-Fakten wenn 'hygiene' gewählt; sonst 0
+   - spez_items: genau die gewählten Einträge aus p.spezOpts (1–4), Titel/Text aus p.spezMap */
 function buildContent(){
- const physio = A.branche==='physio';
+ const p = P();
+ const factsAll = A.branche==='physio' ? regFakten() : (A.branche==='tatowierer' ? (p.hygieneFacts||[]) : []);
+ const factsActive = A.branche==='physio' ? true : (A.branche==='tatowierer' ? A.vertrauen.includes('hygiene') : false);
  return {
    name:A.name, ort:A.ort,
-   headline1: physio?'Wieder in':'Schön, dass',
-   headline2: physio?'Bewegung kommen.':'du da bist.',
-   tagline: physio
-     ? `Physiotherapie in ${A.ort} — mit Händen, Herz und einem Plan, der zu Ihrem Leben passt.`
-     : `Schnitt, Farbe und ehrliche Beratung — in einem Salon, in dem du dich nicht verstellen musst.`,
+   headline1:p.headline1, headline2:p.headline2, tagline:p.tagline, branch_label:p.branchLabel, audience:p.audience,
    over_titel: ueberTitel(), over_text: ueberText(),
-   quotes_all: physio
-     ? [{text:'Mia hat mir zum ersten Mal erklärt, WARUM wir was machen.',who:'M.'},{text:'Nach drei Monaten wieder schmerzfrei joggen — hätte ich nicht geglaubt.',who:'S.'}]
-     : [{text:'Zum ersten Mal ein Schnitt, der auch nach drei Wochen noch sitzt.',who:'S.'},{text:'Ehrliche Beratung statt Verkaufsgespräch. Genau deshalb komme ich wieder.',who:'M.'}],
-   quotesN: A.vertrauen.includes('bewertungen') ? 2 : 0,
-   gallery_images: physio ? [] : DUMMY_IMAGES,
-   galleryN: (!physio && A.vertrauen.includes('arbeiten')) ? 4 : 0,
-   facts_all: physio ? regFakten() : [],
-   factsN: physio ? regFakten().length : 0,
-   fakten_title:'Kosten & Krankenkasse',
-   spez_items: (physio && A.vertrauen.includes('spez')) ? A.spez.map(s=>({title:SPEZ_MAP[s][0],text:SPEZ_MAP[s][1]})) : [],
-   preise:[['Schnitt Damen','ab CHF 78'],['Schnitt Herren','ab CHF 52'],['Farbe / Ansatz','ab CHF 85'],['Balayage','ab CHF 160']]
+   quotes_all: p.quotesPool,
+   quotesN: A.vertrauen.includes('bewertungen') ? p.quotesPool.length : 0,
+   gallery_images: DUMMY_IMAGES,
+   galleryN: p.galerieImmer ? 4 : ((p.hatGalerieToggle && A.vertrauen.includes('arbeiten')) ? 4 : 0),
+   facts_all: factsActive ? factsAll : [],
+   factsN: factsActive ? factsAll.length : 0,
+   fakten_title: A.branche==='physio' ? 'Kosten & Krankenkasse' : (A.branche==='tatowierer' ? p.faktenTitelHygiene : null),
+   spez_items: (p.hatSpez && A.vertrauen.includes('spez')) ? A.spez.map(s=>({title:p.spezMap[s][0], text:p.spezMap[s][1]})) : [],
+   spezLabel: p.spezLabel,
+   preise: p.preise,
+   ctaLabelKontakt: p.ctaLabelKontakt
  };
 }
 
-/* ================= SPEZIALISIERUNG (Physio) — 1 = gross inszeniert, 2–4 = Reihe =================
+/* ================= SPEZIALISIERUNG — 1 = gross inszeniert, 2–4 = Reihe =================
    Kein eigener quantity_rules-Bucket (Spezialisierung ist kein MVP-Sektionstyp aus 7d), aber
-   dieselbe Grundregel: Menge entscheidet Layout, nicht Zufall. */
+   dieselbe Grundregel: Menge entscheidet Layout, nicht Zufall. Überschrift ist branchenspezifisch
+   (c.spezLabel: "Spezialisierung"/"Mandantengruppen"/"Stile"). */
 function spezHtml_warm(c,t,f,r){
  if(!c.spez_items.length) return '';
  if(c.spez_items.length===1){ const s=c.spez_items[0]; return `
    <section style="background:${t.surface_tinted};padding:5rem 0"><div class="wrap" style="text-align:center">
-     <h2>Meine Spezialisierung</h2>
+     <h2>Meine ${c.spezLabel}</h2>
      <h3 style="font-family:'${f.display.family}',serif;font-size:1.6rem;color:${t.primary};margin-bottom:.6rem">${s.title}</h3>
      <p style="max-width:46ch;margin:0 auto">${s.text}</p>
    </div></section>`; }
- return `<section style="padding:4.5rem 0"><div class="wrap"><h2>Meine Spezialgebiete</h2>
+ return `<section style="padding:4.5rem 0"><div class="wrap"><h2>Meine ${c.spezLabel}</h2>
    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
      ${c.spez_items.map(s=>`<div style="background:${t.surface_tinted};border-radius:${r.card};padding:1.4rem"><h3 style="font-family:'${f.display.family}',serif;font-size:1.15rem;color:${t.primary_dark};margin-bottom:.4rem">${s.title}</h3><p style="font-size:.92rem">${s.text}</p></div>`).join('')}
    </div></div></section>`;
@@ -537,12 +659,12 @@ function spezHtml_modern(c,t,f,r,eyebrow){
  if(!c.spez_items.length) return '';
  if(c.spez_items.length===1){ const s=c.spez_items[0]; return `
    <section style="padding:4.5rem 0"><div class="wrap">
-     ${eyebrow('Spezialisierung')}
+     ${eyebrow(c.spezLabel)}
      <h2 style="font-family:'${f.display.family}',sans-serif;font-weight:600;font-size:1.9rem;color:${t.primary_dark};margin-bottom:.6rem">${s.title}</h2>
      <p style="max-width:46ch">${s.text}</p>
    </div></section>`; }
  return `<section style="padding:4.5rem 0"><div class="wrap">
-   ${eyebrow('Spezialisierung')}
+   ${eyebrow(c.spezLabel)}
    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:.4rem">
      ${c.spez_items.map(s=>`<div style="background:#fff;border-radius:${r.card};padding:1.3rem"><h3 style="font-family:'${f.display.family}',sans-serif;font-weight:600;font-size:1.1rem;color:${t.primary_dark};margin-bottom:.4rem">${s.title}</h3><p style="font-size:.92rem;color:${t.text}">${s.text}</p></div>`).join('')}
    </div></div></section>`;
@@ -551,25 +673,25 @@ function spezHtml_gehoben(c,t,f,muted,sep){
  if(!c.spez_items.length) return '';
  if(c.spez_items.length===1){ const s=c.spez_items[0]; return `
    ${sep}<section style="padding:7rem 0;text-align:center"><div class="wrap">
-     <h2 style="font-family:'${f.display.family}',serif;font-weight:300;font-size:2rem;margin-bottom:1rem;line-height:1.15">Meine <em style="font-style:italic">Spezialisierung</em></h2>
+     <h2 style="font-family:'${f.display.family}',serif;font-weight:300;font-size:2rem;margin-bottom:1rem;line-height:1.15">Meine <em style="font-style:italic">${c.spezLabel}</em></h2>
      <p style="font-size:1.1rem;color:${t.primary};margin-bottom:.6rem">${s.title}</p>
      <p style="max-width:46ch;margin:0 auto;color:${muted}">${s.text}</p>
    </div></section>`; }
  return `${sep}<section style="padding:6rem 0"><div class="wrap">
-   <h2 style="font-family:'${f.display.family}',serif;font-weight:300;font-size:2rem;margin-bottom:1.8rem;line-height:1.15">Meine <em style="font-style:italic">Spezialgebiete</em></h2>
+   <h2 style="font-family:'${f.display.family}',serif;font-weight:300;font-size:2rem;margin-bottom:1.8rem;line-height:1.15">Meine <em style="font-style:italic">${c.spezLabel}</em></h2>
    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
      ${c.spez_items.map(s=>`<div style="border:1px solid rgba(26,24,20,.18);padding:1.2rem 1.4rem"><h3 style="font-family:'${f.display.family}',serif;font-size:1.05rem;color:${t.primary};margin-bottom:.4rem">${s.title}</h3><p style="font-size:.9rem;color:${muted}">${s.text}</p></div>`).join('')}
    </div></div></section>`;
 }
 
-/* ================= ABLAUF (Physio, fixe 3 Schritte — kein mengenvariabler Sektionstyp) ================= */
+/* ================= ABLAUF (nur Physio, hatAblauf — fixe 3 Schritte, kein mengenvariabler Typ) ================= */
 const ABLAUF_STEPS = [
   ['Abklärung','Erstgespräch und Untersuchung — Zeit für Ihre Geschichte und Ziele.'],
   ['Behandlung','Individueller Plan: manuell, aktiv, alltagstauglich.'],
   ['Belastbarkeit','Aufbau bis zu Ihrem Ziel: schmerzfrei arbeiten, trainieren, leben.']
 ];
 
-/* ================= PREISE (Coiffeur, fix — kein mengenvariabler Sektionstyp) ================= */
+/* ================= PREISE (fix — kein mengenvariabler Sektionstyp; leer = Sektion entfällt) ================= */
 function preiseHtml_warm(c,t,r,mono){ return `
  <section style="background:${t.primary};color:${t.surface_tinted};padding:4.5rem 0"><div class="wrap">
    <h2 style="color:#fff">Klare Preise.</h2>
@@ -595,13 +717,13 @@ function preiseHtml_gehoben(c,t,f,muted,sep){ return `
 /* ================================================================
    WELT-RENDERER — vier Welten, identische Formsprache wie die Spielwiese
    (Hero-Anatomie, Galerie, Zitate, Fakten, Border-/Radius-Stand),
-   ergänzt um die Fragebogen-eigenen Bausteine: Preise (Coiffeur),
-   Spezialisierung + Ablauf (Physio), Conversion-CTA aus A.conversion.
+   ergänzt um die Fragebogen-eigenen Bausteine: Preise (wenn c.preise befüllt),
+   Spezialisierung (wenn c.spez_items befüllt), Ablauf (nur Physio),
+   Conversion-CTA aus A.conversion.
    ================================================================ */
 function renderWarmNahbar(world, c) {
   const t = world.design_tokens.colors, f = world.design_tokens.fonts, r = world.design_tokens.radii;
   const qr = world.quantity_rules, mono = f.utility_mono.family;
-  const physio = A.branche==='physio';
 
   const qL = resolveLayout(qr.quotes, c.quotesN);
   const gL = resolveLayout(qr.gallery_items, c.galleryN);
@@ -618,7 +740,7 @@ function renderWarmNahbar(world, c) {
           <p style="margin-top:1rem;font-size:.9rem;color:${t.primary}">— ${quotes[0].who}</p>
         </div></section>`;
     return `
-      <section style="background:${t.surface_tinted};padding:4rem 0"><div class="wrap"><h2>Das sagen ${physio?'Patientinnen':'Kundinnen'}</h2>
+      <section style="background:${t.surface_tinted};padding:4rem 0"><div class="wrap"><h2>Das sagen ${c.audience}</h2>
         <div style="display:grid;grid-template-columns:repeat(${quotes.length},1fr);gap:1rem">
           ${quotes.map(q=>`<div style="background:#fff;border-radius:${r.card};padding:1.4rem"><p style="font-size:1rem;line-height:1.6;color:${t.primary_dark}">«${q.text}»</p><p style="margin-top:.8rem;font-size:.85rem;color:${t.primary}">— ${q.who}</p></div>`).join('')}
         </div></div></section>`;
@@ -649,7 +771,7 @@ function renderWarmNahbar(world, c) {
         </ul></div></section>`;
   }
   function ablaufHtml(){
-    if(!physio) return '';
+    if(A.branche!=='physio') return '';
     return `<section style="background:${t.surface_tinted};padding:4.5rem 0"><div class="wrap"><h2>So begleiten wir Sie.</h2>
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:2rem">
         ${ABLAUF_STEPS.map(([h,p],i)=>`<div><span style="font-family:'${f.display.family}',serif;font-size:2rem;color:${t.accent};display:block;margin-bottom:.4rem">${i+1}</span><h3 style="font-size:1rem;margin-bottom:.3rem;color:${t.primary_dark}">${h}</h3><p style="font-size:.92rem">${p}</p></div>`).join('')}
@@ -676,14 +798,14 @@ function renderWarmNahbar(world, c) {
   ${heroCtaHtml(t,r)}
 </div></header>
 ${galleryHtml()}
-${!physio ? preiseHtml_warm(c,t,r,mono) : ''}
-${physio ? spezHtml_warm(c,t,f,r) : ''}
+${c.preise.length ? preiseHtml_warm(c,t,r,mono) : ''}
+${c.spez_items.length ? spezHtml_warm(c,t,f,r) : ''}
 ${factsHtml()}
 ${ablaufHtml()}
 ${quotesHtml()}
-<section style="padding:4rem 0"><div class="wrap"><h2>${c.over_titel}</h2><p style="max-width:52ch">${c.over_text}</p>${physio?qualiHtml(t.primary):''}</div></section>
-<section class="kontakt" id="t" style="${!physio ? `margin-top:-${r.section_cap}` : ''}"><div class="wrap">
-  <h2>${physio?'Erstgespräch anfragen':'Termin buchen'}</h2>
+<section style="padding:4rem 0"><div class="wrap"><h2>${c.over_titel}</h2><p style="max-width:52ch">${c.over_text}</p>${qualiHtml(t.primary)}</div></section>
+<section class="kontakt" id="t" style="${c.preise.length ? `margin-top:-${r.section_cap}` : ''}"><div class="wrap">
+  <h2>${c.ctaLabelKontakt}</h2>
   ${kontaktBodyHtml(mono)}
   <p style="margin-top:1rem"><a style="font-family:'${f.display.family}',serif;font-size:1.5rem;color:${t.accent};text-decoration:none" href="tel:${tel()}">${A.tel}</a><br>${c.name} · ${c.ort}</p>
 </div></section>
@@ -695,7 +817,6 @@ function renderModernTransparent(world, c) {
   const t = world.design_tokens.colors, f = world.design_tokens.fonts, r = world.design_tokens.radii;
   const qr = world.quantity_rules, mono = f.utility_mono.family;
   const sage = t.surface_sage || '#c9d8ce';
-  const physio = A.branche==='physio';
 
   const qL = resolveLayout(qr.quotes, c.quotesN);
   const gL = resolveLayout(qr.gallery_items, c.galleryN);
@@ -732,14 +853,14 @@ function renderModernTransparent(world, c) {
         ${facts.map(ft=>`<p style="font-family:'${mono}';font-size:.9rem;line-height:1.8;color:${t.text}">— ${ft}</p>`).join('')}</div></section>`;
     return `
       <section style="background:${t.primary};padding:4.5rem 0"><div class="wrap" style="display:grid;grid-template-columns:2fr 3fr;gap:3rem;align-items:start">
-        <div>${eyebrow('Kosten & Abrechnung')}<h2 style="font-family:'${f.display.family}',sans-serif;font-weight:600;font-size:1.9rem;color:#fff;margin-bottom:.8rem">${c.fakten_title}</h2>
+        <div>${eyebrow(c.fakten_title)}<h2 style="font-family:'${f.display.family}',sans-serif;font-weight:600;font-size:1.9rem;color:#fff;margin-bottom:.8rem">${c.fakten_title}</h2>
         <p style="color:${sage};max-width:34ch;font-size:.95rem">Damit Sie sich um Ihre Genesung kümmern können — nicht um Formulare.</p></div>
         <ul style="background:#fff;border-radius:${r.card};padding:1.8rem;font-family:'${mono}';font-size:.88rem;line-height:1.9;list-style:none">
           ${facts.map(ft=>`<li style="padding-left:1.4rem;position:relative;margin-bottom:.6rem;color:${t.text}"><span style="position:absolute;left:0;color:${t.primary}">—</span>${ft}</li>`).join('')}
         </ul></div></section>`;
   }
   function ablaufHtml(){
-    if(!physio) return '';
+    if(A.branche!=='physio') return '';
     return `<section style="background:${sage};padding:4.5rem 0"><div class="wrap">${eyebrow('So läuft es ab')}<h2 style="font-family:'${f.display.family}',sans-serif;font-weight:600">Vom ersten Termin zurück in den Alltag.</h2>
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:2rem">
         ${ABLAUF_STEPS.map(([h,p],i)=>`<div><span style="font-family:'${mono}';font-size:2rem;color:${t.primary};display:block;margin-bottom:.4rem">0${i+1}</span><h3 style="font-size:1rem;margin-bottom:.3rem;color:${t.primary_dark}">${h}</h3><p style="font-size:.92rem">${p}</p></div>`).join('')}
@@ -757,7 +878,7 @@ function renderModernTransparent(world, c) {
   return `<!doctype html><html lang="de-CH"><head><meta charset="utf-8">
 <link href="${fontUrl(world)}" rel="stylesheet"><style>${css}</style></head><body>
 <header style="padding:5rem 0 4rem"><div class="wrap">
-  ${eyebrow(`${physio?'Physiotherapie':'Coiffeur · Friseur'} · ${c.ort}`)}
+  ${eyebrow(`${c.branch_label} · ${c.ort}`)}
   <h1 style="font-family:'${f.display.family}',sans-serif;font-weight:800;font-size:clamp(2.4rem,6.5vw,4.6rem);line-height:1;color:${t.primary_dark};letter-spacing:-.02em;margin-bottom:1rem">
     ${c.headline1} <em style="font-style:normal;color:${t.primary};font-weight:400">${c.headline2}</em></h1>
   <p style="max-width:46ch;margin-bottom:1.5rem;font-size:1.05rem">${c.tagline}</p>
@@ -765,13 +886,13 @@ function renderModernTransparent(world, c) {
 </div></header>
 ${factsHtml()}
 ${galleryHtml()}
-${!physio ? preiseHtml_modern(c,t,mono,eyebrow) : ''}
-${physio ? spezHtml_modern(c,t,f,r,eyebrow) : ''}
+${c.preise.length ? preiseHtml_modern(c,t,mono,eyebrow) : ''}
+${c.spez_items.length ? spezHtml_modern(c,t,f,r,eyebrow) : ''}
 ${ablaufHtml()}
 ${quotesHtml()}
-<section><div class="wrap">${eyebrow(c.over_titel)}<p style="max-width:52ch;margin-top:.4rem">${c.over_text}</p>${physio?qualiHtml(t.primary):''}</div></section>
+<section><div class="wrap">${eyebrow(c.over_titel)}<p style="max-width:52ch;margin-top:.4rem">${c.over_text}</p>${qualiHtml(t.primary)}</div></section>
 <section class="kontakt" id="t"><div class="wrap">${eyebrow('Kontakt')}
-  <h2 style="font-family:'${f.display.family}',sans-serif;font-weight:600;font-size:1.9rem;margin-bottom:.8rem">${physio?'Erstgespräch anfragen':'Termin anfragen'}</h2>
+  <h2 style="font-family:'${f.display.family}',sans-serif;font-weight:600;font-size:1.9rem;margin-bottom:.8rem">${c.ctaLabelKontakt}</h2>
   ${kontaktBodyHtml(mono)}
   <p style="margin-top:.6rem"><a style="font-weight:600;font-size:1.6rem;color:${t.accent};text-decoration:none" href="tel:${tel()}">${A.tel}</a><br>${c.name} · ${c.ort}</p>
 </div></section>
@@ -785,7 +906,37 @@ function renderTrendigMutig(world, c) {
 
   const qL = resolveLayout(qr.quotes, c.quotesN);
   const gL = resolveLayout(qr.gallery_items, c.galleryN);
+  const fL = resolveLayout(qr.facts, c.factsN);
   const quotes = c.quotes_all.slice(0, qL.effectiveCount);
+  const facts  = c.facts_all.slice(0, fL.effectiveCount);
+
+  function factsHtml(){
+    if(fL.layout==='hidden' || !facts.length) return '';
+    if(fL.layout==='inline_facts') return `
+      <section style="padding:3.5rem 0"><div class="wrap">
+        <p style="font-family:'${mono}';font-size:.75rem;text-transform:uppercase;letter-spacing:.1em;color:${t.muted};margin-bottom:.6rem">${c.fakten_title}</p>
+        ${facts.map(ft=>`<p style="font-family:'${mono}';font-size:.9rem;margin-bottom:.3rem">— ${ft}</p>`).join('')}
+      </div></section>`;
+    return `
+      <section style="background:${t.primary};color:${t.surface_base};padding:4.5rem 0"><div class="wrap">
+        <h2 style="font-family:'${f.display.family}';font-size:clamp(2rem,5vw,3rem);text-transform:uppercase;margin-bottom:1.2rem;line-height:.95">${(c.fakten_title||'').toUpperCase()}.</h2>
+        <ul style="font-family:'${mono}';font-size:.9rem;line-height:2;list-style:none;border-left:4px solid ${t.accent};padding-left:1.4rem">
+          ${facts.map(ft=>`<li style="border-bottom:1px solid rgba(245,243,238,.15);padding:.3rem 0">${ft}</li>`).join('')}
+        </ul></div></section>`;
+  }
+  function spezHtml_trendig(){
+    if(!c.spez_items.length) return '';
+    if(c.spez_items.length===1){ const s=c.spez_items[0]; return `
+      <section style="background:${t.primary};padding:5rem 0"><div class="wrap">
+        <p style="font-family:'${f.display.family}';font-size:clamp(1.8rem,5vw,3rem);color:${t.surface_base};text-transform:uppercase;border-left:8px solid ${t.accent};padding-left:1.5rem">${s.title}</p>
+        <p style="margin-top:1rem;padding-left:calc(1.5rem + 8px);color:${t.muted};max-width:52ch">${s.text}</p>
+      </div></section>`; }
+    return `<section style="padding:4rem 0"><div class="wrap">
+      <h2 style="font-family:'${f.display.family}';font-size:clamp(2rem,5vw,3rem);text-transform:uppercase;margin-bottom:1.5rem;line-height:.95">${c.spezLabel}.</h2>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+        ${c.spez_items.map(s=>`<div style="border:2px solid ${t.text};padding:1.2rem"><h3 style="font-family:'${f.display.family}';font-size:1.3rem;text-transform:uppercase;margin-bottom:.4rem">${s.title}</h3><p style="font-size:.9rem">${s.text}</p></div>`).join('')}
+      </div></div></section>`;
+  }
 
   function quotesHtml(){
     if(qL.layout==='hidden') return '';
@@ -843,11 +994,13 @@ function renderTrendigMutig(world, c) {
 <div style="background:${t.accent};overflow:hidden;padding:.4rem 0;font-family:'${f.display.family}';text-transform:uppercase;white-space:nowrap;font-size:.85rem;letter-spacing:.04em" aria-hidden="true">
   <span class="mq-inner" style="display:inline-block;padding-right:3rem;animation:mq 18s linear infinite">${marquee.repeat(4)}</span></div>
 ${galleryHtml()}
-${preiseHtml_trendig(c,t,f,mono)}
+${c.spez_items.length ? spezHtml_trendig() : ''}
+${factsHtml()}
+${c.preise.length ? preiseHtml_trendig(c,t,f,mono) : ''}
 ${quotesHtml()}
 <section style="padding:4rem 0"><div class="wrap"><p style="max-width:52ch">${c.over_text}</p></div></section>
 <section class="kontakt" id="t"><div class="wrap" style="padding:4rem 0">
-  <h2 style="font-family:'${f.display.family}';font-size:clamp(2rem,5vw,3rem);text-transform:uppercase;margin-bottom:1rem;line-height:.95">TERMIN.</h2>
+  <h2 style="font-family:'${f.display.family}';font-size:clamp(2rem,5vw,3rem);text-transform:uppercase;margin-bottom:1rem;line-height:.95">${c.ctaLabelKontakt.toUpperCase()}.</h2>
   ${kontaktBodyHtml(mono)}
   <a style="font-family:'${f.display.family}';font-size:clamp(1.8rem,4.5vw,3rem);text-decoration:none;text-transform:uppercase;display:block;margin:.6rem 0" href="tel:${tel()}">${A.tel}</a>
   <span style="font-family:'${mono}';font-size:.9rem">${c.name} · ${c.ort}</span>
@@ -860,7 +1013,6 @@ function renderGehobenElegant(world, c) {
   const t = world.design_tokens.colors, f = world.design_tokens.fonts;
   const qr = world.quantity_rules;
   const muted = t.text_muted;
-  const physio = A.branche==='physio';
 
   const qL = resolveLayout(qr.quotes, c.quotesN);
   const gL = resolveLayout(qr.gallery_items, c.galleryN);
@@ -902,7 +1054,7 @@ function renderGehobenElegant(world, c) {
           </ul></div></div></section>`;
   }
   function ablaufHtml(){
-    if(!physio) return '';
+    if(A.branche!=='physio') return '';
     return `${sep}<section style="padding:6rem 0;text-align:center"><div class="wrap">
       <h2 style="font-family:'${f.display.family}',serif;font-weight:300;font-size:2rem;margin-bottom:2rem;line-height:1.15">So <em style="font-style:italic">begleiten wir Sie</em></h2>
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:2rem">
@@ -929,8 +1081,8 @@ function renderGehobenElegant(world, c) {
 ${sep}
 ${factsHtml()}
 ${galleryHtml()}
-${!physio ? preiseHtml_gehoben(c,t,f,muted,sep) : ''}
-${physio ? spezHtml_gehoben(c,t,f,muted,sep) : ''}
+${c.preise.length ? preiseHtml_gehoben(c,t,f,muted,sep) : ''}
+${c.spez_items.length ? spezHtml_gehoben(c,t,f,muted,sep) : ''}
 ${ablaufHtml()}
 <section style="padding:8rem 0;text-align:center"><div class="wrap">
   <span style="font-family:'${f.display.family}',serif;font-weight:300;font-size:clamp(5rem,14vw,10rem);line-height:1;color:${t.accent};display:block">8</span>
@@ -938,10 +1090,10 @@ ${ablaufHtml()}
 </div></section>
 ${quotesHtml()}
 ${sep}
-<section style="padding:7rem 0;text-align:center"><div class="wrap"><p style="max-width:52ch;margin:0 auto;color:${muted}">${c.over_text}</p></div></section>
+<section style="padding:7rem 0;text-align:center"><div class="wrap"><p style="max-width:52ch;margin:0 auto;color:${muted}">${c.over_text}</p>${qualiHtml(muted)}</div></section>
 ${sep}
 <section style="background:${t.surface_tinted};padding:7rem 0;text-align:center" id="t"><div class="wrap">
-  <h2 style="font-family:'${f.display.family}',serif;font-weight:300;font-size:2rem;margin-bottom:1.2rem;line-height:1.15"><em style="font-style:italic">${physio?'Erstgespräch anfragen':'Termin anfragen'}</em></h2>
+  <h2 style="font-family:'${f.display.family}',serif;font-weight:300;font-size:2rem;margin-bottom:1.2rem;line-height:1.15"><em style="font-style:italic">${c.ctaLabelKontakt}</em></h2>
   ${kontaktBodyHtml('IBM Plex Mono')}
   <p style="margin-top:1rem"><a style="font-family:'${f.display.family}',serif;font-weight:300;font-size:1.8rem;color:${t.accent};text-decoration:none" href="tel:${tel()}">${A.tel}</a></p>
   <p style="margin-top:.4rem;color:${muted}">${c.name} · ${c.ort}</p>
@@ -959,7 +1111,7 @@ const RENDERERS = {
 
 /* ================= GENERIERUNG ================= */
 function generate(){
-  const world = WORLDS[A.charakter];
+  const world = effectiveWorld(A.charakter, A.branche);
   const c = buildContent();
   const html = RENDERERS[A.charakter](world, c);
   document.getElementById('frame').srcdoc = html;
