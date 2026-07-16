@@ -379,6 +379,7 @@ beginnt, baut Vokabeln ohne Satzbau.
 | I6 | Kontrast ≥ WCAG AA, Fliesstext ≥ 16px, Zeilenlänge 45–90 Zeichen | berechenbar |
 | I7 | **Token-Treue:** nur Werte der gewählten Charakter-Welt; **2 gestalterische Schriftfamilien (Display+Body) + optional 1 funktionale Utility-Schrift nur für Fakten** (Preise, Regulatorik — nie Fliesstext/Headlines); Spacing aus Skala | Ist ⊆ Token-Menge |
 | I8 | Texte in Profil-Sprache(n), keine Platzhalter-Reste | Pattern-Check |
+| I9 | **Responsive-Boden:** kein horizontaler Overflow ab 320px Breite; mehrspaltige Grids kollabieren mobil zu einer Spalte (Ausnahme: kleine Galerie-Kacheln dürfen 2-spaltig bleiben, wenn sie sauber passen); Überlappungs-/Versatz-Effekte (FR1) deaktivieren sich mobil | Viewport-Screenshot-Prüfung (320/375/768px), analog H1 — erst nach Rendering hart prüfbar, keine HTML-Analyse |
 
 ### Schritt 2 — Held-Durchsetzung (Hierarchie-Mechanik)
 
@@ -438,6 +439,12 @@ funktionale Mono machte die Fakten-Karte semantisch stark („Schrift sagt: das 
 Fakt, nicht Marketing"); (b) **H1 ist erst nach Rendering hart prüfbar** — der
 Validator braucht Layout-Rendering, nicht nur HTML-Analyse. Gestalterisches Wow
 hängt erwartungsgemäss an Quelle 2 (echtes Material) + Token-Politur.
+
+**Erkenntnis aus Responsive-Durchgang (Ernährungsberatung, alle Welten/Skins):**
+I9 (Responsive-Boden) ist wie H1 **erst nach Rendering hart prüfbar** — ein Grid
+sieht in der HTML-Analyse korrekt aus, läuft aber erst bei 320px sichtbar aus dem
+Viewport. Für den Validator: I9 braucht dieselbe Viewport-Screenshot-Prüfung wie
+H1 (320/375/768px je Welt × Skin), keine statische Regel-Prüfung.
 
 **Erkenntnisse aus Generierungs-Versuch 2 (Coiffeur A/B, Varianz-Test NICHT
 bestanden):** Trotz anderer Tokens erinnerte der Coiffeur an den Physio — die

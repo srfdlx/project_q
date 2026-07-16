@@ -446,6 +446,23 @@ function fontUrl(world) {
 function tel(c) { return c.tel.replace(/\s/g,''); }
 
 /* ================================================================
+   RESPONSIVE-BODEN (I9, konzept-snapshot 7d) — einmal pro Datei definiert,
+   von allen vier Welt-Renderern gemeinsam genutzt statt viermal kopiert.
+   Grid-Container bekommen zusätzlich zum inline grid-template-columns eine
+   Klasse; diese Regel überschreibt sie ab 640px mit !important auf 1 Spalte
+   (Ausnahme grid-gallery: kleine Kacheln dürfen 2-spaltig bleiben, daher
+   auto-fit statt fixer Spaltenzahl). Versatz-Zellen (trendig-mutig-Galerie)
+   verlieren ihren Spalten-/Margin-Versatz komplett. */
+const MOBILE_RESET_CSS = `
+  @media (max-width:640px){
+    html,body{overflow-x:hidden;max-width:100vw}
+    h1,h2,h3,blockquote,p{overflow-wrap:break-word}
+    .grid-2col,.grid-cards,.grid-feature,.grid-stagger,.grid-gallery-lux{grid-template-columns:1fr !important}
+    .grid-gallery{grid-template-columns:repeat(auto-fit,minmax(120px,1fr)) !important}
+    .grid-stagger .stagger-cell{grid-column:auto !important;margin-top:0 !important}
+  }`;
+
+/* ================================================================
    WELT-RENDERER — WARM & NAHBAR
    ================================================================ */
 function renderWarmNahbar(world, skin, fill) {
@@ -480,7 +497,7 @@ function renderWarmNahbar(world, skin, fill) {
     return `
       <section style="background:${t.surface_tinted};padding:4rem 0">
         <div class="wrap"><h2>Das sagen ${c.audience}</h2>
-          <div style="display:grid;grid-template-columns:repeat(${quotes.length},1fr);gap:1rem">
+          <div class="grid-cards" style="display:grid;grid-template-columns:repeat(${quotes.length},1fr);gap:1rem">
             ${quotes.map(q=>`
               <div style="background:#fff;border-radius:${r.card};padding:1.4rem">
                 <p style="font-size:1rem;line-height:1.6;color:${t.primary_dark}">«${q.text}»</p>
@@ -503,7 +520,7 @@ function renderWarmNahbar(world, skin, fill) {
     const cols = n === 1 ? '1fr' : n === 2 ? '1fr 1fr' : '1fr 1fr 1fr';
     return `<section class="wrap" style="padding:4.5rem 0">
       <h2 style="font-family:'${f.display.family}',serif;font-size:1.9rem;color:${t.primary_dark};margin-bottom:1rem">Unsere Arbeiten</h2>
-      <div style="display:grid;grid-template-columns:${cols};gap:.8rem">
+      <div class="grid-gallery" style="display:grid;grid-template-columns:${cols};gap:.8rem">
         ${Array(n).fill(0).map((_,i)=>photoCell(i)).join('')}
       </div></section>`;
   }
@@ -521,7 +538,7 @@ function renderWarmNahbar(world, skin, fill) {
     return `
       <section style="padding:4.5rem 0"><div class="wrap">
         <h2 style="font-family:'${f.display.family}',serif;font-size:1.9rem;color:${t.primary_dark};margin-bottom:1.2rem">Unsere Leistungen</h2>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+        <div class="grid-2col" style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
           ${services.map(s=>`<div style="background:${t.surface_tinted};border-radius:${r.card};padding:1.2rem 1.4rem"><span style="font-size:1rem;color:${t.primary_dark}">${s}</span></div>`).join('')}
         </div>
       </div></section>`;
@@ -559,7 +576,7 @@ function renderWarmNahbar(world, skin, fill) {
 
   return `<!doctype html><html lang="de-CH"><head><meta charset="utf-8">
 <link href="${fontUrl(world)}" rel="stylesheet">
-<style>${css}</style></head><body>
+<style>${css}${MOBILE_RESET_CSS}</style></head><body>
 <header class="hero"><div class="wrap">
   <h1>${c.headline1} ${c.headline2}</h1>
   <p style="max-width:42ch;margin:1rem 0 1.5rem;font-size:1.1rem">${c.tagline}</p>
@@ -621,7 +638,7 @@ function renderModernTransparent(world, skin, fill) {
     return `
       <section style="background:${sage};padding:4rem 0"><div class="wrap">
         ${eyebrow('Kundenstimmen')}
-        <div style="display:grid;grid-template-columns:repeat(${quotes.length},1fr);gap:1rem;margin-top:.4rem">
+        <div class="grid-cards" style="display:grid;grid-template-columns:repeat(${quotes.length},1fr);gap:1rem;margin-top:.4rem">
           ${quotes.map(q=>`
             <div style="background:#fff;border-radius:${r.card};padding:1.4rem">
               <p style="font-size:.95rem;line-height:1.6;color:${t.primary_dark}">«${q.text}»</p>
@@ -642,7 +659,7 @@ function renderModernTransparent(world, skin, fill) {
     const cols = n === 1 ? '1fr' : '1fr 1fr';
     return `<section style="padding:4.5rem 0"><div class="wrap">
       ${eyebrow('Galerie & Arbeiten')}
-      <div style="display:grid;grid-template-columns:${cols};gap:1rem;margin-top:.4rem">
+      <div class="grid-gallery" style="display:grid;grid-template-columns:${cols};gap:1rem;margin-top:.4rem">
         ${Array(n).fill(0).map((_,i)=>photoCell(i)).join('')}
       </div></div></section>`;
   }
@@ -659,7 +676,7 @@ function renderModernTransparent(world, skin, fill) {
     return `
       <section style="padding:4.5rem 0"><div class="wrap">
         ${eyebrow('Leistungen')}
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin-top:.4rem">
+        <div class="grid-2col" style="display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin-top:.4rem">
           ${services.map(s=>`<div style="background:#fff;border-radius:${r.card};padding:1.1rem 1.3rem"><span style="font-size:.95rem;color:${t.text}">${s}</span></div>`).join('')}
         </div>
       </div></section>`;
@@ -673,7 +690,7 @@ function renderModernTransparent(world, skin, fill) {
         ${facts.map(ft=>`<p style="font-family:'${mono}';font-size:.9rem;line-height:1.8;color:${t.text}">— ${ft}</p>`).join('')}
       </div></section>`;
     return `
-      <section style="background:${t.primary};padding:4.5rem 0"><div class="wrap" style="display:grid;grid-template-columns:2fr 3fr;gap:3rem;align-items:start">
+      <section style="background:${t.primary};padding:4.5rem 0"><div class="wrap grid-2col" style="display:grid;grid-template-columns:2fr 3fr;gap:3rem;align-items:start">
         <div>
           ${eyebrow('Kosten & Abrechnung')}
           <h2 style="font-family:'${f.display.family}',sans-serif;font-weight:600;font-size:1.9rem;color:#fff;margin-bottom:.8rem">${c.fakten_title}</h2>
@@ -695,7 +712,7 @@ function renderModernTransparent(world, skin, fill) {
 
   return `<!doctype html><html lang="de-CH"><head><meta charset="utf-8">
 <link href="${fontUrl(world)}" rel="stylesheet">
-<style>${css}</style></head><body>
+<style>${css}${MOBILE_RESET_CSS}</style></head><body>
 <header style="padding:5rem 0 4rem"><div class="wrap">
   ${eyebrow(`${c.branch_label} · ${c.ort}`)}
   <h1 style="font-family:'${f.display.family}',sans-serif;font-weight:800;font-size:clamp(2.4rem,6.5vw,4.6rem);line-height:1;color:${t.primary_dark};letter-spacing:-.02em;margin-bottom:1rem">
@@ -763,9 +780,9 @@ function renderTrendigMutig(world, skin, fill) {
       </div></section>`;
   }
 
-  function photoCell(i, label, extraStyle) {
+  function photoCell(i, label, extraStyle, extraClass) {
     const src = c.gallery_images[i % c.gallery_images.length];
-    return `<div style="aspect-ratio:3/2;background:url('${src}') center/cover;position:relative;overflow:hidden;${extraStyle||''}">
+    return `<div class="${extraClass||''}" style="aspect-ratio:3/2;background:url('${src}') center/cover;position:relative;overflow:hidden;${extraStyle||''}">
       <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(13,13,13,.15),rgba(13,13,13,.6))"></div>
       <span style="position:absolute;bottom:.5rem;left:.5rem;font-family:'${mono}';font-size:.65rem;color:${t.surface_base};background:${t.primary};padding:.2rem .5rem;z-index:1">${label}</span>
     </div>`;
@@ -778,12 +795,13 @@ function renderTrendigMutig(world, skin, fill) {
       const cols = n === 1 ? '1fr' : '3fr 2fr';
       return `<section class="wrap" style="padding:4rem 0">
         <h2 style="font-family:'${f.display.family}';font-size:clamp(2rem,5vw,3rem);text-transform:uppercase;margin-bottom:1rem;line-height:.95">Arbeiten.</h2>
-        <div style="display:grid;grid-template-columns:${cols};gap:.6rem">
+        <div class="grid-feature" style="display:grid;grid-template-columns:${cols};gap:.6rem">
           ${Array(n).fill(0).map((_,i)=>photoCell(i,`Beispiel ${i+1}`)).join('')}
         </div></section>`;
     }
     /* Versatz durch unterschiedliche Spaltenbreiten + margin-top-Offsets statt Zeilen-Spans —
-       jede Kachel bleibt dadurch unabhängig aspect-ratio:3/2, nur die Breite variiert (FR1) */
+       jede Kachel bleibt dadurch unabhängig aspect-ratio:3/2, nur die Breite variiert (FR1).
+       Mobil (I9) deaktiviert grid-stagger + stagger-cell den ganzen Versatz. */
     const staggerCfg = [
       {col:'1/6',mt:'0'},{col:'6/10',mt:'2rem'},{col:'10/13',mt:'-1rem'},
       {col:'1/7',mt:'1.5rem'},{col:'7/13',mt:'0'}
@@ -791,8 +809,8 @@ function renderTrendigMutig(world, skin, fill) {
     const cellsCount = Math.min(n, staggerCfg.length);
     return `<section class="wrap" style="padding:4rem 0">
       <h2 style="font-family:'${f.display.family}';font-size:clamp(2rem,5vw,3rem);text-transform:uppercase;margin-bottom:1rem;line-height:.95">Arbeiten.</h2>
-      <div style="display:grid;grid-template-columns:repeat(12,1fr);gap:.6rem">
-        ${staggerCfg.slice(0,cellsCount).map((cfg,i)=>photoCell(i,'Portfolio',`grid-column:${cfg.col};margin-top:${cfg.mt}`)).join('')}
+      <div class="grid-stagger" style="display:grid;grid-template-columns:repeat(12,1fr);gap:.6rem">
+        ${staggerCfg.slice(0,cellsCount).map((cfg,i)=>photoCell(i,'Portfolio',`grid-column:${cfg.col};margin-top:${cfg.mt}`,'stagger-cell')).join('')}
       </div></section>`;
   }
 
@@ -808,7 +826,7 @@ function renderTrendigMutig(world, skin, fill) {
     return `
       <section style="background:${t.primary};padding:4rem 0"><div class="wrap">
         <h2 style="font-family:'${f.display.family}';font-size:clamp(2rem,5vw,3rem);text-transform:uppercase;margin-bottom:1rem;color:${t.surface_base};line-height:.95">Leistungen.</h2>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.6rem">
+        <div class="grid-2col" style="display:grid;grid-template-columns:1fr 1fr;gap:.6rem">
           ${services.map(s=>`<div style="border:2px solid ${t.surface_base};padding:1rem 1.2rem;color:${t.surface_base};font-size:.95rem">${s.toUpperCase()}</div>`).join('')}
         </div>
       </div></section>`;
@@ -843,7 +861,7 @@ function renderTrendigMutig(world, skin, fill) {
 
   return `<!doctype html><html lang="de-CH"><head><meta charset="utf-8">
 <link href="${fontUrl(world)}" rel="stylesheet">
-<style>${css}</style></head><body>
+<style>${css}${MOBILE_RESET_CSS}</style></head><body>
 <header style="background:${t.primary};color:${t.surface_base};padding:4rem 0 0">
   <div class="wrap">
     <h1 style="font-family:'${f.display.family}';font-size:clamp(3.2rem,12vw,8rem);line-height:.9;text-transform:uppercase">
@@ -919,7 +937,7 @@ function renderGehobentElegant(world, skin, fill) {
     const cols = n === 1 ? '1fr' : n === 2 ? '1fr 1fr' : '1fr 1fr 1fr';
     return `${sep}<section style="padding:7rem 0;text-align:center"><div class="wrap">
       <h2 style="font-family:'${f.display.family}',serif;font-weight:300;font-size:2rem;margin-bottom:2rem;line-height:1.15">Unsere <em style="font-style:italic">Arbeiten</em></h2>
-      <div style="display:grid;grid-template-columns:${cols};gap:2rem">
+      <div class="grid-gallery-lux" style="display:grid;grid-template-columns:${cols};gap:2rem">
         ${Array(n).fill(0).map((_,i)=>`<div style="aspect-ratio:3/2;background:url('${c.gallery_images[i%c.gallery_images.length]}') center/cover;filter:sepia(.25) saturate(.55) brightness(1.02)"></div>`).join('')}
       </div></div></section>`;
   }
@@ -936,7 +954,7 @@ function renderGehobentElegant(world, skin, fill) {
     return `
       ${sep}<section style="padding:6rem 0"><div class="wrap">
         <h2 style="font-family:'${f.display.family}',serif;font-weight:300;font-size:2rem;margin-bottom:1.8rem;line-height:1.15">Leistungen</h2>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+        <div class="grid-2col" style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
           ${services.map(s=>`<div style="border:1px solid rgba(26,24,20,.18);padding:1.2rem 1.4rem;border-radius:2px"><span style="font-size:.95rem;color:${t.primary}">${s}</span></div>`).join('')}
         </div>
       </div></section>`;
@@ -954,7 +972,7 @@ function renderGehobentElegant(world, skin, fill) {
     return `
       ${sep}<section style="padding:6rem 0"><div class="wrap">
         <h2 style="font-family:'${f.display.family}',serif;font-weight:300;font-size:2rem;margin-bottom:1.8rem;line-height:1.15"><em style="font-style:italic">${c.fakten_title}</em></h2>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem;align-items:start">
+        <div class="grid-2col" style="display:grid;grid-template-columns:1fr 1fr;gap:2rem;align-items:start">
           <p style="color:${muted};font-size:.95rem;line-height:1.7">Damit Sie sich um Ihre Genesung kümmern können — nicht um Formulare.</p>
           <ul style="border:1px solid rgba(26,24,20,.2);padding:1.8rem;list-style:none;border-radius:2px">
             ${facts.map(ft=>`<li style="padding:.4rem 0;border-bottom:1px solid rgba(26,24,20,.1);font-size:.9rem;color:${t.primary};padding-left:1rem;position:relative"><span style="position:absolute;left:0;color:${t.accent}">—</span>${ft}</li>`).join('')}
@@ -972,7 +990,7 @@ function renderGehobentElegant(world, skin, fill) {
 
   return `<!doctype html><html lang="de-CH"><head><meta charset="utf-8">
 <link href="${fontUrl(world)}" rel="stylesheet">
-<style>${css}</style></head><body>
+<style>${css}${MOBILE_RESET_CSS}</style></head><body>
 <header style="padding:8rem 0;text-align:center"><div class="wrap">
   <div style="width:2.5rem;height:1px;background:${t.accent};margin:0 auto 2rem"></div>
   <h1 style="font-family:'${f.display.family}',serif;font-weight:300;font-size:clamp(2.2rem,3.6vw,3.6rem);line-height:1.15;max-width:22ch;margin:0 auto">
