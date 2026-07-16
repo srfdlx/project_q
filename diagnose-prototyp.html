@@ -21,6 +21,11 @@
     padding:.95rem 1.1rem;margin-bottom:.7rem;cursor:pointer;font:inherit;transition:border-color .15s}
   .opt:hover{border-color:var(--acc)}
   .opt.sel{border-color:var(--acc);background:#eef4f3}
+  /* Verhindert Phantom-Hover: bleibt die Maus nach einem Klick stehen, landet sie nach dem
+     Neuzeichnen oft zufällig über einer neuen Antwort-Option, die dann fälschlich wie
+     vorausgewählt wirkt (:hover greift, obwohl niemand sie berührt hat). body.freeze-hover
+     hebt das auf, bis sich die Maus tatsächlich wieder bewegt. */
+  body.freeze-hover .opt:hover{border-color:var(--soft)}
   .opt small{display:block;color:#5a6a6e;font-size:.85rem;margin-top:.15rem}
   .opt.dis{opacity:.45;cursor:not-allowed}
   label{display:block;font-weight:600;font-size:.9rem;margin:1rem 0 .3rem}
@@ -427,6 +432,8 @@ function render(){
    html+=`<div class="nav"><button class="btn back" onclick="go(-1)">← Zurück</button><span></span></div>`;
  }
  document.getElementById('stage').innerHTML=html;
+ document.body.classList.add('freeze-hover');
+ document.addEventListener('mousemove', ()=>document.body.classList.remove('freeze-hover'), { once:true });
  document.querySelectorAll('.opt:not(.dis)').forEach(b=>{
    const key=window._key; const mk=multiKey();
    if(mk? mk.includes(b.dataset.v) : A[key]===b.dataset.v) b.classList.add('sel');
