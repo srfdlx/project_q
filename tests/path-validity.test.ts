@@ -7,6 +7,7 @@ import coiffeurRaw from "../src/profiles/coiffeur.json" assert { type: "json" };
 import treuhaenderRaw from "../src/profiles/treuhaender.json" assert { type: "json" };
 import tatowiererRaw from "../src/profiles/tatowierer.json" assert { type: "json" };
 import physiotherapieRaw from "../src/profiles/physiotherapie.json" assert { type: "json" };
+import ernaehrungsberatungRaw from "../src/profiles/ernaehrungsberatung.json" assert { type: "json" };
 
 /**
  * Testart B (Code-Test, Schema Teil 5B): Sackgassen werden hier direkt
@@ -21,6 +22,7 @@ const profiles: Record<string, BranchProfile> = {
   treuhaender: BranchProfileSchema.parse(treuhaenderRaw),
   tatowierer: BranchProfileSchema.parse(tatowiererRaw),
   physiotherapie: BranchProfileSchema.parse(physiotherapieRaw),
+  ernaehrungsberatung: BranchProfileSchema.parse(ernaehrungsberatungRaw),
 };
 
 /** Generischer "plausibelster nächster Schritt" — wählt nie branchenspezifisch,
@@ -228,6 +230,33 @@ describe("Pfad-Validität: Physiotherapie — regulatory_facts conversion-kritis
     session = submitAnswer(session, undefined);
     session = submitAnswer(session, "exact");
     session = submitAnswer(session, { proof_selected: physio.proof_types });
+    const render = getRenderModel(session) as { depth: string; branching: boolean; options: string[] };
+    expect(render.depth).toBe("short");
+    expect(render.branching).toBe(false);
+    expect(render.options.length).toBeGreaterThan(0);
+  });
+});
+
+describe("Pfad-Validität: Ernährungsberatung — regulatory_facts conversion-kritisch", () => {
+  const ernaehrungsberatung = profiles.ernaehrungsberatung;
+
+  it("gefüllte regulatory_facts erscheinen prominent und conversion_critical bei F_vertrauen", () => {
+    let session = createSession(flow, ernaehrungsberatung);
+    session = submitAnswer(session, undefined);
+    session = submitAnswer(session, "exact");
+    const render = getRenderModel(session) as {
+      regulatory_facts: { question: string; placement: string; conversion_critical: boolean }[];
+    };
+    expect(render.regulatory_facts).toHaveLength(1);
+    expect(render.regulatory_facts[0].placement).toBe("prominent");
+    expect(render.regulatory_facts[0].conversion_critical).toBe(true);
+  });
+
+  it("Conversion-Frage ist Kurzform (trust), bleibt aber sichtbar", () => {
+    let session = createSession(flow, ernaehrungsberatung);
+    session = submitAnswer(session, undefined);
+    session = submitAnswer(session, "exact");
+    session = submitAnswer(session, { proof_selected: ernaehrungsberatung.proof_types });
     const render = getRenderModel(session) as { depth: string; branching: boolean; options: string[] };
     expect(render.depth).toBe("short");
     expect(render.branching).toBe(false);

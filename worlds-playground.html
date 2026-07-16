@@ -67,6 +67,7 @@
   <button class="tb-btn" data-skin="physio" onclick="switchSkin('physio')">Praxis Mia</button>
   <button class="tb-btn" data-skin="treuhaender" onclick="switchSkin('treuhaender')">Treuhand Mia</button>
   <button class="tb-btn" data-skin="tatowierer" onclick="switchSkin('tatowierer')">Ink Mia</button>
+  <button class="tb-btn" data-skin="ernaehrungsberatung" onclick="switchSkin('ernaehrungsberatung')">Ernährung Mia</button>
   <div class="sep"></div>
   <span class="tb-label">Befüllung</span>
   <button class="tb-btn fill-active" onclick="switchFill('minimal')">Minimal</button>
@@ -321,6 +322,34 @@ const CONTENT_POOL = {
     fakten_title:'Kosten & Krankenkasse',
     gallery_images: DUMMY_IMAGES,
     hero_strip_image: DUMMY_IMAGES[1]
+  },
+  ernaehrungsberatung: {
+    name:'Mia Brändle', salon:'Ernährungspraxis Mia Brändle', ort:'Zürich-Oerlikon', tel:'044 555 12 34',
+    headline1:'Isst du dich', headline2:'endlich wieder wohl?',
+    tagline:'Ernährungsberatung in Zürich — fundiert, alltagstauglich und ohne erhobenen Zeigefinger.',
+    cta:'Erstgespräch anfragen',
+    branch_label:'Ernährungsberatung · Praxis',
+    audience:'Klientinnen',
+    quotes_all:[
+      {text:'Zum ersten Mal eine Ernährungsumstellung, die sich nicht wie Verzicht anfühlt.',who:'N.'},
+      {text:'Endlich jemand, der meine Werte erklärt, statt nur Tabellen zu verteilen.',who:'F.'},
+      {text:'Nach Jahren mit Diäten endlich ein Ansatz, der sich alltagstauglich anfühlt.',who:'S.'},
+      {text:'Geduldig, fachlich fundiert und nie mit erhobenem Zeigefinger.',who:'M.'},
+      {text:'Meine Blutwerte haben sich innert Monaten spürbar verbessert.',who:'K.'},
+      {text:'Ich habe gelernt, auf meinen Körper zu hören statt auf Regeln.',who:'J.'}
+    ],
+    services_all:['Ernährungsanalyse','Gewichtsmanagement','Sporternährung','Diabetes- & Stoffwechselberatung','Unverträglichkeiten & Allergien','Kinderernährung','Vegane & vegetarische Beratung','Gruppen-Workshops'],
+    over_text:'Mein Ansatz verbindet Fachwissen, Zuhören und Alltagstauglichkeit. Du sollst verstehen, warum eine Veränderung dir hilft — nicht nur, dass sie es tut.',
+    preise:[],
+    facts_all:[
+      'Anerkannt von allen Schweizer Krankenkassen.',
+      'Abrechnung über die Grundversicherung mit ärztlicher Verordnung.',
+      'Verordnung vom Haus- oder Facharzt genügt — wir übernehmen die Administration.',
+      'Zusatzversicherte und Selbstzahler: Termin auch ohne Verordnung möglich.'
+    ],
+    fakten_title:'Kosten & Krankenkasse',
+    gallery_images: DUMMY_IMAGES,
+    hero_strip_image: DUMMY_IMAGES[0]
   },
   treuhaender: {
     name:'Mia Brändle', salon:'Treuhand Mia Brändle', ort:'Zürich-Oerlikon', tel:'044 555 12 34',

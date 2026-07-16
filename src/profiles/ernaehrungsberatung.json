@@ -1,0 +1,60 @@
+{
+  "branch_id": "ernaehrungsberatung",
+  "branch_label": { "de": "Ernährungsberatung" },
+  "branch_aliases": ["Ernährungsberater/in", "Diätberatung", "Ernährungstherapie"],
+
+  "default_purpose": {
+    "de": "...dass Klientinnen Sie finden, Vertrauen fassen und unkompliziert ein Erstgespräch anfragen"
+  },
+
+  "conversion_type": "first_consultation",
+  "conversion_class": "trust",
+  "conversion_fallbacks": ["call", "contact_form"],
+
+  "craft_slider": 10,
+
+  "proof_types": ["qualification", "certification", "specialization", "experience_years", "testimonials"],
+  "specialization_relevant": true,
+
+  "default_blocks": [
+    "hero",
+    "services",
+    "about_me",
+    "specialization",
+    "qualifications",
+    "contact",
+    "location_map",
+    "opening_hours",
+    "legal"
+  ],
+  "optional_blocks": ["team", "testimonials"],
+
+  "semi_dynamic_modules": ["availability_status", "vacation_notice"],
+
+  "regulatory_facts": [
+    {
+      "question": { "de": "Rechnest du über die Krankenkasse ab?" },
+      "options": ["Grundversicherung (SVDE-anerkannt)", "nur Zusatzversicherung", "Selbstzahler", "Verordnung nötig"],
+      "placement": "prominent",
+      "conversion_critical": true
+    }
+  ],
+
+  "offered_worlds": [
+    {
+      "world_id": "warm-nahbar",
+      "label": { "de": "Warm & persönlich" },
+      "subtitle": { "de": "hier nimmt man sich Zeit für mich" }
+    },
+    {
+      "world_id": "modern-transparent",
+      "label": { "de": "Klar & fachlich" },
+      "subtitle": { "de": "die wissen genau, was sie tun" }
+    }
+  ],
+
+  "out_of_scope_signals": [
+    "Mitglieder-/Login-Bereich mit Klientendaten",
+    "Online-Shop für Nahrungsergänzungsmittel"
+  ]
+}
