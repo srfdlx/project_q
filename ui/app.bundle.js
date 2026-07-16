@@ -4794,13 +4794,67 @@ var physiotherapie_default = {
   ]
 };
 
+// src/profiles/ernaehrungsberatung.json
+var ernaehrungsberatung_default = {
+  branch_id: "ernaehrungsberatung",
+  branch_label: { de: "Ern\xE4hrungsberatung" },
+  branch_aliases: ["Ern\xE4hrungsberater/in", "Di\xE4tberatung", "Ern\xE4hrungstherapie"],
+  default_purpose: {
+    de: "...dass Klientinnen Sie finden, Vertrauen fassen und unkompliziert ein Erstgespr\xE4ch anfragen"
+  },
+  conversion_type: "first_consultation",
+  conversion_class: "trust",
+  conversion_fallbacks: ["call", "contact_form"],
+  craft_slider: 10,
+  proof_types: ["qualification", "certification", "specialization", "experience_years", "testimonials"],
+  specialization_relevant: true,
+  default_blocks: [
+    "hero",
+    "services",
+    "about_me",
+    "specialization",
+    "qualifications",
+    "contact",
+    "location_map",
+    "opening_hours",
+    "legal"
+  ],
+  optional_blocks: ["team", "testimonials"],
+  semi_dynamic_modules: ["availability_status", "vacation_notice"],
+  regulatory_facts: [
+    {
+      question: { de: "Rechnest du \xFCber die Krankenkasse ab?" },
+      options: ["Grundversicherung (SVDE-anerkannt)", "nur Zusatzversicherung", "Selbstzahler", "Verordnung n\xF6tig"],
+      placement: "prominent",
+      conversion_critical: true
+    }
+  ],
+  offered_worlds: [
+    {
+      world_id: "warm-nahbar",
+      label: { de: "Warm & pers\xF6nlich" },
+      subtitle: { de: "hier nimmt man sich Zeit f\xFCr mich" }
+    },
+    {
+      world_id: "modern-transparent",
+      label: { de: "Klar & fachlich" },
+      subtitle: { de: "die wissen genau, was sie tun" }
+    }
+  ],
+  out_of_scope_signals: [
+    "Mitglieder-/Login-Bereich mit Klientendaten",
+    "Online-Shop f\xFCr Nahrungserg\xE4nzungsmittel"
+  ]
+};
+
 // ui/app.ts
 var flow = FlowGraphSchema.parse(flow_graph_default);
 var profiles = [
   { id: "coiffeur", data: BranchProfileSchema.parse(coiffeur_default) },
   { id: "treuhaender", data: BranchProfileSchema.parse(treuhaender_default) },
   { id: "tatowierer", data: BranchProfileSchema.parse(tatowierer_default) },
-  { id: "physiotherapie", data: BranchProfileSchema.parse(physiotherapie_default) }
+  { id: "physiotherapie", data: BranchProfileSchema.parse(physiotherapie_default) },
+  { id: "ernaehrungsberatung", data: BranchProfileSchema.parse(ernaehrungsberatung_default) }
 ];
 var screen = { kind: "select" };
 var path = [];

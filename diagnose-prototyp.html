@@ -74,8 +74,8 @@ let step = 0, returnToReview = false;
 /* ================= BRANCHENPROFILE (Fragen als Daten — Motor/Profil-Prinzip) =================
    1:1 aus src/profiles/*.json: welten-IDs = offered_worlds[].world_id, vertrauenOpts = proof_types,
    hatSpez = specialization_relevant, hatReg = regulatory_facts.length>0, convOpts-Reihenfolge
-   orientiert an conversion_type + conversion_fallbacks. Alle vier echten Branchen sind jetzt
-   vertreten (vorher nur Coiffeur/Physio, Treuhand/Tätowierer als Platzhalter). */
+   orientiert an conversion_type + conversion_fallbacks. Alle fünf echten Branchen sind jetzt
+   vertreten (Coiffeur, Physio, Treuhand, Tätowierer, Ernährungsberatung). */
 const PROFILES = {
  coiffeur:{
   label:'Coiffeur', platzhalterName:'z.B. Salon Mia', defaultOrt:'Baden', defaultBusinessNoun:'Dein Salon',
@@ -131,6 +131,18 @@ const PROFILES = {
             lymph:['Lymphdrainage','Sanfte Entstauungstherapie nach Operationen oder bei chronischen Schwellungen.'],
             neuro:['Neuro-Rehabilitation','Begleitung nach Schlaganfall, bei MS oder Parkinson — alltagsnah und geduldig.'] },
   qualiText:'dipl. Physiotherapeutin FH<br>CAS Sportphysiotherapie (ESP)<br>Mitglied physioswiss',
+  faktenTitelReg:'Kosten & Krankenkasse',
+  regFaktenMap:{
+    grund:['Anerkannt von allen Schweizer Krankenkassen.','Abrechnung über die Grundversicherung mit ärztlicher Verordnung.','Verordnung vom Haus- oder Facharzt genügt — wir übernehmen die Administration.'],
+    zusatz:['Abrechnung über Zusatzversicherung oder als Selbstzahler.','Keine ärztliche Verordnung nötig — Termin direkt vereinbaren.'],
+    beides:['Anerkannt von allen Schweizer Krankenkassen.','Abrechnung über die Grundversicherung mit ärztlicher Verordnung.','Zusatzversicherte und Selbstzahler: Termin auch ohne Verordnung möglich.']
+  },
+  ablaufLabel:'Behandlungsablauf (Transparenz)',
+  ablaufSteps:[
+    ['Abklärung','Erstgespräch und Untersuchung — Zeit für Ihre Geschichte und Ziele.'],
+    ['Behandlung','Individueller Plan: manuell, aktiv, alltagstauglich.'],
+    ['Belastbarkeit','Aufbau bis zu Ihrem Ziel: schmerzfrei arbeiten, trainieren, leben.']
+  ],
   convClass:'trust',
   convFrage:'Wie sollen Patientinnen Kontakt aufnehmen?',
   convHint:'Kurze Frage, kurze Antwort — bei Vertrauensberufen ist der Kontaktweg selten das Problem.',
@@ -145,6 +157,55 @@ const PROFILES = {
   soloText:'Mein Ansatz verbindet Hände, Training und Zuhören. Sie sollen verstehen, was wir tun und warum.',
   teamText:'Wir sind ein kleines Team mit einem gemeinsamen Ansatz: Hände, Training und Zuhören verbinden.',
   erfahrungSuffix:' Seit über zwölf Jahren begleite ich Menschen zurück in ihre Bewegung.'
+ },
+ ernaehrungsberatung:{
+  label:'Ernährungsberatung', platzhalterName:'z.B. Ernährungspraxis Amrein', defaultOrt:'Bern', defaultBusinessNoun:'Deine Praxis',
+  branchLabel:'Ernährungsberatung', audience:'Klientinnen',
+  headline1:'Isst du dich', headline2:'endlich wieder wohl?',
+  tagline:'Ernährungsberatung — fundiert, alltagstauglich und ohne erhobenen Zeigefinger.',
+  zweckSatz:'Die meisten Ernährungsberaterinnen wollen vor allem eins: dass Klientinnen sie finden, Vertrauen fassen und unkompliziert ein Erstgespräch anfragen. Stimmt das für dich?',
+  welten:[ ['warm-nahbar','Warm & persönlich','„hier nimmt man sich Zeit für mich"'],
+           ['modern-transparent','Klar & fachlich','„die wissen genau, was sie tun"'] ],
+  vertrauenFrage:'Was überzeugt jemanden, dass er bei DIR in guten Händen ist?',
+  vertrauenOpts:[ ['quali','Qualifikation & Zertifizierung','SVDE-Anerkennung, eidg. Fachausweis, Verbandsmitgliedschaft'],
+                  ['spez','Meine Spezialgebiete','Klientinnen suchen sehr gezielt'],
+                  ['bewertungen','Bewertungen & Stimmen','Zitate zufriedener Klientinnen'],
+                  ['erfahrung','Meine Erfahrung','Jahre, Ansatz, Persönlichkeit'] ],
+  hatSpez:true, hatReg:true, hatAblauf:true, hatGalerieToggle:false, galerieImmer:false,
+  spezFrage:'Welche Spezialgebiete deckst du ab?', spezHint:'Sie werden zum Herzstück deiner Seite — Klientinnen suchen genau danach.',
+  spezLabel:'Spezialisierung',
+  spezOpts:[ ['gewicht','Gewichtsmanagement'],['sport','Sporternährung'],['diabetes','Diabetes & Stoffwechsel'],['unvertraeglichkeit','Unverträglichkeiten & Allergien'] ],
+  spezMap:{ gewicht:['Gewichtsmanagement','Nachhaltige Gewichtsveränderung ohne Diät-Druck — alltagstauglich und individuell.'],
+            sport:['Sporternährung','Leistungsorientierte Ernährung für Training, Wettkampf und Regeneration.'],
+            diabetes:['Diabetes & Stoffwechsel','Ernährungsumstellung bei Diabetes sowie Fettstoffwechsel- und Stoffwechselstörungen.'],
+            unvertraeglichkeit:['Unverträglichkeiten & Allergien','Sichere und genussvolle Ernährung bei Zöliakie, Laktose- oder Fruktoseintoleranz.'] },
+  qualiText:'dipl. Ernährungsberaterin SVDE<br>Eidg. anerkannter Abschluss<br>Mitglied Schweizerischer Verband der Ernährungsberater/innen',
+  faktenTitelReg:'Kosten & Krankenkasse',
+  regFaktenMap:{
+    grund:['Anerkannt von allen Schweizer Krankenkassen.','Abrechnung über die Grundversicherung mit ärztlicher Verordnung.','Verordnung vom Haus- oder Facharzt genügt — wir übernehmen die Administration.'],
+    zusatz:['Abrechnung über Zusatzversicherung oder als Selbstzahler.','Keine ärztliche Verordnung nötig — Termin direkt vereinbaren.'],
+    beides:['Anerkannt von allen Schweizer Krankenkassen.','Abrechnung über die Grundversicherung mit ärztlicher Verordnung.','Zusatzversicherte und Selbstzahler: Termin auch ohne Verordnung möglich.']
+  },
+  ablaufLabel:'Beratungsablauf (Transparenz)',
+  ablaufSteps:[
+    ['Standortbestimmung','Erstgespräch, Ernährungsprotokoll und gemeinsame Zielklärung.'],
+    ['Beratungsplan','Individueller, alltagstauglicher Ernährungsplan statt starrer Diätvorgaben.'],
+    ['Begleitung','Regelmässige Anpassung auf dem Weg zu einer nachhaltigen Veränderung.']
+  ],
+  convClass:'trust',
+  convFrage:'Wie sollen Klientinnen Kontakt aufnehmen?',
+  convHint:'Kurze Frage, kurze Antwort — bei Vertrauensberufen ist der Kontaktweg selten das Problem.',
+  convOpts:[ ['anruf','Anrufen','Nummer gut sichtbar','call'],
+             ['formular','Anfrage-Formular','du meldest dich zurück','formular'] ],
+  ctaLabelHero:'Erstgespräch anfragen', ctaLabelKontakt:'Erstgespräch anfragen',
+  callText:'Rufen Sie an — wir finden gemeinsam einen passenden Termin.',
+  formularText:'Schreiben Sie kurz, worum es geht — Sie erhalten innert eines Arbeitstags eine Antwort.', formularFields:'Name · Anliegen · Verordnung vorhanden?',
+  quotesPool:[{text:'Zum ersten Mal eine Ernährungsumstellung, die sich nicht wie Verzicht anfühlt.',who:'N.'},{text:'Endlich jemand, der meine Werte erklärt, statt nur Tabellen zu verteilen.',who:'F.'}],
+  preise:[],
+  teamLabel:'Unser Beratungsteam',
+  soloText:'Mein Ansatz verbindet Fachwissen, Zuhören und Alltagstauglichkeit. Du sollst verstehen, warum eine Veränderung dir hilft — nicht nur, dass sie es tut.',
+  teamText:'Wir sind ein kleines Team mit einem gemeinsamen Ansatz: Fachwissen, Zuhören und Alltagstauglichkeit verbinden.',
+  erfahrungSuffix:' Seit über acht Jahren begleite ich Menschen zu einem entspannteren Verhältnis mit Essen.'
  },
  treuhaender:{
   label:'Treuhänder', platzhalterName:'z.B. Treuhand Weber', defaultOrt:'Zug', defaultBusinessNoun:'Dein Treuhandbüro',
@@ -227,7 +288,7 @@ const PROFILES = {
  }
 };
 const P = ()=>PROFILES[A.branche] || PROFILES.coiffeur;
-const BRANCHEN = ['coiffeur','physio','treuhaender','tatowierer'];
+const BRANCHEN = ['coiffeur','physio','treuhaender','tatowierer','ernaehrungsberatung'];
 
 /* Branchenspezifische Akzent-Overrides je Welt — 1:1 aus src/profiles/tatowierer.json
    (offered_worlds[].skin.color_overrides). Andere Branchen nutzen Welten unverändert. */
@@ -253,6 +314,7 @@ function buildSteps(){
      opt('physio','Physiotherapie'),
      opt('treuhaender','Treuhänder / Treuhandbüro'),
      opt('tatowierer','Tätowierer / Tattoo-Studio'),
+     opt('ernaehrungsberatung','Ernährungsberatung'),
      opt('andere','Etwas anderes','',false,'gate') ], 'branche'); },
    valid(){ return BRANCHEN.includes(A.branche); } });
 
@@ -280,7 +342,7 @@ function buildSteps(){
    valid(){ return A.spez.length>0; } });
 
  if(p.hatReg) st.push({ id:'FR', render(){ return `
-   <div class="default-note">Diese Frage stellt dir kaum ein Website-Baukasten — dabei ist die Antwort für deine Patienten die wichtigste Info überhaupt.</div>`
+   <div class="default-note">Diese Frage stellt dir kaum ein Website-Baukasten — dabei ist die Antwort für deine ${p.audience} die wichtigste Info überhaupt.</div>`
    + q('Rechnest du über die Krankenkasse ab?','Die Antwort erscheint wortgetreu und prominent auf deiner Seite.',
    [ opt('grund','Ja, über die Grundversicherung','mit ärztlicher Verordnung'),
      opt('zusatz','Nur Zusatzversicherung & Selbstzahler','keine Verordnung nötig'),
@@ -328,7 +390,7 @@ function reviewHtml(st){
  if(p.galerieImmer || (p.hatGalerieToggle && A.vertrauen.includes('arbeiten'))) bloecke.push(['Galerie: Deine Arbeiten', 'F4']);
  if(A.vertrauen.includes('quali')) bloecke.push(['Qualifikation & Zulassung', 'F4']);
  if(A.branche==='tatowierer' && A.vertrauen.includes('hygiene')) bloecke.push(['Hygiene & Sicherheit', 'F4']);
- bloecke.push([p.hatAblauf?'Behandlungsablauf (Transparenz)':'Leistungen & Preise (Beispielwerte)', null]);
+ bloecke.push([p.hatAblauf?(p.ablaufLabel||'Ablauf (Transparenz)'):'Leistungen & Preise (Beispielwerte)', null]);
  if(A.vertrauen.includes('bewertungen')) bloecke.push(['Kundenstimmen', 'F4']);
  bloecke.push([(A.team==='team'?p.teamLabel:'Über mich')+(A.vertrauen.includes('erfahrung')?' — mit deiner Geschichte':''), 'FT']);
  bloecke.push(['Kontakt & Öffnungszeiten', 'F5'], ['Impressum & Datenschutz (automatisch)', null]);
@@ -568,11 +630,11 @@ function fontUrl(world) {
 function tel(){ return A.tel.replace(/\s/g,''); }
 function wa(){ return A.tel.replace(/\D/g,''); }
 
-/* Regulatorik: WÖRTLICH nach Antwort (I5 — Null-Freiheits-Zone). Nur Physio hat hatReg. */
+/* Regulatorik: WÖRTLICH nach Antwort (I5 — Null-Freiheits-Zone), Texte kommen aus p.regFaktenMap.
+   Jede hatReg-Branche (Physio, Ernährungsberatung) hat ihre eigene Karte. */
 function regFakten(){
- if(A.reg==='grund') return ['Anerkannt von allen Schweizer Krankenkassen.','Abrechnung über die Grundversicherung mit ärztlicher Verordnung.','Verordnung vom Haus- oder Facharzt genügt — wir übernehmen die Administration.'];
- if(A.reg==='zusatz') return ['Abrechnung über Zusatzversicherung oder als Selbstzahler.','Keine ärztliche Verordnung nötig — Termin direkt vereinbaren.'];
- return ['Anerkannt von allen Schweizer Krankenkassen.','Abrechnung über die Grundversicherung mit ärztlicher Verordnung.','Zusatzversicherte und Selbstzahler: Termin auch ohne Verordnung möglich.'];
+ const map = P().regFaktenMap || {};
+ return map[A.reg] || map.beides || [];
 }
 function ueberTitel(){ return A.team==='team' ? P().teamLabel : 'Über mich'; }
 function ueberText(){
@@ -614,12 +676,13 @@ function kontaktBodyHtml(mono){
    - quotesN: 0 wenn 'bewertungen' nicht wählbar/gewählt, sonst feste Pool-Grösse
    - galleryN: galerieImmer (Tätowierer, craft_slider 95) → immer 4; hatGalerieToggle (Coiffeur) →
      4 wenn 'arbeiten' gewählt; sonst (Physio, Treuhänder — kein gallery_portfolio im echten Profil) → 0
-   - factsN: Physio — Länge von regFakten(); Tätowierer — Hygiene-Fakten wenn 'hygiene' gewählt; sonst 0
+   - factsN: hatReg-Branchen (Physio, Ernährungsberatung) — Länge von regFakten(); Tätowierer — Hygiene-Fakten
+     wenn 'hygiene' gewählt; sonst 0
    - spez_items: genau die gewählten Einträge aus p.spezOpts (1–4), Titel/Text aus p.spezMap */
 function buildContent(){
  const p = P();
- const factsAll = A.branche==='physio' ? regFakten() : (A.branche==='tatowierer' ? (p.hygieneFacts||[]) : []);
- const factsActive = A.branche==='physio' ? true : (A.branche==='tatowierer' ? A.vertrauen.includes('hygiene') : false);
+ const factsAll = p.hatReg ? regFakten() : (A.branche==='tatowierer' ? (p.hygieneFacts||[]) : []);
+ const factsActive = p.hatReg ? true : (A.branche==='tatowierer' ? A.vertrauen.includes('hygiene') : false);
  return {
    name:A.name, ort:A.ort,
    headline1:p.headline1, headline2:p.headline2, tagline:p.tagline, branch_label:p.branchLabel, audience:p.audience,
@@ -630,7 +693,7 @@ function buildContent(){
    galleryN: p.galerieImmer ? 4 : ((p.hatGalerieToggle && A.vertrauen.includes('arbeiten')) ? 4 : 0),
    facts_all: factsActive ? factsAll : [],
    factsN: factsActive ? factsAll.length : 0,
-   fakten_title: A.branche==='physio' ? 'Kosten & Krankenkasse' : (A.branche==='tatowierer' ? p.faktenTitelHygiene : null),
+   fakten_title: p.hatReg ? p.faktenTitelReg : (A.branche==='tatowierer' ? p.faktenTitelHygiene : null),
    spez_items: (p.hatSpez && A.vertrauen.includes('spez')) ? A.spez.map(s=>({title:p.spezMap[s][0], text:p.spezMap[s][1]})) : [],
    spezLabel: p.spezLabel,
    preise: p.preise,
@@ -684,12 +747,7 @@ function spezHtml_gehoben(c,t,f,muted,sep){
    </div></div></section>`;
 }
 
-/* ================= ABLAUF (nur Physio, hatAblauf — fixe 3 Schritte, kein mengenvariabler Typ) ================= */
-const ABLAUF_STEPS = [
-  ['Abklärung','Erstgespräch und Untersuchung — Zeit für Ihre Geschichte und Ziele.'],
-  ['Behandlung','Individueller Plan: manuell, aktiv, alltagstauglich.'],
-  ['Belastbarkeit','Aufbau bis zu Ihrem Ziel: schmerzfrei arbeiten, trainieren, leben.']
-];
+/* ================= ABLAUF (hatAblauf-Branchen — fixe 3 Schritte aus p.ablaufSteps, kein mengenvariabler Typ) ================= */
 
 /* ================= PREISE (fix — kein mengenvariabler Sektionstyp; leer = Sektion entfällt) ================= */
 function preiseHtml_warm(c,t,r,mono){ return `
@@ -771,10 +829,10 @@ function renderWarmNahbar(world, c) {
         </ul></div></section>`;
   }
   function ablaufHtml(){
-    if(A.branche!=='physio') return '';
+    if(!P().hatAblauf) return '';
     return `<section style="background:${t.surface_tinted};padding:4.5rem 0"><div class="wrap"><h2>So begleiten wir Sie.</h2>
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:2rem">
-        ${ABLAUF_STEPS.map(([h,p],i)=>`<div><span style="font-family:'${f.display.family}',serif;font-size:2rem;color:${t.accent};display:block;margin-bottom:.4rem">${i+1}</span><h3 style="font-size:1rem;margin-bottom:.3rem;color:${t.primary_dark}">${h}</h3><p style="font-size:.92rem">${p}</p></div>`).join('')}
+        ${P().ablaufSteps.map(([h,p],i)=>`<div><span style="font-family:'${f.display.family}',serif;font-size:2rem;color:${t.accent};display:block;margin-bottom:.4rem">${i+1}</span><h3 style="font-size:1rem;margin-bottom:.3rem;color:${t.primary_dark}">${h}</h3><p style="font-size:.92rem">${p}</p></div>`).join('')}
       </div></div></section>`;
   }
 
@@ -860,10 +918,10 @@ function renderModernTransparent(world, c) {
         </ul></div></section>`;
   }
   function ablaufHtml(){
-    if(A.branche!=='physio') return '';
+    if(!P().hatAblauf) return '';
     return `<section style="background:${sage};padding:4.5rem 0"><div class="wrap">${eyebrow('So läuft es ab')}<h2 style="font-family:'${f.display.family}',sans-serif;font-weight:600">Vom ersten Termin zurück in den Alltag.</h2>
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:2rem">
-        ${ABLAUF_STEPS.map(([h,p],i)=>`<div><span style="font-family:'${mono}';font-size:2rem;color:${t.primary};display:block;margin-bottom:.4rem">0${i+1}</span><h3 style="font-size:1rem;margin-bottom:.3rem;color:${t.primary_dark}">${h}</h3><p style="font-size:.92rem">${p}</p></div>`).join('')}
+        ${P().ablaufSteps.map(([h,p],i)=>`<div><span style="font-family:'${mono}';font-size:2rem;color:${t.primary};display:block;margin-bottom:.4rem">0${i+1}</span><h3 style="font-size:1rem;margin-bottom:.3rem;color:${t.primary_dark}">${h}</h3><p style="font-size:.92rem">${p}</p></div>`).join('')}
       </div></div></section>`;
   }
 
@@ -1054,11 +1112,11 @@ function renderGehobenElegant(world, c) {
           </ul></div></div></section>`;
   }
   function ablaufHtml(){
-    if(A.branche!=='physio') return '';
+    if(!P().hatAblauf) return '';
     return `${sep}<section style="padding:6rem 0;text-align:center"><div class="wrap">
       <h2 style="font-family:'${f.display.family}',serif;font-weight:300;font-size:2rem;margin-bottom:2rem;line-height:1.15">So <em style="font-style:italic">begleiten wir Sie</em></h2>
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:2rem">
-        ${ABLAUF_STEPS.map(([h,p],i)=>`<div><span style="font-family:'${f.display.family}',serif;font-weight:300;font-size:1.8rem;color:${t.accent};display:block;margin-bottom:.4rem">${i+1}</span><h3 style="font-size:1rem;margin-bottom:.3rem;color:${t.primary}">${h}</h3><p style="font-size:.9rem;color:${muted}">${p}</p></div>`).join('')}
+        ${P().ablaufSteps.map(([h,p],i)=>`<div><span style="font-family:'${f.display.family}',serif;font-weight:300;font-size:1.8rem;color:${t.accent};display:block;margin-bottom:.4rem">${i+1}</span><h3 style="font-size:1rem;margin-bottom:.3rem;color:${t.primary}">${h}</h3><p style="font-size:.9rem;color:${muted}">${p}</p></div>`).join('')}
       </div></div></section>`;
   }
 

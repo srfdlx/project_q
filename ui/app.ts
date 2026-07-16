@@ -6,6 +6,7 @@ import coiffeurRaw from "../src/profiles/coiffeur.json" assert { type: "json" };
 import treuhaenderRaw from "../src/profiles/treuhaender.json" assert { type: "json" };
 import tatowiererRaw from "../src/profiles/tatowierer.json" assert { type: "json" };
 import physiotherapieRaw from "../src/profiles/physiotherapie.json" assert { type: "json" };
+import ernaehrungsberatungRaw from "../src/profiles/ernaehrungsberatung.json" assert { type: "json" };
 
 /**
  * Diese Datei enthält ausschliesslich Rendering + Event-Wiring.
@@ -24,6 +25,7 @@ const profiles: { id: string; data: BranchProfile }[] = [
   { id: "treuhaender", data: BranchProfileSchema.parse(treuhaenderRaw) },
   { id: "tatowierer", data: BranchProfileSchema.parse(tatowiererRaw) },
   { id: "physiotherapie", data: BranchProfileSchema.parse(physiotherapieRaw) },
+  { id: "ernaehrungsberatung", data: BranchProfileSchema.parse(ernaehrungsberatungRaw) },
 ];
 
 type Screen = { kind: "select" } | { kind: "flow"; profile: BranchProfile; session: Session };

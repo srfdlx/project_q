@@ -4,6 +4,7 @@ import coiffeur from "../src/profiles/coiffeur.json" assert { type: "json" };
 import treuhaender from "../src/profiles/treuhaender.json" assert { type: "json" };
 import tatowierer from "../src/profiles/tatowierer.json" assert { type: "json" };
 import physiotherapie from "../src/profiles/physiotherapie.json" assert { type: "json" };
+import ernaehrungsberatung from "../src/profiles/ernaehrungsberatung.json" assert { type: "json" };
 
 /**
  * Testart A (Konzept-Test, Schema Teil 5A): Lücken werden gemeldet,
@@ -17,6 +18,7 @@ describe("Schema-Vollständigkeit", () => {
     { name: "treuhaender", data: treuhaender },
     { name: "tatowierer", data: tatowierer },
     { name: "physiotherapie", data: physiotherapie },
+    { name: "ernaehrungsberatung", data: ernaehrungsberatung },
   ];
 
   for (const { name, data } of profiles) {
