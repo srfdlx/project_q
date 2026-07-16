@@ -20,7 +20,23 @@ Design-Entscheidung treffen muss.
 |---|---|
 | Wix/Squarespace/Jimdo | Nicht Design-Baukasten, sondern Zweck-Diagnose. Design wird nie zur Wahl gestellt. |
 | Lovable & KI-Generatoren | Geführte, gezielte Fragen statt offenem Prompt. Kein stundenlanges Design-Rumschrauben möglich (bewusste Leitplanke). |
+| **Durable** (relevantester Player) | 3 Fragen (Branche/Name/Ort) vs. echte Diagnose; letzte 20% via Drag-and-Drop zurück an den Laien vs. Annotation+Designer; generisch vs. CH+Regulatorik |
 | Alle | Hybrid KI + Mensch: ein echter UX-Designer gibt frei / springt bei qualitativen Wünschen ein. |
+
+**Wettbewerbs-Notiz Durable (Stand Juli 2026):** Gleiche Zielgruppe (Solopreneure,
+lokale Dienstleister), gleiches Versprechen („keine Design-Entscheidungen"),
+~30-Sek-Generierung mit erstaunlich kontextrichtigem Output, All-in-one (CRM,
+Buchung, Invoicing, Marketing), ab ~15 $/Mt., Millionen Nutzer → **validiert
+unseren Markt und setzt den Preis-Anker fürs Billig-Segment.** Unsere drei
+Terrains: (1) **Diagnose statt Vermutung** — Durable fragt nie nach Kassen-
+Abrechnung, Conversion-Verhalten, Vertrauens-Belegen; (2) **Designer statt
+Selbst-Editor** — Durable bringt auf 70–80% und delegiert den Rest an den Laien
+zurück (Baukasten mit KI-Starthilfe), wir lösen dieselben 20% via Annotation +
+Mensch; (3) **CH + Regulatorik + Garantie** — plus Gegenposition zum Durable-
+Lock-in (kein Code-Export, Seite lebt nur mit Abo). Konsequenzen: Pricing
+positioniert sich *zwischen* Durable und Agentur und muss den Abstand begründen;
+jede unserer ~8 Fragen (vs. deren 3) muss ihren Wert spürbar machen — das
+transparente Default-Prinzip ist dafür nicht Kür, sondern Rechtfertigung.
 
 **Der eigentliche Burggraben ist die Verzweigungslogik**, nicht der Output.
 Der Output ist kopierbar, sobald man ihn sieht. Die Regel „welche Frage triggert
@@ -379,7 +395,7 @@ beginnt, baut Vokabeln ohne Satzbau.
 | I6 | Kontrast ≥ WCAG AA, Fliesstext ≥ 16px, Zeilenlänge 45–90 Zeichen | berechenbar |
 | I7 | **Token-Treue:** nur Werte der gewählten Charakter-Welt; **2 gestalterische Schriftfamilien (Display+Body) + optional 1 funktionale Utility-Schrift nur für Fakten** (Preise, Regulatorik — nie Fliesstext/Headlines); Spacing aus Skala | Ist ⊆ Token-Menge |
 | I8 | Texte in Profil-Sprache(n), keine Platzhalter-Reste | Pattern-Check |
-| I9 | **Responsive-Boden:** kein horizontaler Overflow ab 320px Breite; mehrspaltige Grids kollabieren mobil zu einer Spalte (Ausnahme: kleine Galerie-Kacheln dürfen 2-spaltig bleiben, wenn sie sauber passen); Überlappungs-/Versatz-Effekte (FR1) deaktivieren sich mobil | Viewport-Screenshot-Prüfung (320/375/768px), analog H1 — erst nach Rendering hart prüfbar, keine HTML-Analyse |
+| I9 | **Mobile-Integrität:** kein horizontaler Overflow auf keiner Viewport-Breite (ab 320px); mehrspaltige Grids kollabieren auf schmalen Screens zu 1 Spalte (Ausnahme: kleine Galerie-Kacheln dürfen 2-spaltig bleiben, wenn sie sauber passen); Überlappungs-/Versatz-Effekte (FR1) deaktivieren sich mobil. Zielgruppen-Realität: Endkunden kommen mehrheitlich mobil | Viewport-Render-Test (320/375/768px je Welt × Skin), analog H1 — erst nach Rendering hart prüfbar, keine HTML-Analyse |
 
 ### Schritt 2 — Held-Durchsetzung (Hierarchie-Mechanik)
 
@@ -482,7 +498,14 @@ die passende Variante — nie eine globale Standardlösung.
 überschreitet, greift `overflow: "discard"` — das System zeigt die Top-N, Rest fällt
 weg. Das ist eine Gestaltungsentscheidung, keine Fehlerbehandlung. Beispiel Zitate:
 4+ Einträge → `top3_select` (3 beste), Rest stumm. Der Nutzer kann priorisieren;
-der Renderer zeigt nie mehr als das weltdefinierte Maximum.
+der Renderer zeigt nie mehr als das weltdefinierte Maximum. Unbegrenzte
+Inhaltsmengen wären der Rückfall ins Selber-Vollstopfen — „weniger, aber
+inszeniert" ist Teil des Qualitätsversprechens, nicht nur Layout-Zwang.
+
+**Bezug zu Abschnitt 6 (Pflege):** Dieselben `quantity_rules` definieren zugleich,
+was das generierte Settings-Panel dem Kunden nachträglich erlauben darf (z.B.
+wie viele Kundenstimmen er selbst nachtragen kann, bevor die Obergrenze greift) —
+die Mengen-Regeln sind nicht nur Generierungs-, sondern auch Pflege-Vertrag.
 
 **Layout-Varianten sind welt-spezifisch:** `card_row` sieht in `warm-nahbar`
 (gerundete Karten, warme Farben) anders aus als in `trendig-mutig` (scharfe Kanten,
